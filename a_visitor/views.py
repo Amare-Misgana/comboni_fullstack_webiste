@@ -5,10 +5,13 @@ from django.conf import settings
 def home(request):
     return render(request, "a_visitor/home/html")
 
-def contact(request):
-    return render(request, "a_visitor/contact.html")
+def about(request):
+    return render(request, "a_visitor/about.html")
 
-def email_view(request):
+def news(request):
+    return render(request, "a_vistor/news.html")
+
+def contact(request):
     if request.method == "POST":
         email = request.POST.get("email")
         message = request.POST.get("message")
@@ -44,7 +47,5 @@ def email_view(request):
             html_message=html_message
         )
 
-    return render(request, "a_visitor/send.html")
+    return render(request, "a_visitor/contact.html")
 
-def about(request):
-    return render(request, "a_visitor/about.html")

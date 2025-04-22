@@ -1,0 +1,263 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Merriweather", sans-serif;
+}
+.hero_container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-color: black;
+  isolation: isolate;
+  padding: 1em;
+}
+.hero_container .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+.hero_container .logo img {
+  width: 5.6em;
+}
+.hero_container .logo h1 {
+  color: white;
+  font-size: 4em;
+}
+.hero_container nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.hero_container nav .nav_links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+.hero_container nav .nav_links a {
+  text-decoration: none;
+  color: var(--link);
+  position: relative;
+}
+.hero_container nav .nav_links a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0.2em;
+  background-color: #fff;
+  bottom: -3px;
+  left: 50%;
+  transition: width 0.4s ease, left 0.4s ease;
+}
+.hero_container nav .nav_links a:hover::after {
+  width: 100%;
+  left: 0;
+}
+.hero_container nav .nav_links a button {
+  padding: 0.3em 1em;
+  background-color: var(--primary);
+  color: var(--primary-text);
+  border: none;
+  font-size: 1.2em;
+  border-radius: 0.2em;
+  font-family: "poppins", sans-serif;
+}
+.hero_container nav .nav_links a button:hover {
+  background-color: var(--primary-light);
+  cursor: pointer;
+}
+.hero_container .hero {
+  margin-top: 5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.hero_container .hero * {
+  color: var(--primary-text);
+  text-align: center;
+}
+.hero_container .hero .slogn {
+  font-size: 0.6em;
+}
+.hero_container .hero .main_header {
+  font-size: 2em;
+}
+.hero_container .hero .sub_header h3 {
+  font-size: 1em;
+  font-weight: 50;
+  margin: 1em 0 4em 0;
+  max-width: 70vw;
+}
+.hero_container .hero .cta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+}
+.hero_container .hero .cta a button {
+  width: 12em;
+  padding: 0.6em;
+  border-radius: 0.4em;
+  border: none;
+  background-color: var(--primary);
+  font-family: "poppins", sans-serif;
+  font-size: 1em;
+}
+.hero_container .hero .cta a button:hover {
+  cursor: pointer;
+  background-color: var(--primary-light);
+}
+.hero_container .hero .cta .optional_cta {
+  background-color: rgba(255, 255, 255, 0.226);
+  backdrop-filter: blur(1px);
+  border: 1px solid;
+}
+.hero_container .hero .cta .optional_cta:hover {
+  background-color: #fff;
+  color: var(--primary);
+}
+@media (max-width: 768px) {
+  .hero_container nav {
+    flex-direction: column;
+    gap: 1em;
+  }
+  .hero_container nav .nav_links {
+    transform: translateX(100%);
+    transition: transform 1s ease;
+    background-color: var(--primary);
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    width: 15em;
+    top: 0;
+    right: 0;
+  }
+
+  .hero_container .logo img {
+    width: 10em;
+  }
+
+  .hero_container .logo h1 {
+    display: none;
+  }
+
+  .hero_container .nav_links {
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+
+  .hero_container .hero {
+    margin-top: 3em;
+    padding: 0 1em;
+  }
+
+  .hero_container .hero .main_header {
+    font-size: 1.5em;
+  }
+
+  .hero_container .hero .sub_header h3 {
+    font-size: 0.9em;
+    max-width: 100%;
+  }
+
+  .hero_container .hero .cta {
+    gap: 1em;
+  }
+  .nav_links {
+    transform: translateX(100%);
+  }
+  .nav_links.active {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    background-color: var(--primary);
+    height: 100vh;
+    width: 16em;
+    gap: 2em !important;
+    animation: slide-in 0.7s ease forwards;
+  }
+  @keyframes slide-in {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  .nav_links * {
+    font-size: 2em;
+  }
+  .nav_links a:last-child {
+    display: none;
+  }
+  .menu-toggle {
+    display: block !important;
+  }
+  .fa-times {
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0.4em;
+  }
+  .fa-times:hover {
+    cursor: pointer;
+  }
+}
+@media (max-width: 480px) {
+  .hero_container .hero h1 {
+    font-size: 1.4em;
+  }
+  .hero_container .hero .slogn p {
+    font-size: 1em;
+  }
+  .hero_container .hero .cta a button {
+    width: 8em;
+    padding: 0.8em;
+  }
+  .hero_container nav .nav_links {
+    width: 12em;
+  }
+  .hero_container nav .nav_links * {
+    font-size: 2em;
+  }
+}
+.menu-toggle {
+  font-size: 2em;
+  background: none;
+  border: none;
+  color: white;
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0.4em;
+}
+.menu-toggle:hover {
+  cursor: pointer;
+}
+
+/* Over lay */
+.menu_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.452);
+  z-index: 1;
+  display: none;
+  backdrop-filter: blur(2px);
+}
+.menu_overlay:hover {
+  cursor: pointer;
+}
+
+.menu_overlay.active {
+  display: block;
+}

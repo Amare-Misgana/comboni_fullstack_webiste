@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 def home(request):
-    return render(request, "a_visitor/home/html")
+    return render(request, "a_visitor/home.html")
 
 def about(request):
     return render(request, "a_visitor/about.html")

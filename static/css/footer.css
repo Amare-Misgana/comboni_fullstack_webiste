@@ -1,102 +1,105 @@
+footer {
+  background-color: var(--primary, #f9f9f9);
+  padding: 3em 2em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  font-family: "Segoe UI", sans-serif;
+  color: #333333;
+  gap: 0.3em;
+  width: 100vw;
+}
+
+footer .logo {
+  padding: 1em;
+  display: inline-block;
+  border-radius: 0.5em;
+  margin-bottom: 1em;
+}
+
+footer .logo img {
+  max-width: 140px;
+  height: auto;
+  border-radius: 0.5em;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  padding: 0.3em;
+}
+
+footer .quick_links,
+footer .contact,
+footer .follow_us {
+  margin-bottom: 1em;
+  min-width: 180px;
+}
+
+footer .quick_links h4,
+footer .contact h4,
+footer .follow_us h4 {
+  color: var(--link-hover, #0b63ce);
+  font-size: 1.2em;
+  margin-bottom: 0.7em;
+  font-weight: 600;
+}
+
+footer .quick_links ul,
+footer .contact ul,
+footer .follow_us ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+footer .quick_links ul li,
+footer .contact ul li {
+  margin-bottom: 0.6em;
+  font-size: 0.97em;
+}
+
+footer .quick_links ul li::before {
+  content: "➤ ";
+  color: var(--link-hover, #0b63ce);
+  margin-right: 0.3em;
+}
+
+footer .quick_links a {
+  text-decoration: none;
+  color: var(--link, #007bff);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+footer .quick_links a:hover {
+  color: var(--link-hover, #0b63ce);
+  transform: translateX(2px);
+}
+
+footer .contact ul li i {
+  margin-right: 0.6em;
+  color: var(--link-hover, #0b63ce);
+}
+
+footer .follow_us ul {
+  display: flex;
+  gap: 0.9em;
+  padding-top: 0.4em;
+}
+
+footer .follow_us a {
+  font-size: 1.4em;
+  display: inline-block;
+  color: var(--link, #007bff);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+footer .follow_us a:hover {
+  color: var(--link-hover, #0b63ce);
+  transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
   footer {
-    background-color: var(--primary);
-    padding: 2em;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    font-family: sans-serif;
-    color: #333;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100vw;
+    flex-direction: column;
+    align-items: flex-start;
   }
-
-  .logo {
-    padding: 1em;
-    display: inline-block;
-    border-radius: 0.5em;
-    margin-bottom: 1em;
-  }
-
-  .footer_logo {
-    display: block;
-    max-width: 120px;
-    height: auto;
-  }
-
-  .footer-list,
-  .follow_us {
-    margin-bottom: 1em;
-    min-width: 180px;
-  }
-
-  .footer-list h4,
-  .follow_us h4 {
-    margin-bottom: 0.5em;
-    font-size: 1.1em;
-    color: var(--link-hover);
-  }
-
-  .footer-list ul,
-  .follow_us ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .footer-list ul li,
-  .contact ul li {
-    margin-bottom: 0.4em;
-  }
-
-  .footer-list a {
-    text-decoration: none;
-    color: var(--link);
-    transition: color 0.2s;
-  }
-
-  .footer-list a:visited {
-    color: var(--link-visited);
-  }
-
-  .footer-list a:hover {
-    color: var(--link-hover);
-  }
-
-  .follow_us ul {
-    display: flex;
-    gap: 0.8em;
-    padding-top: 0.5em;
-  }
-
-  .follow_us a {
-    font-size: 1.3em;
-    color: var(--link);
-    transition: color 0.2s;
-  }
-
-  .follow_us a:hover {
-    color: var(--link-hover);
-  }
-  .contact h4 {
-    color: var(--link-hover);
-    font-size: 1.1em;
-    margin-bottom: 0.5em;
-  }
-
-  .contact ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .contact ul li {
-    margin-bottom: 0.4em;
-    color: var(--link);
-    font-size: 0.95em;
-  }
-
-  .contact ul li i {
-    margin-right: 0.5em;
-    color: var(--link-hover);
-  }
+}

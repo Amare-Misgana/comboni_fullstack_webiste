@@ -1,0 +1,102 @@
+  footer {
+    background-color: var(--primary);
+    padding: 2em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    font-family: sans-serif;
+    color: #333;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+  }
+
+  .logo {
+    padding: 1em;
+    display: inline-block;
+    border-radius: 0.5em;
+    margin-bottom: 1em;
+  }
+
+  .footer_logo {
+    display: block;
+    max-width: 120px;
+    height: auto;
+  }
+
+  .footer-list,
+  .follow_us {
+    margin-bottom: 1em;
+    min-width: 180px;
+  }
+
+  .footer-list h4,
+  .follow_us h4 {
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+    color: var(--link-hover);
+  }
+
+  .footer-list ul,
+  .follow_us ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer-list ul li,
+  .contact ul li {
+    margin-bottom: 0.4em;
+  }
+
+  .footer-list a {
+    text-decoration: none;
+    color: var(--link);
+    transition: color 0.2s;
+  }
+
+  .footer-list a:visited {
+    color: var(--link-visited);
+  }
+
+  .footer-list a:hover {
+    color: var(--link-hover);
+  }
+
+  .follow_us ul {
+    display: flex;
+    gap: 0.8em;
+    padding-top: 0.5em;
+  }
+
+  .follow_us a {
+    font-size: 1.3em;
+    color: var(--link);
+    transition: color 0.2s;
+  }
+
+  .follow_us a:hover {
+    color: var(--link-hover);
+  }
+  .contact h4 {
+    color: var(--link-hover);
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+  }
+
+  .contact ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .contact ul li {
+    margin-bottom: 0.4em;
+    color: var(--link);
+    font-size: 0.95em;
+  }
+
+  .contact ul li i {
+    margin-right: 0.5em;
+    color: var(--link-hover);
+  }

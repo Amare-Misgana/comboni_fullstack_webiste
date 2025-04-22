@@ -1,0 +1,6 @@
+:root {
+    --link-visited: #cacaca;
+    --link: #f0f0f0;
+    --link-hover: white;
+    --primary: #0c7c0c;
+}

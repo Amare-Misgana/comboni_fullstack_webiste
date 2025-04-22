@@ -27,6 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'codeamare@gmail.com'
+EMAIL_HOST_PASSWORD = 'gobl jpfq tnvk wbaw'
+
 
 # Application definition
 
@@ -35,7 +42,7 @@ INSTALLED_APPS = [
     'a_student',
     'a_teacher',
     'a_school_admin',
-    'a_visiter',
+    'a_visitor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

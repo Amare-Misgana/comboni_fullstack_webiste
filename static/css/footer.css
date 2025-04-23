@@ -4,72 +4,45 @@ footer {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
-  align-content: center;
+  align-items: flex-start;
   font-family: "Segoe UI", sans-serif;
-  color: #333333;
-  gap: 0.3em;
-  width: 100vw;
+  color: #333;
+  gap: 2em;
+  width: 100%;
 }
 
-footer .logo {
-  padding: 1em;
-  display: inline-block;
-  border-radius: 0.5em;
-  margin-bottom: 1em;
-}
-
-footer .logo img {
+.logo img {
   max-width: 140px;
   height: auto;
   border-radius: 0.5em;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   padding: 0.3em;
 }
 
-footer .quick_links,
-footer .contact,
-footer .follow_us {
-  margin-bottom: 1em;
-  min-width: 180px;
-}
-
-footer .quick_links h4,
-footer .contact h4,
-footer .follow_us h4 {
+footer h4 {
   color: var(--link-hover, #0b63ce);
-  font-size: 1.2em;
+  font-size: 1.5em;
   margin-bottom: 0.7em;
   font-weight: 600;
 }
 
-footer .quick_links ul,
-footer .contact ul,
-footer .follow_us ul {
+footer ul {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
-footer .quick_links ul li,
-footer .contact ul li {
+footer ul li {
   margin-bottom: 0.6em;
   font-size: 0.97em;
 }
 
-footer .quick_links ul li::before {
-  content: "➤ ";
-  color: var(--link-hover, #0b63ce);
-  margin-right: 0.3em;
-}
-
-footer .quick_links a {
+footer a {
   text-decoration: none;
   color: var(--link, #007bff);
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-footer .quick_links a:hover {
+footer a:hover {
   color: var(--link-hover, #0b63ce);
   transform: translateX(2px);
 }
@@ -78,7 +51,13 @@ footer .contact ul li i {
   margin-right: 0.6em;
   color: var(--link-hover, #0b63ce);
 }
-
+footer .contact ul li {
+  color: var(--link);
+}
+footer .contact ul li:hover {
+  color: var(--link-hover);
+  cursor: pointer;
+}
 footer .follow_us ul {
   display: flex;
   gap: 0.9em;
@@ -88,8 +67,7 @@ footer .follow_us ul {
 footer .follow_us a {
   font-size: 1.4em;
   display: inline-block;
-  color: var(--link, #007bff);
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: transform 0.3s ease, color 0.3s;
 }
 
 footer .follow_us a:hover {

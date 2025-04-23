@@ -1,0 +1,12 @@
+{% load static %}
+<div class="testimony">
+  <div class="person">
+    <img src="{% static testimony.src %}" alt="{{ testimony.alt }}" />
+  </div>
+  <div class="message_container">
+    <div class="message">
+      <p><span class="quote">"</span>{{ testimony.message }}<span class="quote">"</span></p>
+    </div>
+    <div class="message_by">{{ testimony.message_by }}</div>
+  </div>
+</div>

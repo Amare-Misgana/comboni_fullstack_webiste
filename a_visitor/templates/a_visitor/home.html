@@ -7,12 +7,22 @@
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/variables.css' %}">
     <link rel="stylesheet" href="{% static 'a_visitor/css/home.css' %}">
-    {% comment %} <link rel="stylesheet" href="{% static 'css/header.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
+    <link rel="stylesheet" href="{% static 'css/testimony.css' %}">
     <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
+    />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
+    rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
   <style>
     .hero_container::after {
       content: "";
@@ -29,48 +39,64 @@
 {% endblock %}
 
 {% block content %}
-<header class="hero_container">
-    <div class="menu_overlay"></div>
-
-    <nav>
-      <button class="menu-toggle">&#9776;</button>
-      <div class="logo">
-        <img src="{% static 'images/logo-light.png' %}" alt="School Logo" />
-        <h1>CSSS</h1>
+  {% include "fragments/header.html" with slogn="Always More, Always Better, For Our GOD & Country" main_header="Comboni Senior Secondary School" sub_header="Shaping Future Leaders With Knowledge, Discipline, and Integrity." %}
+  <section class="feature-section">
+    {% include 'fragments/sub_title.html' with title_sub="Features" %}
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="feature_card">
+            <i class="fa fa-graduation-cap"></i>
+            <div class="feature_title">Academic Excellence</div>
+            <div class="feature_description">
+              Empowering students through a strong and competitive curriculum.
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="feature_card">
+            <i class="fa fa-users"></i>
+            <div class="feature_title">Community Engagement</div>
+            <div class="feature_description">
+              Encouraging growth through collaboration and outreach.
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="feature_card">
+            <i class="fa fa-lightbulb"></i>
+            <div class="feature_title">Innovative Learning</div>
+            <div class="feature_description">
+              Integrating technology and creativity into education.
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div class="nav_links">
-        <i class="fas fa-times"></i>
-        <a href="{% url 'home_url' %}">Home</a>
-        <a href="{% url 'news_url' %}">News</a>
-        <a href="{% url 'about_url' %}">About</a>
-        <a href="{% url 'contact_url' %}">Contact</a>
-        <a href="{% url 'home_url' %}"><button>Login</button></a>
-      </div>
-    </nav>
-    <div class="hero">
-      <div class="slogn">
-        <i><p>Always More, Always Better, For Our GOD & Country</p></i>
-      </div>
-      <div class="main_header">
-        <h1>Comboni Senior Secondary School</h1>
-      </div>
-      <div class="sub_header">
-        <h3>
-          Shaping Future Leaders With Knowledge, Discipline, and Integrity.
-        </h3>
-      </div>
-      <div class="cta">
-        <a href="{% url 'home_url' %}"><button>Login</button></a>
-        <a href="{% url 'contact_url' %}"
-          ><button class="optional_cta">Contact Us</button></a
-        >
-      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
     </div>
-  </header>
+  </section>
+  <section class="testimony-section">
+    {% include 'fragments/sub_title.html' with title_sub="Testimonial" %}
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        {% for testimony in testimonial %}
+          <div class="swiper-slide">
+            {% include 'fragments/testimony.html' with testimony=testimony %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </section>
+  
   {% include "fragments/footer.html" %}
 {% endblock %}
 
 {% block script %}
-  <script src="{% static 'a_visitor/js/home.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'a_visitor/js/home.js' %}"></script>
 {% endblock %}

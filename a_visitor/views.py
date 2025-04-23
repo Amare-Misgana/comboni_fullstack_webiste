@@ -3,7 +3,47 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 def home(request):
-    return render(request, "a_visitor/home.html")
+    testimonial = [
+        {
+            "src": "a_visitor/images/yosi.jpg",
+            "alt": "Message by Yosph Mulugeta from 11C",
+            "message": "CSSS is more than a school — it’s a family. I’ve grown academically and personally thanks to the amazing staff and programs.",
+            "message_by": "Yosph Mulugeta, 11C"
+        },
+        {
+            "src": "a_visitor/images/sami.webp",
+            "alt": "Message by Samrawit Getachew from 10A",
+            "message": "The support I get from my teachers at CSSS is unmatched. They truly care about our success.",
+            "message_by": "Samrawit Getachew, 10A"
+        },
+        {
+            "src": "a_visitor/images/miki.jfif",
+            "alt": "Message by Mikias Tadesse from 9B",
+            "message": "I’ve made lifelong friends at Comboni and discovered a love for science and innovation.",
+            "message_by": "Mikias Tadesse, 9B"
+        },
+        {
+            "src": "a_visitor/images/blen.jpg",
+            "alt": "Message by Blen Yared from 12D",
+            "message": "CSSS pushes me to aim higher and be my best self every day. I’m proud to be here.",
+            "message_by": "Blen Yared, 12D"
+        },
+        {
+            "src": "a_visitor/images/caleb.jpg",
+            "alt": "Message by Caleb Daniel from 11A",
+            "message": "From leadership skills to academic excellence, CSSS has given me so much to be thankful for.",
+            "message_by": "Caleb Daniel, 11A"
+        }
+    ]
+
+        
+
+    return render(request, "a_visitor/home.html", {
+        "email": "example@gmail.com",
+        "phone_number": "+251 911 963 441",
+        "address": "Comboni School Hawassa",
+        "testimonial": testimonial,
+    })
 
 def about(request):
     return render(request, "a_visitor/about.html")

@@ -1,0 +1,100 @@
+.testimony {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(202, 202, 202);
+  width: 90vw;
+  height: 20em;
+}
+.testimony .person {
+  height: 20em;
+  width: calc(90vw - (90vw / 1.618));
+  overflow: hidden;
+}
+.testimony .person img {
+  height: 20em;
+  width: calc(90vw - (90vw / 1.618));
+  object-fit: cover;
+}
+.testimony .message_container {
+  width: calc(90vw / 1.618);
+  height: 20em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  background-color: #fff;
+  padding: 1em;
+}
+.testimony .message_container .quote {
+  font-size: 2em;
+  text-align: center;
+  color: #333;
+  position: absolute;
+  transform: translate(-0.3em, -0.4em);
+}
+.testimony .message_container .message_by {
+  position: absolute;
+  bottom: 0.3em;
+}
+.testimony-section .swiper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.testimony-section .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.testimony-section .swiper {
+  max-width: 90vw;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.testimony-section .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2em;
+  width: 90vw !important;
+}
+
+.testimony-section .swiper-pagination-bullet {
+  background-color: var(--primary-ultra-light);
+}
+
+.testimony-section .swiper-pagination-bullet-active {
+  background-color: var(--primary);
+}
+
+.testimony-section .swiper-button-prev,
+.testimony-section .swiper-button-next {
+  color: var(--primary-light);
+}
+
+.testimony-section .swiper-button-prev:hover,
+.testimony-section .swiper-button-next:hover {
+  color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .testimony-section .swiper-slide {
+    padding: 10px;
+  }
+
+  .testimony-section .swiper-button-prev,
+  .testimony-section .swiper-button-next {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  .testimony-section .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+  }
+}

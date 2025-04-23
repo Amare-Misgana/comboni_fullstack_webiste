@@ -1,0 +1,38 @@
+{% load static %}
+<header class="hero_container">
+  <div class="menu_overlay"></div>
+
+  <nav>
+    <button class="menu-toggle">&#9776;</button>
+    <div class="logo">
+      <img src="{% static 'images/logo-light.png' %}" alt="School Logo" />
+      <h1>CSSS</h1>
+    </div>
+
+    <div class="nav_links">
+      <i class="fas fa-times"></i>
+      <a href="{% url 'home_url' %}">Home</a>
+      <a href="{% url 'news_url' %}">News</a>
+      <a href="{% url 'about_url' %}">About</a>
+      <a href="{% url 'contact_url' %}">Contact</a>
+      <a href="{% url 'home_url' %}" class="nav_link_login"><button>Login</button></a>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="slogn">
+      <i><p>{{slogn}}</p></i>
+    </div>
+    <div class="main_header">
+      <h1>{{main_header}}</h1>
+    </div>
+    <div class="sub_header">
+      <h3>{{sub_header}}</h3>
+    </div>
+    <div class="cta">
+      <a href="{% url 'home_url' %}"><button>Login</button></a>
+      <a href="{% url 'contact_url' %}"
+        ><button class="optional_cta">Contact Us</button></a
+      >
+    </div>
+  </div>
+</header>

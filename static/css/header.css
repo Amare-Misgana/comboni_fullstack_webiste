@@ -21,6 +21,7 @@
 .hero_container .logo img {
   width: 5.6em;
 }
+
 .hero_container .logo h1 {
   color: white;
   font-size: 4em;
@@ -83,13 +84,13 @@
   text-align: center;
 }
 .hero_container .hero .slogn {
-  font-size: 0.6em;
+  font-size: 0.9em;
 }
-.hero_container .hero .main_header {
-  font-size: 2em;
+.hero_container .hero .main_header h1 {
+  font-size: 6em;
 }
 .hero_container .hero .sub_header h3 {
-  font-size: 1em;
+  font-size: 2em;
   font-weight: 50;
   margin: 1em 0 4em 0;
   max-width: 70vw;

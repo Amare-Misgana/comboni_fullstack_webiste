@@ -28,11 +28,13 @@
     <div class="sub_header">
       <h3>{{sub_header}}</h3>
     </div>
+    {% if is_cta %}
     <div class="cta">
       <a href="{% url 'home_url' %}"><button>Login</button></a>
       <a href="{% url 'contact_url' %}"
         ><button class="optional_cta">Contact Us</button></a
       >
     </div>
+    {% endif %}
   </div>
 </header>

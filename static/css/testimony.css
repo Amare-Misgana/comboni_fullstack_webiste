@@ -1,100 +1,115 @@
-.testimony {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgb(202, 202, 202);
-  width: 90vw;
-  height: 20em;
-}
-.testimony .person {
-  height: 20em;
-  width: calc(90vw - (90vw / 1.618));
-  overflow: hidden;
-}
-.testimony .person img {
-  height: 20em;
-  width: calc(90vw - (90vw / 1.618));
-  object-fit: cover;
-}
-.testimony .message_container {
-  width: calc(90vw / 1.618);
-  height: 20em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  position: relative;
-  background-color: #fff;
-  padding: 1em;
-}
-.testimony .message_container .quote {
-  font-size: 2em;
-  text-align: center;
-  color: #333;
-  position: absolute;
-  transform: translate(-0.3em, -0.4em);
-}
-.testimony .message_container .message_by {
-  position: absolute;
-  bottom: 0.3em;
-}
-.testimony-section .swiper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.testimony-section {
+  margin: 2em;
 }
 
-.testimony-section .swiper-slide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.testimony-section .swiper {
+.testimonial {
   max-width: 90vw;
+  margin: 0 auto;
+  position: relative;
+  padding: 1rem 0;
+}
+
+.testimonial .swiper {
+  width: 90%;
   margin: 0 auto;
   padding: 2rem 0;
 }
 
-.testimony-section .swiper-slide {
+.testimonial .swiper-slide {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2em;
-  width: 90vw !important;
 }
 
-.testimony-section .swiper-pagination-bullet {
-  background-color: var(--primary-ultra-light);
+.testimonial {
+  width: 100vw;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
 }
 
-.testimony-section .swiper-pagination-bullet-active {
-  background-color: var(--primary);
+.testimonial .swiper {
+  width: 100%;
+  padding: 2em 0;
 }
 
-.testimony-section .swiper-button-prev,
-.testimony-section .swiper-button-next {
-  color: var(--primary-light);
+.testimonial .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2em;
 }
 
-.testimony-section .swiper-button-prev:hover,
-.testimony-section .swiper-button-next:hover {
+.testimonial .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 2em;
+}
+
+.testimonial .card {
+  width: 100% !important;
+  max-width: 1000px !important;
+  height: 250px !important;
+  display: flex;
+  border: 1px solid #ccc;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+
+.testimonial .card-image {
+  width: 40%;
+  height: 100%;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.testimonial .card-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  position: relative;
+  height: 100%;
+}
+
+.testimonial .message {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.testimonial .message-by {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.testimonial .swiper-button-next::after,
+.testimonial .swiper-button-prev::after {
   color: var(--primary);
 }
 
-@media (max-width: 768px) {
-  .testimony-section .swiper-slide {
-    padding: 10px;
-  }
+.testimonial .swiper-pagination .swiper-pagination-bullet {
+  background: var(--primary-ultra-light) !important;
+}
 
-  .testimony-section .swiper-button-prev,
-  .testimony-section .swiper-button-next {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-  }
+.testimonial .swiper-pagination .swiper-pagination-bullet-active {
+  background: var(--primary) !important;
+}
 
-  .testimony-section .swiper-pagination-bullet {
-    width: 8px;
-    height: 8px;
+@media (max-width: 439px) {
+  .testimony-section .swiper-button-next,
+  .testimony-section .swiper-button-prev {
+    display: none;
   }
 }

@@ -43,6 +43,7 @@ def home(request):
         "phone_number": "+251 911 963 441",
         "address": "Comboni School Hawassa",
         "testimonial": testimonial,
+        "is_cta": True,
     })
 
 def about(request):

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Home | CSSS{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'a_visitor/css/contact.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
+    <link rel="stylesheet" href="{% static 'css/testimony.css' %}">
+    <link rel="icon" href="{% static 'images/logo-light.png' %}">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
+    rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+  <style>
+    .hero_container::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: url("{% static 'a_visitor/images/graduation.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+    }
+    .main_header h1{
+        font-size: 15em !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include "fragments/header.html" with slogn="" main_header="Contact" sub_header="" %}
+  <section class="feature-section">
+    <form class="contact-form">
+        <div class="form-row">
+          <div class="form-left">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input id="name" type="text" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input id="phone" type="tel" placeholder="+1 (555) 123-4567">
+            </div>
+          </div>
+          <div class="form-right">
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" rows="7" placeholder="Your message…"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="form-submit">
+          <button type="submit">Send Message</button>
+        </div>
+      </form>
+      
+  </section>
+  
+  {% include "fragments/footer.html" %}
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'a_visitor/js/home.js' %}"></script>
+{% endblock %}

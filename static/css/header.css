@@ -87,12 +87,12 @@
   font-size: 0.9em;
 }
 .hero_container .hero .main_header h1 {
-  font-size: 6em;
+  font-size: 8.6em !important;
 }
 .hero_container .hero .sub_header h3 {
   font-size: 2em;
   font-weight: 50;
-  margin: 1em 0 4em 0;
+  margin: 1em 0 2em 0;
   max-width: 70vw;
 }
 .hero_container .hero .cta {
@@ -158,12 +158,16 @@
     padding: 0 1em;
   }
 
-  .hero_container .hero .main_header {
-    font-size: 1.5em;
+  .hero_container .hero .slogn p {
+    font-size: 0.7em;
+  }
+
+  .hero_container .hero .main_header h1 {
+    font-size: 6.9em !important;
   }
 
   .hero_container .hero .sub_header h3 {
-    font-size: 0.9em;
+    font-size: 1.1em;
     max-width: 100%;
   }
 
@@ -171,7 +175,7 @@
     gap: 1em;
   }
   .nav_links {
-    transform: translateX(100%);
+    transform: translateX(100%) !important;
   }
   .nav_links.active {
     display: flex !important;
@@ -215,10 +219,12 @@
   }
 }
 @media (max-width: 480px) {
-  .hero_container .hero h1 {
-    font-size: 1.4em;
+  .hero_container .hero .main_header h1 {
+    font-size: 2.5em;
     font-family: "merriweather", serif;
     font-weight: 400;
+    margin: 1.2em;
+    width: 100vw;
   }
   .hero_container .hero .slogn p {
     font-size: 1em;

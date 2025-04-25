@@ -42,29 +42,32 @@
   </style>
 {% endblock %}
 
-{% block content %}
+{% block content %} 
+  {% include "fragments/messages.html" %}
   {% include "fragments/header.html" with slogn="" main_header="Contact" sub_header="" %}
   <section class="feature-section">
-    <form class="contact-form">
+    {% include 'fragments/sub_title.html' with title_sub="Contact Form" %}
+    <form class="contact-form" method="post">
+      {% csrf_token %}
         <div class="form-row">
           <div class="form-left">
             <div class="form-group">
               <label for="name">Name</label>
-              <input id="name" type="text" placeholder="Your Name" required>
+              <input id="name" name="name" type="text" placeholder="Your Name" required>
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input id="email" type="email" placeholder="you@example.com" required>
+              <input id="email" type="email" name="email" placeholder="you@example.com" required>
             </div>
             <div class="form-group">
               <label for="phone">Phone</label>
-              <input id="phone" type="tel" placeholder="+1 (555) 123-4567">
+              <input id="phone" type="tel" name="phone_number" placeholder="+1 (555) 123-4567">
             </div>
           </div>
           <div class="form-right">
             <div class="form-group">
               <label for="message">Message</label>
-              <textarea id="message" rows="7" placeholder="Your message…"></textarea>
+              <textarea id="message" rows="7" name="message" placeholder="Your message…"></textarea>
             </div>
           </div>
         </div>
@@ -72,13 +75,61 @@
           <button type="submit">Send Message</button>
         </div>
       </form>
-      
   </section>
-  
+  <section class="contact-info">
+    {% include "fragments/sub_title.html" with title_sub="Contact Info" %}
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <!-- Slide 1: Address -->
+        <div class="swiper-slide">
+          <div class="card">
+            <i class="fas fa-map-marker-alt icon"></i>
+            <h3>Address</h3>
+            <p>
+              123 Main Street<br/>
+              Springfield, USA
+            </p>
+          </div>
+        </div>
+        <!-- Slide 2: Email -->
+        <div class="swiper-slide">
+          <div class="card">
+            <i class="fas fa-envelope icon"></i>
+            <h3>Email</h3>
+            <p>info@example.com</p>
+          </div>
+        </div>
+        <!-- Slide 3: Phone -->
+        <div class="swiper-slide">
+          <div class="card">
+            <i class="fas fa-phone-alt icon"></i>
+            <h3>Phone</h3>
+            <p>+1 (555) 123-4567</p>
+          </div>
+        </div>
+      </div>
+      <!-- Pagination -->
+      <div class="swiper-pagination"></div>
+      <!-- Navigation buttons -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </section>
+  <section class="map-section">
+    {% include "fragments/sub_title.html" with title_sub="Find Us" %}
+    <div class="map-container">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4501.054754541714!2d38.46392758898734!3d7.045563399999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x17b14575effbe9d7%3A0xd4da0e062a06164b!2sSaint%20Daniel%20Comboni%20Catholic%20Secondary%20and%20Preparatory%20School!5e1!3m2!1sen!2set!4v1745599978715!5m2!1sen!2set" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </section>
   {% include "fragments/footer.html" %}
 {% endblock %}
 
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="{% static 'a_visitor/js/home.js' %}"></script>
+<script src="{% static 'a_visitor/js/contact.js' %}"></script>
 {% endblock %}

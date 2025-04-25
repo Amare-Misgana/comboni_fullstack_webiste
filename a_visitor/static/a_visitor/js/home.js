@@ -27,12 +27,12 @@ const swiper_testimony = new Swiper(".testimonial .swiper", {
     disableOnInteraction: false,
   },
   pagination: {
-    el: ".swiper-pagination",
+    el: ".testimonial .swiper-pagination",
     clickable: true,
   },
   navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
+    nextEl: ".testimonial .swiper-button-next",
+    prevEl: ".testimonial .swiper-button-prev",
   },
   slidesPerView: 1,
   spaceBetween: 30,
@@ -45,12 +45,12 @@ const swiper_feature = new Swiper(".feature-section .swiper", {
     disableOnInteraction: false,
   },
   pagination: {
-    el: ".swiper-pagination",
+    el: ".feature-section .swiper-pagination",
     clickable: true,
   },
   navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
+    nextEl: ".feature-section .swiper-button-next",
+    prevEl: ".feature-section .swiper-button-prev",
   },
   breakpoints: {
     320: {

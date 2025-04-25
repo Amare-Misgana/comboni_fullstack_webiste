@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Home | CSSS{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'a_visitor/css/news.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
+    <link rel="stylesheet" href="{% static 'css/testimony.css' %}">
+    <link rel="icon" href="{% static 'images/logo-light.png' %}">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
+    rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+  <style>
+    .hero_container::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: url("{% static 'a_visitor/images/graduation.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+    }
+    .main_header h1{
+        font-size: 15em !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %} 
+  {% include "fragments/messages.html" %}
+  {% include "fragments/header.html" with slogn="" main_header="Contact" sub_header="" %}
+  <section class="news-section">
+    {% for item in news_items %}
+      <article class="news-card">
+        <div class="news-image">
+          <img src="{% static item.image_src %}" alt="{{ item.title }}">
+        </div>
+        <div class="news-content">
+          <h3>{{ item.title }}</h3>
+          <p class="description">{{ item.description }}</p>
+          <div class="news-footer">
+            <span class="news-date">{{ item.date }}</span>
+            <a href="{{ item.url }}" class="read-more">Read more</a>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+  
+  {% include "fragments/footer.html" %}
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'a_visitor/js/news.js' %}"></script>
+{% endblock %}

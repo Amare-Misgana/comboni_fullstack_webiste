@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib import messages
 
 def home(request):
     testimonial = [
@@ -50,14 +51,39 @@ def about(request):
     return render(request, "a_visitor/about.html")
 
 def news(request):
-    return render(request, "a_vistor/news.html")
+    context = context = {
+        "news_items": [
+            {
+                "title": "New Campus Opening",
+                "description": "We are excited to announce the grand opening of our new campus in the northern region of the city. The facility is equipped with modern classrooms and sports areas...",
+                "date": "April 20, 2025",
+                "image_src": "images/news_campus.jpg",
+                "url": "/news/new-campus-opening/"
+            },
+            {
+                "title": "Tech Workshop 2025",
+                "description": "Our annual tech workshop is back! Join industry leaders and learn about the latest advancements in AI, robotics, and more.",
+                "date": "March 15, 2025",
+                "image_src": "images/news_tech_workshop.jpg",
+                "url": "/news/tech-workshop-2025/"
+            },
+            {
+                "title": "Student Achievements",
+                "description": "We are proud of our students who participated in the national science fair and brought home multiple awards across various categories...",
+                "date": "February 10, 2025",
+                "image_src": "images/news_student_awards.jpg",
+                "url": "/news/student-achievements/"
+            }
+        ]
+    }
+    return render(request, "a_visitor/news.html", context)
 
 def contact(request):
     if request.method == "POST":
         email = request.POST.get("email")
         message = request.POST.get("message")
         name = request.POST.get("name")
-        phone_number = request.POST.get("phone number")
+        phone_number = request.POST.get("phone_number")
         full_message = f"""
         Sender Name: {name}
         Sender Phone: {phone_number}
@@ -65,19 +91,21 @@ def contact(request):
         """
 
         html_message = f"""
-        <html>
-        <body style="font-family: Arial; background-color: #f9f9f9; padding: 20px;">
-            <div style="background-color: white; padding: 20px; border-radius: 10px;">
-                <h2 style="color: #333;">New Contact Message</h2>
-                <p><strong>Name:</strong> {name}</p>
-                <p><strong>Email:</strong> {email}</p>
-                <p><strong>Phone Number:</strong> {phone_number}</p>
-                <p><strong>Message:</strong></p>
-                <p style="color: #555;">{message}</p>
+    <html>
+    <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 30px;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+            <h2 style="color: #2c3e50; margin-bottom: 20px;">📨 New Contact Message</h2>
+            <p><strong>Name:</strong> {name}</p>
+            <p><strong>Email:</strong> {email}</p>
+            <p><strong>Phone Number:</strong> {phone_number}</p>
+            <p><strong>Message:</strong></p>
+            <div style="padding: 15px; background-color: #f7f9fa; border-left: 4px solid #3498db; color: #333; border-radius: 5px;">
+                {message}
             </div>
-        </body>
-        </html>
-        """
+        </div>
+    </body>
+    </html>
+    """
 
         send_mail(
             subject="Contact Us Message",
@@ -87,6 +115,12 @@ def contact(request):
             fail_silently=False,
             html_message=html_message
         )
+        messages.success(request, "Your message has been sent successfully!")
+        return redirect("contact_url")
 
-    return render(request, "a_visitor/contact.html")
+    return render(request, "a_visitor/contact.html", {
+        "email": "example@gmail.com",
+        "phone_number": "+251 911 963 441",
+        "address": "Comboni School Hawassa",
+    })
 

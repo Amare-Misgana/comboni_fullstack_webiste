@@ -1,0 +1,24 @@
+<!-- SweetAlert CSS -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+/>
+
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Messages Loop with SweetAlert -->
+{% if messages %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      {% for message in messages %}
+          Swal.fire({
+              icon: '{{ message.tags }}',  // success, error, warning, info, etc.
+              title: '{{ message }}',
+              showConfirmButton: false,
+              timer: 5000  // Auto-close after 5 seconds
+          });
+      {% endfor %}
+  });
+</script>
+{% endif %}

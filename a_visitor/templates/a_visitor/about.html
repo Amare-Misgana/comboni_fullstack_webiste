@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Home | CSSS{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'a_visitor/css/about.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
+    <link rel="icon" href="{% static 'images/logo-light.png' %}">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
+    rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+  <style>
+    .hero_container::after {
+      content: ""; 
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: url("{% static 'a_visitor/images/graduation.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+    }
+    .main_header h1{
+        font-size: 15em !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %} 
+  {% include "fragments/messages.html" %}
+  {% include "fragments/header.html" with slogn="" main_header="About Us" sub_header="" %}
+
+  {% include "fragments/sub_title.html" with title_sub="institutional" %}
+  <section class="about-section institutional">
+    <p class="about-description">
+        Provides a succinct two- to 
+        three-sentence overview of the 
+        school’s founding, mission, 
+        core values, and journey— 
+        mirroring HubSpot’s advice to 
+        cover mission, values, and 
+        story in the About section 
+        HubSpot Blog. This immediate 
+        context helps orient new 
+        visitors and establishes 
+        institutional credibility, as 
+        Orbit Media notes that clear 
+        framing sets reader 
+        expectations orbitmedia.com.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/seniors.jpeg' %}');"></div>
+  </section>
+  
+  {% include "fragments/sub_title.html" with title_sub="Guiding Philosophy" %}
+  <section class="about-section philosophy">
+    <p class="about-description">
+        Articulates the school’s 
+        mission and vision statements 
+        in one unified narrative, 
+        outlining what the school does 
+        now and its long-term 
+        aspirations, in line with 
+        Asana’s mission-vs-vision 
+        distinction asana.com. 
+        Presenting these elements 
+        together fosters emotional 
+        connection and guides reader 
+        expectations, echoing Wired 
+        Impact’s call for 
+        straightforward, quotable 
+        statements wiredimpact.com.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/award.jpeg' %}');"></div>
+  </section>
+  
+  {% include "fragments/sub_title.html" with title_sub="Foundational Principles" %}
+  <section class="about-section principles">
+    <p class="about-description">
+        Lists core values—such as 
+        integrity, respect, innovation, 
+        and community—with brief 
+        explanations that illustrate how 
+        each principle shapes student 
+        life, following Orbit Media’s 
+        recommendation to reveal beliefs 
+        with clarity orbitmedia.com. 
+        Using bullet points and concise 
+        language improves scannability, 
+        as Smashing Magazine advocates 
+        avoiding jargon and focusing 
+        on clear writing smashingmagazine.com.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/football_students.jpg' %}');"></div>
+  </section>
+  
+  {% include "fragments/sub_title.html" with title_sub="Evolution & Milestones" %}
+  <section class="about-section milestones">
+    <p class="about-description">
+        Presents a chronological 
+        timeline of key events since 
+        1991—using dates and short 
+        captions to highlight growth 
+        and achievements—reflecting New 
+        Media Campaigns’ advice on 
+        immersive timelines with visuals 
+        newmediacampaigns.com. 
+        Visually organizing milestones 
+        maintains reader interest and 
+        aids comprehension, consistent 
+        with Infogram’s guidance on 
+        visual hierarchy infogram.com.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/science.jpg' %}');"></div>
+  </section>
+  
+  {% include "fragments/sub_title.html" with title_sub="Leadership Insights" %}
+  <section class="about-section leadership">
+    <p class="about-description">
+        Features a personal message from 
+        the principal, reflecting on 
+        recent successes and upcoming 
+        goals in a warm, authentic tone, 
+        as HubSpot suggests using personal 
+        narratives to build trust hubspot.com. 
+        Including a photo and signature 
+        enhances that trust, aligning with 
+        HubSpot’s heading hierarchy best 
+        practices to emphasize key voices 
+        hubspot.com.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/thankyouforsportfamily.jpg' %}');"></div>
+  </section>
+  
+  {% include "fragments/sub_title.html" with title_sub="Recognitions & Distinctions" %}
+  <section class="about-section recognitions">
+    <p class="about-description">
+        Highlights awards, national exam 
+        honors, and student achievements 
+        with brief descriptors of each 
+        accolade—mirroring HubSpot’s 
+        recommendation to showcase 
+        testimonials and awards for 
+        credibility hubspot.com. Showcasing 
+        third-party validations strengthens 
+        the school’s reputation, as Smashing 
+        Magazine notes that external 
+        recognition builds initial trust 
+        smashingmagazine.com.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/award.jpeg' %}');"></div>
+  </section>
+  
+  {% include "fragments/sub_title.html" with title_sub="Campus & Community" %}
+  <section class="about-section campus">
+    <p class="about-description">
+        Describes the campus environment, 
+        facilities, and Hawassa community 
+        context in vivid language and 
+        imagery, helping readers visualize 
+        life at the school—echoing University 
+        of Wisconsin-Platteville’s model 
+        of immersive campus descriptions 
+        uwplatt.edu. Including geographic 
+        and cultural details fosters a sense 
+        of belonging and helps families 
+        envision the student experience, 
+        similar to Singapore American 
+        School’s campus overview approach 
+        singapore.edu.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/seniors.jpeg' %}');"></div>
+  </section>
+  
+  {% include "fragments/sub_title.html" with title_sub="Engagement & Outreach" %}
+  <section class="about-section outreach">
+    <p class="about-description">
+        Details partnerships with local 
+        organizations, service programs, 
+        and parent-community involvement 
+        opportunities to illustrate the 
+        school’s collaborative ethos, 
+        drawing on HubSpot’s community 
+        management tips for building 
+        engagement hubspot.com. Listing 
+        volunteer initiatives, advisory 
+        councils, and outreach events 
+        demonstrates the school’s social 
+        impact and invites stakeholders to 
+        participate actively hubspot.com.
+    </p>
+    <div class="image-background" style="background-image: url('{% static 'a_visitor/images/football_students.jpg' %}');"></div>
+  </section>
+  
+  
+  {% include "fragments/footer.html" %}
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'js/header.js' %}"></script>
+<script src="{% static 'a_visitor/js/about.js' %}"></script>
+{% endblock %}

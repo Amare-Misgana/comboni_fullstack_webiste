@@ -13,19 +13,59 @@
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
     <style>
+      * {
+        margin: 0;
+      }
       body {
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        background-color: #0d8817;
+        flex-direction: column;
+        font-family: sans-serif;
       }
-      
+      .contact-message {
+        background-color: #ffffff;
+        padding: 2em;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+        border-radius: 0.3em;
+        gap: 1.3em;
+      }
+      .message-box {
+        background-color: #b1f7ae;
+        width: 100%;
+        border-left: 0.4em solid #0d8817;
+        border-radius: 0.3em 0 0 0.3em;
+        padding: 0.6em 0 0.6em 0.14em;
+      }
+      h1 {
+        color: white;
+        text-align: center;
+        font-size: 3em;
+      }
     </style>
   </head>
   <body>
+    <body style="margin:0;padding:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background-color:#0d8817;flex-direction:column;font-family:sans-serif;">
+      <h1 style="margin:0;color:#ffffff;text-align:center;font-size:3em;">📨Contact Info</h1>
+      <div style="margin:0;background-color:#ffffff;padding:2em;display:flex;flex-direction:column;align-items:flex-start;gap:1.3em;border-radius:0.3em;">
+          <h3 style="margin:0;"><strong>Name:</strong> {name}</h3>
+          <h3 style="margin:0;"><strong>Email:</strong> {email}</h3>
+          <h3 style="margin:0;">
+          <strong>Phone Number:</strong>
+          <a href="tel:{phone_number}" style="color:inherit;text-decoration:none;">{phone_number}</a>
+          </h3>
+          <h3 style="margin:0;"><strong>Message:</strong></h3>
+          <div style="margin:0;background-color:#b1f7ae;width:100%;border-left:0.4em solid #0d8817;border-radius:0.3em 0 0 0.3em;padding:0.6em 0 0.6em 0.14em;">
+          {message}
+          </div>
+      </div>
+  </body>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
-      
-    </script>
+    <script></script>
   </body>
 </html>

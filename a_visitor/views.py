@@ -48,11 +48,15 @@ def home(request):
     })
 
 def about(request):
-    return render(request, "a_visitor/about.html")
+    return render(request, "a_visitor/about.html", {
+         "email": "example@gmail.com",
+        "phone_number": "+251 911 963 441",
+        "address": "Comboni School Hawassa",
+    })
 
 def news(request):
     context = context = {
-        "news_items": [
+        "news_otherd_items": [
             {
                 "title": "New Campus Opening",
                 "description": "We are excited to announce the grand opening of our new campus in the northern region of the city. The facility is equipped with modern classrooms and sports areas...",
@@ -74,7 +78,10 @@ def news(request):
                 "image_src": "images/news_student_awards.jpg",
                 "url": "/news/student-achievements/"
             }
-        ]
+        ],
+        "email": "example@gmail.com",
+        "phone_number": "+251 911 963 441",
+        "address": "Comboni School Hawassa",
     }
     return render(request, "a_visitor/news.html", context)
 
@@ -91,20 +98,63 @@ def contact(request):
         """
 
         html_message = f"""
-    <html>
-    <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 30px;">
-        <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-            <h2 style="color: #2c3e50; margin-bottom: 20px;">📨 New Contact Message</h2>
-            <p><strong>Name:</strong> {name}</p>
-            <p><strong>Email:</strong> {email}</p>
-            <p><strong>Phone Number:</strong> {phone_number}</p>
-            <p><strong>Message:</strong></p>
-            <div style="padding: 15px; background-color: #f7f9fa; border-left: 4px solid #3498db; color: #333; border-radius: 5px;">
-                {message}
+    <!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0;padding:20px 0;background-color:#0d8817;font-family:Arial, Helvetica, sans-serif;">
+    <center>
+        <!--[if mso]>
+        <table cellpadding="0" cellspacing="0" border="0" style="padding:20px 0;">
+        <tr>
+        <td>
+        <![endif]-->
+        
+        <div style="max-width:600px;margin:0 auto;">
+            <h1 style="margin:0 0 20px 0;color:#ffffff;text-align:center;font-size:32px;">📨 Contact Info</h1>
+            
+            <div style="background-color:#ffffff;padding:30px;border-radius:4px;">
+                <table cellpadding="0" cellspacing="0" style="width:100%;">
+                    <tr>
+                        <td style="padding-bottom:15px;">
+                            <h3 style="margin:0;font-size:18px;"><strong>Name:</strong> {name}</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom:15px;">
+                            <h3 style="margin:0;font-size:18px;"><strong>Email:</strong> {email}</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom:15px;">
+                            <h3 style="margin:0;font-size:18px;">
+                                <strong>Phone Number:</strong>
+                                <a href="tel:{phone_number}" style="color:#000000;text-decoration:none;">{phone_number}</a>
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3 style="margin:0 0 10px 0;font-size:18px;"><strong>Message:</strong></h3>
+                            <div style="background-color:#b1f7ae;padding:15px;border-left:4px solid #0d8817;">
+                                {message}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
-    </body>
-    </html>
+
+        <!--[if mso]>
+        </td>
+        </tr>
+        </table>
+        <![endif]-->
+    </center>
+</body>
+</html>
     """
 
         send_mail(

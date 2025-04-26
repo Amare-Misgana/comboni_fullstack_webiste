@@ -35,7 +35,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1em;
+  gap: 0.3em;
 }
 .hero_container nav .nav_links a {
   text-decoration: none;
@@ -87,7 +87,7 @@
   font-size: 0.9em;
 }
 .hero_container .hero .main_header h1 {
-  font-size: 8.6em !important;
+  font-size: 8.3em;
 }
 .hero_container .hero .sub_header h3 {
   font-size: 2em;
@@ -163,7 +163,7 @@
   }
 
   .hero_container .hero .main_header h1 {
-    font-size: 6.9em !important;
+    font-size: 3.9em;
   }
 
   .hero_container .hero .sub_header h3 {
@@ -175,20 +175,19 @@
     gap: 1em;
   }
   .nav_links {
-    transform: translateX(100%) !important;
+    transform: translateX(100%);
   }
   .nav_links.active {
-    display: flex !important;
+    display: flex;
     flex-direction: column;
     position: fixed;
-    z-index: 10;
-    top: 0;
-    right: 0;
+    z-index: 9999999;
     background-color: var(--primary);
     height: 100vh;
     width: 16em;
-    gap: 2em !important;
+    gap: 2em;
     animation: slide-in 0.7s ease forwards;
+    transform: translateX(100%);
   }
   @keyframes slide-in {
     0% {
@@ -239,9 +238,6 @@
     width: 8em;
     padding: 0.8em;
   }
-  .hero_container nav .nav_links {
-    width: 12em;
-  }
   .hero_container nav .nav_links * {
     font-size: 2em;
   }
@@ -253,8 +249,8 @@
   color: white;
   display: none;
   position: absolute;
-  top: 0;
-  right: 0.4em;
+  top: 0.2em;
+  right: 0.6em;
 }
 .menu-toggle:hover {
   cursor: pointer;

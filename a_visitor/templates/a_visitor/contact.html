@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
-    <link rel="stylesheet" href="{% static 'css/testimony.css' %}">
     <link rel="icon" href="{% static 'images/logo-light.png' %}">
     <link
     rel="stylesheet"
@@ -26,7 +25,7 @@
     />
   <style>
     .hero_container::after {
-      content: "";
+      content: ""; 
       position: absolute;
       inset: 0;
       z-index: -1;
@@ -131,5 +130,6 @@
 
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'js/header.js' %}"></script>
 <script src="{% static 'a_visitor/js/contact.js' %}"></script>
 {% endblock %}

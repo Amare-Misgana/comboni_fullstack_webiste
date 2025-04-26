@@ -44,9 +44,37 @@
 
 {% block content %} 
   {% include "fragments/messages.html" %}
-  {% include "fragments/header.html" with slogn="" main_header="Contact" sub_header="" %}
-  <section class="news-section">
-    {% for item in news_items %}
+  {% include "fragments/header.html" with slogn="" main_header="News" sub_header="" %}
+  {% include "fragments/sub_title.html" with title_sub="Latest News" %}
+  {% if news_latest_items %}
+    <section class="news-section-latest">
+      {% for item in news_latest_items %}
+        <article class="news-card">
+          <div class="news-image">
+            <img src="{% static item.image_src %}" alt="{{ item.title }}">
+          </div>
+          <div class="news-content">
+            <h3>{{ item.title }}</h3>
+            <p class="description">{{ item.description }}</p>
+            <div class="news-footer">
+              <span class="news-date">{{ item.date }}</span>
+              <a href="{{ item.url }}" class="read-more">Read more</a>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+
+  {% else %}
+  <div class="empty-box">
+    <h2>No Latest News Available</h2>
+    <p>Please check back later.</p>
+  </div>
+  {% endif %}
+  </section>
+  {% include "fragments/sub_title.html" with title_sub="Other News" %}
+  {% if news_other_items %}
+  <section class="news-section-other">
+    {% for item in news_other_items %}
       <article class="news-card">
         <div class="news-image">
           <img src="{% static item.image_src %}" alt="{{ item.title }}">
@@ -62,6 +90,12 @@
       </article>
     {% endfor %}
   </section>
+  {% else %}
+    <div class="empty-box">
+      <h2>No News Available</h2>
+      <p>Please check back later.</p>
+    </div>
+  {% endif %}
   
   {% include "fragments/footer.html" %}
 {% endblock %}
@@ -69,4 +103,5 @@
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="{% static 'a_visitor/js/news.js' %}"></script>
+<script src="{% static 'js/header.js' %}"></script>
 {% endblock %}

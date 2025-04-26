@@ -1,3 +1,10 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow-x: hidden !important;
+}
 .news-section-other,
 .news-section-latest {
   display: grid;
@@ -80,4 +87,16 @@
 .empty-box p {
   font-size: 1.1em;
 }
+header {
+  height: 70vh !important;
+}
 
+.hero_container .hero .main_header h1 {
+  font-size: 8em !important;
+}
+
+@media (max-width: 480px) {
+  .hero_container .hero .main_header h1 {
+    font-size: 5em !important;
+  }
+}

@@ -4,10 +4,12 @@
 
   <nav>
     <button class="menu-toggle">&#9776;</button>
-    <div class="logo">
-      <img src="{% static 'images/logo-light.png' %}" alt="School Logo" />
-      <h1>CSSS</h1>
-    </div>
+    <a href="{% url 'home_url' %}" class="logo_link">
+      <div class="logo">
+        <img src="{% static 'images/logo-light.png' %}" alt="School Logo" />
+        <h1>CSSS</h1>
+      </div>
+    </a>
 
     <div class="nav_links">
       <i class="fas fa-times close-btn"></i>
@@ -15,7 +17,7 @@
       <a href="{% url 'news_url' %}">News</a>
       <a href="{% url 'about_url' %}">About</a>
       <a href="{% url 'contact_url' %}">Contact</a>
-      <a href="{% url 'home_url' %}" class="nav_link_login"><button>Login</button></a>
+      <a href="{% url 'login_choice_url' %}" class="nav_link_login"><button>Login</button></a>
     </div>
   </nav>
   <div class="hero">
@@ -23,14 +25,14 @@
       <i><p>{{slogn}}</p></i>
     </div>
     <div class="main_header">
-      <h1>{{main_header}}</h1>
+      <h1 class="slide-in-appear">{{main_header}}</h1>
     </div>
     <div class="sub_header">
       <h3>{{sub_header}}</h3>
     </div>
     {% if is_cta %}
     <div class="cta">
-      <a href="{% url 'home_url' %}"><button>Login</button></a>
+      <a href="{% url 'login_choice_url' %}"><button>Login</button></a>
       <a href="{% url 'contact_url' %}"
         ><button class="optional_cta">Contact Us</button></a
       >

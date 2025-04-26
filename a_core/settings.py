@@ -151,3 +151,7 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL = '/media-url/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+AUTHENTICATION_BACKENDS = [
+    'myapp.backends.UsernameOrEmailBackend',
+]

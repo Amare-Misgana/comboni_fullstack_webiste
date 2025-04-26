@@ -4,6 +4,12 @@
   box-sizing: border-box;
   font-family: "Merriweather", sans-serif;
 }
+body {
+  background-color: #fdfdfd !important;
+}
+.logo_link {
+  text-decoration: none;
+}
 .hero_container {
   width: 100vw;
   height: 100vh;
@@ -35,7 +41,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.3em;
+  gap: 2em;
 }
 .hero_container nav .nav_links a {
   text-decoration: none;
@@ -87,10 +93,10 @@
   font-size: 0.9em;
 }
 .hero_container .hero .main_header h1 {
-  font-size: 8.3em;
+  font-size: 6.3em;
 }
 .hero_container .hero .sub_header h3 {
-  font-size: 2em;
+  font-size: 1.5em;
   font-weight: 50;
   margin: 1em 0 2em 0;
   max-width: 70vw;
@@ -237,9 +243,6 @@
   .hero_container .hero .cta a button {
     width: 8em;
     padding: 0.8em;
-  }
-  .hero_container nav .nav_links * {
-    font-size: 2em;
   }
 }
 .menu-toggle {

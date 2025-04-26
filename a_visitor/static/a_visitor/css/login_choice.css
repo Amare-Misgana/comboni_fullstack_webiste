@@ -1,0 +1,90 @@
+.login-options {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+  padding: 3em 1em;
+  max-width: 60em;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  padding: 2em 1em;
+  border-radius: 0.5em;
+  text-align: center;
+  flex: 1 1 0;
+  min-width: 15em;
+  max-width: 18em;
+  height: 25em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-logo {
+  font-size: 4em;
+  color: var(--primary);
+  margin-bottom: 1em;
+}
+
+.card h2 {
+  margin-bottom: 0.5em;
+  font-size: 1.5em;
+}
+
+.card p {
+  font-size: 1em;
+  margin-bottom: 1em;
+  color: #555;
+}
+
+.card button {
+  padding: 0.8em 2em;
+  background: var(--primary-light);
+  color: white;
+  border: none;
+  border-radius: 0.5em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.card button:hover {
+  background: var(--primary);
+}
+
+@media (max-width: 600px) {
+  .login-options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 90%;
+    max-width: 20em;
+  }
+}
+header {
+  height: 70vh !important;
+}
+@media (max-width: 768px) {
+  .login-options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 20em;
+  }
+}
+
+.hero_container .hero .main_header h1 {
+  font-size: 8em !important;
+}
+
+@media (max-width: 480px) {
+  .hero_container .hero .main_header h1 {
+    font-size: 5em !important;
+  }
+}

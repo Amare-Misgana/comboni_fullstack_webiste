@@ -1,0 +1,85 @@
+.login-page {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2em;
+}
+
+.login-card {
+  background: white;
+  padding: 3em 2em;
+  border-radius: 0.8em;
+  box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.1);
+  max-width: 25em;
+  width: 100%;
+  text-align: center;
+}
+
+.login-card h1 {
+  color: var(--primary);
+  margin-bottom: 0.5em;
+  font-size: 2em;
+}
+
+.login-card p {
+  margin-bottom: 2em;
+  color: #555;
+  font-size: 1em;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.login-card input {
+  padding: 1em;
+  border: 0.1em solid var(--primary-light);
+  border-radius: 0.5em;
+  font-size: 1em;
+}
+
+.login-card button {
+  padding: 1em;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0.5em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-card button:hover {
+  background: var(--primary-light);
+}
+
+.forgot-link {
+  display: inline-block;
+  margin-top: 1.5em;
+  font-size: 0.9em;
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.forgot-link:hover {
+  color: var(--primary-light);
+}
+
+header {
+  height: 19vh !important;
+}
+
+.hero_container .hero .main_header h1 {
+  font-size: 8em !important;
+}
+
+@media (max-width: 480px) {
+  .hero_container .hero .main_header h1 {
+    font-size: 5em !important;
+  }
+}

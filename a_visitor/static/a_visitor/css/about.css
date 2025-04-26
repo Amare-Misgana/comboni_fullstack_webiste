@@ -3,6 +3,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow-x: hidden !important;
 }
 .about-section {
   display: flex;
@@ -58,5 +59,19 @@ body {
 
   .image-background {
     height: 200px;
+  }
+}
+
+header {
+  height: 70vh !important;
+}
+
+.hero_container .hero .main_header h1 {
+  font-size: 8em !important;
+}
+
+@media (max-width: 480px) {
+  .hero_container .hero .main_header h1 {
+    font-size: 5em !important;
   }
 }

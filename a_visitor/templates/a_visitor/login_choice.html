@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Home | CSSS{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'a_visitor/css/login_choice.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
+    <link rel="icon" href="{% static 'images/logo-light.png' %}">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
+    rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+  <style>
+    .hero_container::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: url("{% static 'a_visitor/images/hero_background.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.6;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include "fragments/header.html" with slogn="" main_header="Choose Your Portal" sub_header="" %}
+  <section class="login-options">
+    <div class="card">
+      <i class="fas fa-user-graduate card-logo"></i>
+      <h2>Student</h2>
+      <p>Login as student to track your progress.</p>
+      <a href="{% url 'login_url' role='student' %}"><button>Login</button></a>
+    </div>
+  
+    <div class="card">
+      <i class="fas fa-chalkboard-teacher card-logo"></i>
+      <h2>Teacher</h2>
+      <p>Login as teacher to manage classes and students.</p>
+      <a href="{% url 'login_url' role='teacher' %}"><button>Login</button></a>
+    </div>
+  
+    <div class="card">
+      <i class="fas fa-user-shield card-logo"></i>
+      <h2>Admin</h2>
+      <p>Login as admin to manage the whole system.</p>
+      <a href="{% url 'login_url' role='admin' %}"><button>Login</button></a>
+    </div>
+  </section>
+  
+  
+  {% include "fragments/footer.html" %}
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'a_visitor/js/home.js' %}"></script>
+<script src="{% static 'js/header.js' %}"></script>
+{% endblock %}

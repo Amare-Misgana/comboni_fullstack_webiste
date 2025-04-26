@@ -1,3 +1,5 @@
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
@@ -56,7 +58,7 @@ def about(request):
 
 def news(request):
     context = context = {
-        "news_otherd_items": [
+        "news_other_items": [
             {
                 "title": "New Campus Opening",
                 "description": "We are excited to announce the grand opening of our new campus in the northern region of the city. The facility is equipped with modern classrooms and sports areas...",
@@ -91,6 +93,13 @@ def contact(request):
         message = request.POST.get("message")
         name = request.POST.get("name")
         phone_number = request.POST.get("phone_number")
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, "Invalid email.")
+            return render(request, 'a_visitor/contact.html')
+
         full_message = f"""
         Sender Name: {name}
         Sender Phone: {phone_number}
@@ -168,9 +177,28 @@ def contact(request):
         messages.success(request, "Your message has been sent successfully!")
         return redirect("contact_url")
 
-    return render(request, "a_visitor/contact.html", {
+    context = {
         "email": "example@gmail.com",
         "phone_number": "+251 911 963 441",
         "address": "Comboni School Hawassa",
-    })
+    }
 
+    return render(request, "a_visitor/contact.html", context)
+
+
+def login_choice(request):
+    context = {
+        "email": "example@gmail.com",
+        "phone_number": "+251 911 963 441",
+        "address": "Comboni School Hawassa",
+    }
+    return render(request, "a_visitor/login_choice.html", context)
+
+def login_view(request, role):
+    context = {
+        "email": "example@gmail.com",
+        "phone_number": "+251 911 963 441",
+        "address": "Comboni School Hawassa",
+        "title_sub": f"Login As {role}",
+    }
+    return render(request, "a_visitor/login.html", context)

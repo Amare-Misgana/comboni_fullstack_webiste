@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Home | CSSS{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'a_visitor/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
+    <link rel="stylesheet" href="{% static 'css/testimony.css' %}">
+    <link rel="icon" href="{% static 'images/logo-light.png' %}">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
+    rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+  <style>
+    .hero_container::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: url("{% static 'a_visitor/images/graduation.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+    }
+  </style>
+{% endblock %}
+
+{% block content %} 
+  {% include "fragments/messages.html" %}
+  {% include "fragments/header.html" with slogn="" sub_header="" %}
+  {% include 'fragments/sub_title.html' %}
+  <section class="login-page">
+    <div class="login-card">
+      <h1>Welcome Back</h1>
+      <p>Please login to your account</p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+      </form>
+      <a href="#" class="forgot-link">Forgot Password?</a>
+    </div>
+  </section>
+  {% include "fragments/footer.html" %}
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'a_visitor/js/news.js' %}"></script>
+<script src="{% static 'js/header.js' %}"></script>
+{% endblock %}

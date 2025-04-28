@@ -17,7 +17,12 @@
       <a href="{% url 'news_url' %}">News</a>
       <a href="{% url 'about_url' %}">About</a>
       <a href="{% url 'contact_url' %}">Contact</a>
-      <a href="{% url 'login_choice_url' %}" class="nav_link_login"><button>Login</button></a>
+      {% if user.is_authenticated %}
+        <a href="{% url user.role|add:'_dashboard_url' %}" class="nav_link_login">
+      {% else %}
+        <a href="{% url 'login_choice_url' %}" class="nav_link_login">
+      {% endif %}
+        <button>Login</button></a>
     </div>
   </nav>
   <div class="hero">

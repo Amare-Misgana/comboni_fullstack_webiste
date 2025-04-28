@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import authenticate, logout,  login, get_user_model
+from django.urls import reverse
 
 def home(request):
     testimonial = [
@@ -195,6 +197,32 @@ def login_choice(request):
     return render(request, "a_visitor/login_choice.html", context)
 
 def login_view(request, role):
+    if request.method == 'POST':
+        username_or_email = request.POST['username']
+        password = request.POST['password']
+        UserModel = get_user_model()
+
+        try:
+            user = UserModel.objects.get(username=username_or_email)
+        except UserModel.DoesNotExist:
+            try:
+                user = UserModel.objects.get(email=username_or_email)
+            except UserModel.DoesNotExist:
+                messages.error(request, "Username or Email does not exist.")
+                return redirect(reverse('login_url', kwargs={'role': 'teacher'}))
+
+        if not user.check_password(password):
+            messages.error(request, "Incorrect password.")
+            return redirect(reverse('login_url', kwargs={'role': 'teacher'}))
+
+        if user.role != role:
+            messages.error(request, f"Wrong portal. You are not registered in {role}.")
+            return redirect(reverse('login_url', kwargs={'role': 'teacher'}))
+
+        login(request, user)
+        messages.success(request, "Logged in successfully.")
+        return redirect(f"{role}_dashboard_url")
+
     context = {
         "email": "example@gmail.com",
         "phone_number": "+251 911 963 441",
@@ -202,3 +230,7 @@ def login_view(request, role):
         "title_sub": f"Login As {role}",
     }
     return render(request, "a_visitor/login.html", context)
+
+def logout_view(request):
+    logout(request)
+    return redirect("home_url")

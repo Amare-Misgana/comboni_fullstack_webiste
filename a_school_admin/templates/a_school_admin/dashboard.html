@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard | CSSS {% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'a_school_admin/css/dashboard.css' %}">
+    <link
+    rel="stylesheet"
+    href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    />
+{% endblock %}
+
+
+{% block content %}
+
+{% include "a_school_admin/header.html" %}
+
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'a_school_admin/js/dashboard.js' %}"></script>
+    <script>
+        const userNames = {{ names|safe }};
+        const inp = document.getElementById('search');
+        const suggestList = document.querySelector('.suggestions');
+
+
+        console.log(userNames)
+
+        inp.addEventListener('input', () => {
+        const v = inp.value.toLowerCase();
+        suggestList.innerHTML = '';
+        if (!v) return;
+        userNames
+            .filter(n => n.toLowerCase().startsWith(v))
+            .forEach(n => {
+            const li = document.createElement('li');
+            li.textContent = n;
+            li.onclick = () => inp.value = n;
+            suggestList.appendChild(li);
+            });
+        });
+    </script>
+{% endblock %}

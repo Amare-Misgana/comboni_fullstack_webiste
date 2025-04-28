@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,7 @@ EMAIL_HOST_PASSWORD = 'iumq ztrn hktn ztjt'
 # Application definition
 
 INSTALLED_APPS = [
+    'common',
     'a_message',
     'a_student',
     'a_teacher',
@@ -140,6 +142,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGIN_URL = reverse_lazy("login_choice_url")
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
@@ -153,5 +156,7 @@ MEDIA_URL = '/media-url/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTHENTICATION_BACKENDS = [
-    'myapp.backends.UsernameOrEmailBackend',
+    'a_school_admin.backends.UsernameOrEmailBackend',
 ]
+
+AUTH_USER_MODEL = 'common.CustomUser'

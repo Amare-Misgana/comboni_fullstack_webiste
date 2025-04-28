@@ -9,4 +9,5 @@ urlpatterns = [
     path("news/", views.news, name="news_url"),
     path("login-choice/", views.login_choice, name="login_choice_url"),
     path("login/<str:role>/", views.login_view, name="login_url"),
+    path("logout/", views.logout_view, name="logout_url"),
 ]

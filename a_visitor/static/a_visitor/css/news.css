@@ -7,13 +7,12 @@ body {
 }
 .news-section-other,
 .news-section-latest {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2em;
   padding: 2em;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .news-card {

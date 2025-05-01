@@ -14,7 +14,11 @@ def school_admin_dashboard(request):
     }
     return render(request, "a_school_admin/dashboard.html", context)
 
-
+@login_required
 def user_search(request):
     names = list(CustomUser.objects.values_list('first_name', flat=True))
     return render(request, 'a_school_admin/example.html', {'names': names})
+
+@login_required
+def materials(request):
+    pass

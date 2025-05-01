@@ -4,10 +4,21 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block head %}
-    
+<link rel="stylesheet" href="{% static 'a_school_admin/css/dashboard.css' %}">
+{% endblock %}  
+
+
+{% block page_title %}
+    <h2>Welcome back,</h2>
+    <div class="user-info">
+    <img src="https://picsum.photos/200" alt="" />
+    <h1 class="username">{{ request.user.first_name }} {{request.user.middle_name}}</h1>
+    </div>
 {% endblock %}
 
 {% block content %}
-    <h1> Hello Everyone </h1>
+    <div class="overview">
+        
+    </div>
 {% endblock %}
 

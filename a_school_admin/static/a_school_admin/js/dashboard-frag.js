@@ -19,6 +19,11 @@ class Theme {
     document.querySelector("body").classList.toggle("dark-mode");
     this.is_light = !this.is_light;
     this.setTheme();
+    if (!this.is_light) {
+      document.querySelector(".theme-toggle").checked = true;
+    } else {
+      document.querySelector(".theme-toggle").checked = false;
+    }
   }
 
   changeByBool() {
@@ -48,6 +53,14 @@ theme.initialSetUp();
 
 document.querySelector(".theme-toggle").addEventListener("change", function () {
   theme.changeTheme();
+});
+
+document.addEventListener("keydown", (event) => {
+  console.log("Key pressed:", event.key);
+  if (event.key === "F9") {
+    event.preventDefault();
+    theme.changeTheme();
+  }
 });
 
 // EXCUTETION END

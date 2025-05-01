@@ -30,19 +30,19 @@
           <div class="links">
             <ul>
               <li>
-                <i class="fas fa-home"></i>
+                <i class="fas fa-tachometer-alt"></i>
                 <a href="#">Home</a>
               </li>
               <li>
-                <i class="fas fa-plus"></i>
+                <i class="fas fa-user-graduate"></i>
                 <a href="#">Plus</a>
               </li>
               <li>
-                <i class="fas fa-cogs"></i>
+                <i class="fas fa-chalkboard-teacher"></i>
                 <a href="#">Material</a>
               </li>
               <li>
-                <i class="fas fa-calendar"></i>
+                <i class="fas fa-school"></i>
                 <a href="#">Calender</a>
               </li>
             </ul>
@@ -67,11 +67,7 @@
         <div class="top">
           <div class="greeting">
             {% block page_title %}
-              <h2>Welcome back,</h2>
-              <div class="user-info">
-                <img src="https://picsum.photos/200" alt="" />
-                <h1 class="username">{{ request.user.first_name }} {{request.user.middle_name}}</h1>
-              </div>
+              
             {% endblock %}
           </div>
 
@@ -86,6 +82,7 @@
         </div>
         <div class="content">
           <!-- CONTENTS OF THE DASHBOARD HERE -->
+           {% block content %}{% endblock %}
         </div>
       </div>
     </div>

@@ -5,36 +5,41 @@
 }
 
 body {
-  --box-shadow: rgb(212, 212, 212);
-  --tint: rgb(231, 231, 231);
-  --primary: #4caf50;
-  --primaryL: #76d479;
-  --primary-light: rgb(219, 219, 219);
-  --primary-text: #000000;
-  --link: #313131;
-  --primary-text-light: rgb(26, 26, 26);
-  --secondary-text: #666666;
-  --last-text: #999999;
-  --background: #eef5eb;
-  --light-background: #ffffff;
-  --dark-background: #e3ece2;
-  background-color: var(--background);
-  transition: background-color 0.5s ease;
+  --box-shadow: 212, 212, 212;
+  --tint: 231, 231, 231;
+  --primary: 76, 175, 80;
+  --primaryL: 118, 212, 121;
+  --primaryD: 45, 170, 49;
+  --low-light: 219, 219, 219;
+  --primary-text: 0, 0, 0;
+  --secondary-text: 102, 102, 102;
+  --last-text: 153, 153, 153;
+  --high-dark: 26, 26, 26;
+  --low-dark: 49, 49, 49;
+  --background: 238, 245, 235;
+  --light-background: 220, 225, 222;
+  --dark-background: 227, 236, 226;
+  --switch-mode: var(--switch-mode);
+  background-color: rgb(var(--light-background));
+  transition: background-color var(--switch-mode) ease;
 }
 
 body.dark-mode {
-  --primary: #4caf50;
-  --primary-text: #ffffff;
-  --link: #e4e4e4;
-  --primary-text-light: rgb(231, 231, 231);
-  --secondary-text: #b0b0b0;
-  --primary-light: rgb(53, 53, 53);
-  --last-text: #808080;
-  --background: #232523;
-  --light-background: #333333;
-  --dark-background: #1b1b1b;
-  --box-shadow: rgb(65, 65, 65);
-  background-color: var(--background);
+  --box-shadow: 45, 45, 45;
+  --tint: 50, 50, 50;
+  --primary: 76, 175, 80;
+  --primaryL: 118, 212, 121;
+  --primaryD: 45, 170, 49;
+  --low-light: 70, 70, 70;
+  --primary-text: 255, 255, 255;
+  --secondary-text: 204, 204, 204;
+  --last-text: 153, 153, 153;
+  --high-dark: 230, 230, 230;
+  --low-dark: 224, 224, 224;
+  --background: 18, 18, 18;
+  --light-background: 30, 30, 30;
+  --dark-background: 24, 24, 24;
+  background-color: rgb(var(--light-background));
 }
 
 /* Dashboard */
@@ -46,8 +51,8 @@ body.dark-mode {
 /* Header */
 
 .header#slide-bar {
-  background-color: var(--dark-background);
-  width: 14em;
+  background-color: rgba(var(--background), 0.7);
+  width: 16em;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -57,7 +62,8 @@ body.dark-mode {
   flex-direction: column;
   align-items: flex-end;
   overflow: hidden;
-  transition: width 0.7s ease, background-color 0.5s ease;
+  transition: width 0.7s ease;
+  border-right: 1px solid rgba(var(--last-text), 0.7);
 }
 
 body.slide .header {
@@ -87,7 +93,7 @@ body.slide .header .nav-head {
 }
 
 .header .nav-head .fas {
-  color: var(--secondary-text);
+  color: rgb(var(--secondary-text));
   cursor: pointer;
   position: absolute;
   right: 0.7em;
@@ -104,7 +110,7 @@ body.slide .nav-head .fas {
   width: 100%;
   font-family: sans-serif;
   flex-direction: column;
-  padding: 0.3em 0.3em 0.3em 1em;
+  /* padding: 0.3em 0.3em 0.3em 1em; */
   justify-content: space-between;
   align-items: flex-start;
   height: 100%;
@@ -112,7 +118,7 @@ body.slide .nav-head .fas {
 
 body.slide .nav {
   align-items: center;
-  padding: 0.3em;
+  /* padding: 0.3em; */
 }
 
 .nav .links {
@@ -124,26 +130,34 @@ body.slide .nav {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  gap: 1em;
   height: 100%;
 }
 
 .nav .links ul li {
   display: flex;
   justify-content: space-between;
-  width: 100%;
   gap: 1em;
+  padding: 1em 4em 1em 2em;
+  transition: all var(--switch-mode) ease;
+}
+
+body.slide .links ul {
+  padding: 0 0 0 2.5em;
+}
+
+.nav .links ul li:hover {
+  cursor: pointer;
+  background-color: rgba(var(--primary), 0.7);
 }
 
 .nav .links ul li:hover i,
 .nav .links ul li:hover a {
-  color: var(--primary);
   cursor: pointer;
 }
 
 .nav .links ul li a {
   text-decoration: none;
-  color: var(--secondary-text);
+  color: rgb(var(--secondary-text));
   font-weight: 300;
   font-size: 1.4em;
   width: 60%;
@@ -155,7 +169,7 @@ body.slide .nav .links ul li a {
 
 .nav .links ul li i {
   font-size: 1.4em;
-  color: var(--link);
+  color: rgb(var(--primary-text));
 }
 
 body.slide .nav .links ul li i {
@@ -174,7 +188,7 @@ body.slide .nav .links ul li i {
   justify-content: flex-start;
   align-items: center;
   gap: 1.4em;
-  color: var(--secondary-text);
+  color: rgb(var(--secondary-text));
 }
 
 body.slide .nav .actions .action-child {
@@ -184,12 +198,17 @@ body.slide .nav .actions .action-child {
 .nav .actions .hr {
   width: 90%;
   height: 2px;
-  background-color: var(--last-text);
+  background-color: rgb(var(--last-text));
   margin: 1em 0;
 }
 
 .nav .actions .theme {
+  padding: 0 0 0 1em;
   gap: 0;
+}
+
+body.slide .nav .actions .theme {
+  padding: 0;
 }
 
 body.slide .nav .actions h4 {
@@ -215,7 +234,7 @@ body.slide .menu-icon {
 
 .bar {
   height: 0.2em;
-  background: var(--secondary-text);
+  background: rgb(var(--secondary-text));
   border-radius: 0.2em;
   width: 100%;
 }
@@ -241,10 +260,8 @@ body.slide .checkbox:checked ~ .slider::before {
   position: relative;
   min-width: 6.25em; /* 100px */
   height: 3em; /* 50px */
-  --light: var(--secondary-text);
+  --light: white;
   --dark: #28292c;
-  --link: var(--primary);
-  --link-hover: var(--primary-light);
 }
 
 .switch-label {
@@ -301,16 +318,17 @@ body.slide .checkbox:checked ~ .slider::before {
 
 .top {
   width: 100%;
-  background-color: rgba(var(--background), 0.7);
+  background-color: rgba(var(--light-background), 1);
+  /* background-color: rgb(var(--tint)); */
   min-height: 6em;
   position: sticky;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1em;
-  transition: background-color 0.5s ease;
+  transition: background-color var(--switch-mode) ease;
   backdrop-filter: blur(2px);
-  border-bottom: 1px solid var(--box-shadow);
+  border-bottom: 1px solid rgb(var(--box-shadow));
 }
 
 .top .greeting {
@@ -329,12 +347,12 @@ body.slide .checkbox:checked ~ .slider::before {
 }
 
 .top .greeting .user-info h1 {
-  color: var(--primary-text);
+  color: rgb(var(--primary-text));
 }
 
 .top .greeting > h2 {
   font-size: 1.1em;
-  color: var(--primary-text-light);
+  color: rgba(var(--primary-text), 0.8);
 }
 
 /* Logout Section */
@@ -342,14 +360,14 @@ body.slide .checkbox:checked ~ .slider::before {
 .logout form button {
   padding: 0.5em 0.7em;
   font-size: 1.2em;
-  background-color: var(--primary);
+  background-color: rgb(var(--primaryD));
   color: white;
   border-radius: 0.2em;
   border: none;
 }
 
 .logout form button:hover {
-  background-color: var(--primaryL);
+  background-color: rgb(var(--primary));
   cursor: pointer;
 }
 

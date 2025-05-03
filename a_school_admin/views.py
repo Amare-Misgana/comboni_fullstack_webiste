@@ -15,6 +15,18 @@ def school_admin_dashboard(request):
     return render(request, "a_school_admin/dashboard.html", context)
 
 @login_required
+def students_mang(request):
+    return render(request, "a_school_admin/students-mang.html")
+
+@login_required
+def teachers_mang(request):
+    return render(request, "a_school_admin/teachers-mang.html")
+
+@login_required
+def class_mang(request):
+    return render(request, "a_school_admin/class-mang.html")
+
+@login_required
 def user_search(request):
     names = list(CustomUser.objects.values_list('first_name', flat=True))
     return render(request, 'a_school_admin/example.html', {'names': names})

@@ -1,24 +1,63 @@
-{% extends "a_school_admin/dashboard-frag.html" %}
+{% extends 'a_school_admin/dashboard-frag.html' %}
 {% load static %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}
+  Dashboard
+{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'a_school_admin/css/dashboard.css' %}">
-{% endblock %}  
-
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/dashboard.css' %}" />
+{% endblock %}
 
 {% block page_title %}
-    <h2>Welcome back,</h2>
-    <div class="user-info">
+  <h2>Welcome back,</h2>
+  <div class="user-info">
     <img src="https://picsum.photos/200" alt="" />
-    <h1 class="username">{{ request.user.first_name }} {{request.user.middle_name}}</h1>
-    </div>
+    <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
+  </div>
 {% endblock %}
 
 {% block content %}
-    <div class="overview">
-        
+  <div class="overview">
+    <div class="info-card" id="total-students">
+      <i class="fa-solid fa-ellipsis"></i>
+      <i class="fas fa-user-graduate"></i>
+      <div class="info">
+        <h1>734</h1>
+        <p>Total Students</p>
+      </div>
     </div>
+    <div class="info-card" id="total-teachers">
+      <i class="fa-solid fa-ellipsis"></i>
+      <i class="fas fa-chalkboard-teacher"></i>
+      <div class="info">
+        <h1>734</h1>
+        <p>Total Teachers</p>
+      </div>
+    </div>
+    <div class="info-card" id="total-classes">
+      <i class="fa-solid fa-ellipsis"></i>
+      <i class="fas fa-school"></i>
+      <div class="info">
+        <h1>734</h1>
+        <p>Total Classes</p>
+      </div>
+    </div>
+    <div class="info-card" id="total-sections">
+      <i class="fa-solid fa-ellipsis"></i>
+      <i class="fas fa-layer-group"></i>
+      <div class="info">
+        <h1>734</h1>
+        <p>Total Sections</p>
+      </div>
+    </div>
+  </div>
+  <div class="student-per-grade">
+    <canvas id="sutent-per-grade"></canvas>
+  </div>
 {% endblock %}
 
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'a_school_admin/js/dashboard.js' %}"></script>
+{% endblock %}

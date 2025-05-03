@@ -1,9 +1,20 @@
+
+:root {
+  --link-visited: #cacaca;
+  --link: #f0f0f0;
+  --link-hover: white;
+  --primary: #196b21;
+  --primary-text: white;
+  --secondary-text: rgb(236, 236, 236);
+  --primary-light: #0f920f;
+  --primary-ultra-light: #85da85;
+}
 .sub_title {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 0.8em;
-  width: 100vw;
+  width: 100%;
   margin: 2em 0;
   padding: 1em 0 1em 1em;
 }
@@ -15,6 +26,13 @@
   width: 100%;
   height: 2em;
   background-color: var(--primary);
+}
+
+body.dark-mode .sub_title .design{
+ background-color: var(--primary-light);
+}
+body.dark-mode .sub_title h2 {
+  color: white;
 }
 @media (max-width: 768px) {
   .sub_title h2 {

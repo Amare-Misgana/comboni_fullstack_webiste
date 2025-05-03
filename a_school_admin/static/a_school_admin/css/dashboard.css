@@ -1,4 +1,134 @@
-.content h1 {
-  color: rgb(var(--primary-text));
-  color: white;
+* {
+  margin: 0;
+  padding: 0;
 }
+
+.content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  gap: 2em;
+  padding: 2em 0;
+}
+
+
+/* OVERVIEW CARDS */
+
+.content .overview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 0.2em;
+  width: 90%;
+}
+
+.content .overview .info-card {
+  width: 23%;
+  padding: 1em 2em;
+  border-radius: 0.2em;
+  background-color: var(--light-background);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 6em;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.content .overview .info-card .fas {
+  color: rgb(32, 161, 32);
+  font-size: 2em;
+  z-index: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content .overview .info-card .fas::after {
+  content: "";
+  position: absolute;
+  width: 2em;
+  height: 2em;
+  z-index: -1;
+  border-radius: 50%;
+  border: 1px solid rgba(2, 158, 2, 0.76);
+  background-color: #fcfcfc;
+}
+
+.content .overview .info-card:hover {
+  cursor: pointer;
+}
+
+.content .overview .info-card:hover .fas::after {
+  border: 1px solid rgba(2, 158, 2, 0.918);
+  background-color: #f7f7f7;
+}
+
+.content .overview .info-card .fa-ellipsis:hover {
+  color: #9b9b9b;
+}
+
+.content .overview .info-card .fa-ellipsis {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0.6em;
+}
+
+.content .overview .info-card .fa-ellipsis h1 {
+  color: var(--primary-text);
+  background-color: red;
+}
+
+body.dark-mode .content .overview .info-card .fa-ellipsis h1 {
+  color: var(--primary-text);
+}
+
+.content .overview .info-card .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  transform: translateX(10%);
+}
+
+@media (max-width: 1280px) {
+  .content .overview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1em;
+  }
+
+  .content .overview .info-card {
+    width: 98%;
+  }
+}
+
+
+/* OVERVIEW CARDS END!!!!!!!!!!!!!!!!! */
+
+
+/* STUDENT PER GRADE  */
+
+
+.content .student-per-grade {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  height: 50em;
+  padding: 0 2em;
+  background-color: #fff;
+}
+
+.content .student-per-grade #student-per-grade {
+  width: 100%;
+}
+
+
+
+/* STUDENT PER GRADE END!!!!!!!!!!!!!!!!! */

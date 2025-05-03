@@ -21,9 +21,9 @@ from django.conf import settings
 
 urlpatterns = [
     path('', include('a_message.urls')),
-    path('', include('a_student.urls')),
-    path('', include('a_teacher.urls')),
-    path('', include('a_school_admin.urls')),
+    path('student-dashboard/', include('a_student.urls')),
+    path('teacher-dashboard', include('a_teacher.urls')),
+    path('admin-dashboard/', include('a_school_admin.urls')),
     path('', include('a_visitor.urls')),
     path('admin/', admin.site.urls),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

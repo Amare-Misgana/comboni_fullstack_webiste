@@ -56,7 +56,6 @@ document.querySelector(".theme-toggle").addEventListener("change", function () {
 });
 
 document.addEventListener("keydown", (event) => {
-  console.log("Key pressed:", event.key);
   if (event.key === "F9") {
     event.preventDefault();
     theme.changeTheme();

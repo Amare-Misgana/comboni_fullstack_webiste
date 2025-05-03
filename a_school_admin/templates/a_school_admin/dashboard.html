@@ -20,7 +20,7 @@
 {% block content %}
   <div class="overview">
     <div class="info-card" id="total-students">
-      <i class="fa-solid fa-ellipsis"></i>
+      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-user-graduate"></i>
       <div class="info">
         <h1>734</h1>
@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="info-card" id="total-teachers">
-      <i class="fa-solid fa-ellipsis"></i>
+      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-chalkboard-teacher"></i>
       <div class="info">
         <h1>734</h1>
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="info-card" id="total-classes">
-      <i class="fa-solid fa-ellipsis"></i>
+      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-school"></i>
       <div class="info">
         <h1>734</h1>
@@ -44,7 +44,7 @@
       </div>
     </div>
     <div class="info-card" id="total-sections">
-      <i class="fa-solid fa-ellipsis"></i>
+      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-layer-group"></i>
       <div class="info">
         <h1>734</h1>
@@ -55,9 +55,153 @@
   <div class="student-per-grade">
     <canvas id="sutent-per-grade"></canvas>
   </div>
+  <div class="student-gender">
+    <canvas id="student-gender"></canvas>
+  </div>
+  <div class="admin-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Admin Name</th>
+          <th>Recent Activity</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John Doe</td>
+          <td>Added new user</td>
+          <td>2025-05-03 12:30</td>
+        </tr>
+        <tr>
+          <td>Jane Smith</td>
+          <td>Updated permissions</td>
+          <td>2025-05-03 11:10</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
 
 {% block script %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{% static 'a_school_admin/js/dashboard.js' %}"></script>
+  <script>
+    function getTheme() {
+      return localStorage.getItem('theme') === 'true'
+    }
+    
+    function getLabelColor() {
+      return getTheme() ? 'black' : 'white'
+    }
+    
+    // Chart 1
+    const ctx1 = document.getElementById('sutent-per-grade').getContext('2d')
+    let chart1 = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow'],
+        datasets: [
+          {
+            label: 'Votes',
+            data: [12, 19, 3],
+            backgroundColor: '#196b21'
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: { color: getLabelColor() }
+          },
+          title: {
+            display: true,
+            text: 'Student Votes by Color',
+            color: getLabelColor(),
+            font: { size: 18 }
+          }
+        },
+        scales: {
+          x: { ticks: { color: getLabelColor() } },
+          y: { ticks: { color: getLabelColor() } }
+        }
+      }
+    })
+    
+    // Chart 2
+    const ctx2 = document.getElementById('student-gender').getContext('2d')
+    let chart2 = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'],
+        datasets: [
+          {
+            label: 'Votes',
+            data: [12, 1, 3, 4],
+            backgroundColor: '#196b21'
+          },
+          {
+            label: 'Votes',
+            data: [1, 19, 3, 2],
+            backgroundColor: '#196b21'
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: { color: getLabelColor() }
+          },
+          title: {
+            display: true,
+            text: 'Student Gender Per Grade',
+            color: getLabelColor(),
+            font: { size: 18 }
+          }
+        },
+        scales: {
+          x: { ticks: { color: getLabelColor() } },
+          y: { ticks: { color: getLabelColor() } }
+        }
+      }
+    })
+    
+    // Update both charts on theme toggle
+    document.querySelector('.theme-toggle').addEventListener('change', function () {
+      const newColor = getLabelColor()
+    
+      ;[chart1, chart2].forEach((chart) => {
+        chart.options.plugins.legend.labels.color = newColor
+        chart.options.plugins.title.color = newColor
+        chart.options.scales.x.ticks.color = newColor
+        chart.options.scales.y.ticks.color = newColor
+        chart.update()
+      })
+    })
+  </script>
 {% endblock %}

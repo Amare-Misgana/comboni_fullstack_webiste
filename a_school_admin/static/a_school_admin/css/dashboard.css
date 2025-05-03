@@ -19,7 +19,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-right: 0.2em;
   width: 90%;
 }
 
@@ -37,7 +36,7 @@
 }
 
 .content .overview .info-card .fas {
-  color: rgb(32, 161, 32);
+  color: var(--primary);
   font-size: 2em;
   z-index: 1;
   position: relative;
@@ -57,34 +56,37 @@
   background-color: #fcfcfc;
 }
 
-.content .overview .info-card:hover {
-  cursor: pointer;
-}
-
 .content .overview .info-card:hover .fas::after {
   border: 1px solid rgba(2, 158, 2, 0.918);
   background-color: #f7f7f7;
 }
 
-.content .overview .info-card .fa-ellipsis:hover {
-  color: #9b9b9b;
-}
-
-.content .overview .info-card .fa-ellipsis {
+.content .overview .info-card a {
+  background-color: white;
   position: absolute;
   top: 0;
   right: 0;
-  margin: 0.6em;
+  width: 2em;
+  height: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 50%;
+  margin: 0.3em;
+  border: 1px solid var(--primaryL);
 }
 
-.content .overview .info-card .fa-ellipsis h1 {
-  color: var(--primary-text);
-  background-color: red;
+.content .overview .info-card .fa-ellipsis {
+  color: var(--last-text);
 }
 
-body.dark-mode .content .overview .info-card .fa-ellipsis h1 {
-  color: var(--primary-text);
+.content .overview .info-card .fa-ellipsis:hover {
+  color: var(--second-text);
+  cursor: pointer;
 }
+
+
 
 .content .overview .info-card .info {
   display: flex;
@@ -93,6 +95,14 @@ body.dark-mode .content .overview .info-card .fa-ellipsis h1 {
   align-items: center;
   width: 100%;
   transform: translateX(10%);
+}
+
+.content .overview .info-card .info h1 {
+  color: var(--primary-text);
+}
+
+.content .overview .info-card .info p {
+  color: var(--last-text);
 }
 
 @media (max-width: 1280px) {
@@ -112,23 +122,67 @@ body.dark-mode .content .overview .info-card .fa-ellipsis h1 {
 /* OVERVIEW CARDS END!!!!!!!!!!!!!!!!! */
 
 
-/* STUDENT PER GRADE  */
+/* STUDENT PER GRADE GRAPH  */
 
 
-.content .student-per-grade {
+.content .student-per-grade,
+.content .student-gender {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 90%;
-  height: 50em;
+  height: 30em;
   padding: 0 2em;
-  background-color: #fff;
+  background-color: var(--light-background);
 }
 
-.content .student-per-grade #student-per-grade {
+.content .student-per-grade #student-per-grade,
+.content .student-gender #student-gender {
   width: 100%;
 }
 
 
+/* STUDENT PER GRADE GRAPH END!!!!!!!!!!!!!!!!! */
 
-/* STUDENT PER GRADE END!!!!!!!!!!!!!!!!! */
+
+
+.content .admin-table {
+  width: 90%;
+  margin: 2em auto;
+  background: var(--light-background);
+  overflow-x: auto;
+}
+
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.content th,
+.content td {
+  padding: 1em;
+  text-align: left;
+}
+
+.content thead {
+  background: var(--primary);
+  color: white;
+}
+
+.content th {
+  font-weight: 600;
+}
+
+.content tbody tr:nth-child(even) {
+  background: var(--tint);
+  color: var(--primary-text);
+}
+
+.content tbody tr:nth-child(odd) {
+  color: var(--primary-text);
+}
+
+.content tbody tr td:last-child {
+  color: var(--primary-text);
+  font-size: 0.9em;
+}

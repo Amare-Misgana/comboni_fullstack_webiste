@@ -16,10 +16,10 @@ body {
   --last-text: 153, 153, 153;
   --high-dark: 26, 26, 26;
   --low-dark: 49, 49, 49;
-  --background: 238, 245, 235;
-  --light-background: 220, 225, 222;
+  --background: 225, 225, 225;
+  --light-background: 210, 210, 210;
   --dark-background: 227, 236, 226;
-  --switch-mode: var(--switch-mode);
+  --switch-mode: 0.5s;
   background-color: rgb(var(--light-background));
   transition: background-color var(--switch-mode) ease;
 }
@@ -39,7 +39,7 @@ body.dark-mode {
   --background: 18, 18, 18;
   --light-background: 30, 30, 30;
   --dark-background: 24, 24, 24;
-  background-color: rgb(var(--light-background));
+  background-color: rgba(var(--light-background), 0.9);
 }
 
 /* Dashboard */
@@ -318,8 +318,7 @@ body.slide .checkbox:checked ~ .slider::before {
 
 .top {
   width: 100%;
-  background-color: rgba(var(--light-background), 1);
-  /* background-color: rgb(var(--tint)); */
+  background-color: rgba(var(--light-background), 0.3);
   min-height: 6em;
   position: sticky;
   display: flex;
@@ -328,7 +327,7 @@ body.slide .checkbox:checked ~ .slider::before {
   padding: 1em;
   transition: background-color var(--switch-mode) ease;
   backdrop-filter: blur(2px);
-  border-bottom: 1px solid rgb(var(--box-shadow));
+  border-bottom: 1px solid rgba(var(--box-shadow), 0.6);
 }
 
 .top .greeting {

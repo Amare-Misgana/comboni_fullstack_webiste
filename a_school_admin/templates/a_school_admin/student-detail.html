@@ -1,0 +1,69 @@
+{% extends 'a_school_admin/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/student-detail.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/sub_title.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h2></h2>
+  <div class="user-info">
+    <h1 class="username">Class Management</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="student-profile-card">
+    <div class="profile-header">
+      <img src="https://via.placeholder.com/120" alt="Profile Picture" class="profile-pic" />
+      <div class="profile-actions">
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </div>
+    </div>
+
+    <div class="profile-details">
+      <p>
+        <span>First Name:</span> [First Name]
+      </p>
+      <p>
+        <span>Middle Name:</span> [Middle Name]
+      </p>
+      <p>
+        <span>Last Name:</span> [Last Name]
+      </p>
+      <p>
+        <span>Age:</span> [Age]
+      </p>
+      <p>
+        <span>Gender:</span> [Gender]
+      </p>
+      <p>
+        <span>Phone Number:</span> [Phone]
+      </p>
+      <p>
+        <span>Email:</span> [Email]
+      </p>
+      <p>
+        <span>Grade:</span> [Grade]
+      </p>
+      <p>
+        <span>Section:</span> [Section]
+      </p>
+      <p>
+        <span>Status:</span> [75%]
+      </p>
+      <p>
+        <span>Best Subject:</span> [Math]
+      </p>
+      <p>
+        <span>Worst Subject:</span> [History]
+      </p>
+    </div>
+  </div>
+{% endblock %}

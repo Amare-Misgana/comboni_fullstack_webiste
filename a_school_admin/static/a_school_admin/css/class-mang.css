@@ -1,0 +1,26 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/*  Class Performance  */
+
+.content .class-activity,
+.content .student-gender {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 50em !important;
+    padding: 0 2em;
+    background-color: var(--light-background);
+}
+
+.content .class-activity #class-activity {
+    width: 100%;
+}
+
+
+/*  Class Performance END!!!!!!!!!!!!!!!!! */

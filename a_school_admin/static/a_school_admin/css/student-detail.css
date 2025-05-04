@@ -1,0 +1,75 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.student-profile-card {
+    width: 80%;
+    background: var(--light-background);
+    color: var(--primary-text);
+    border-radius: 0.3em;
+    padding: 2em;
+    margin: 2em auto;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.9em;
+}
+
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary);
+}
+
+.profile-actions {
+    display: flex;
+    gap: 0.3em;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 0.5em 2em;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1.1em;
+}
+
+.edit-btn {
+    border-radius: 0.3em 0 0 0.3em;
+    background: var(--primary);
+    color: var(--primary-text);
+}
+
+.edit-btn:hover {
+    background: var(--primaryD);
+}
+
+.delete-btn {
+    border-radius: 0 0.3em 0.3em 0;
+    background: crimson;
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background: rgb(235, 36, 75);
+}
+
+.profile-details p {
+    margin: 0.6em 0;
+}
+
+.profile-details span {
+    font-weight: bold;
+    color: var(--secondary-text);
+}

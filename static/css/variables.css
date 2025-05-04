@@ -1,8 +1,9 @@
 :root {
   --box-shadow: rgb(212, 212, 212);
   --tint: rgb(209, 209, 209);
-  --primary: #196b21; 
+  --primary: #196b21;
   --primaryL: rgb(118, 212, 121);
+  --primaryLL: rgba(143, 212, 145, 0.664);
   --primaryD: rgb(45, 170, 49);
   --low-light: rgb(219, 219, 219);
   --primary-text: rgb(32, 32, 32);
@@ -24,6 +25,7 @@ body.dark-mode {
   --box-shadow: rgb(45, 45, 45);
   --tint: rgb(75, 75, 75);
   --primaryL: rgb(118, 212, 121);
+  --primaryLL: rgba(116, 179, 118, 0.658);
   --primaryD: rgb(45, 170, 49);
   --low-light: rgb(70, 70, 70);
   --secondary-text: rgb(177, 177, 177);
@@ -32,6 +34,6 @@ body.dark-mode {
   --low-dark: rgb(224, 224, 224);
   --background: rgb(18, 18, 18);
   --light-background: rgb(43, 46, 42);
-  --dark-background: rgb(24, 24, 24);
+  --dark-background: rgb(32, 32, 32);
   background-color: var(--background);
 }

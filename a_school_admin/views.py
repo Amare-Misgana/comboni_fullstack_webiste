@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from common.models import UserProfile, CustomUser
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
+from django.contrib import messages
 
 
 @login_required
@@ -15,8 +18,48 @@ def school_admin_dashboard(request):
     return render(request, "a_school_admin/dashboard.html", context)
 
 @login_required
+def edit_students(request, student_id):
+    Student = get_user_model()
+    student = Student.objects.get(id=student_id)
+    StudentProfile = get_object_or_404(UserProfile, user=student)
+
+    if request.method == 'POST':
+        student.first_name = request.POST.get('first_name')
+        student.middle_name = request.POST.get('middle_name', '')
+        student.last_name = request.POST.get('last_name')
+        student.phone_number = request.POST.get('phone_number')
+        student.email = request.POST.get('email')
+
+
+        password = request.POST.get('password')
+        if password:
+            student.password = make_password(password)
+            StudentProfile.password = password
+
+        profile_image = request.FILES.get('profile_image')
+        if profile_image:
+            StudentProfile.user_pic = profile_image
+
+        student.save()
+        messages.success(request, 'Student updated successfully.')
+        return redirect('students_mang_url')
+    return render(request, "a_school_admin/edit-students.html")
+
+
+@login_required
+def student_detail(request, student_username):
+    return render(request, "a_school_admin/student-detail.html")
+
+
+
+@login_required
 def students_mang(request):
-    return render(request, "a_school_admin/students-mang.html")
+    User = get_user_model()
+    students = User.objects.filter(role='student')
+    context = {
+        "students": students,
+    }
+    return render(request, "a_school_admin/students-mang.html", context)
 
 @login_required
 def teachers_mang(request):

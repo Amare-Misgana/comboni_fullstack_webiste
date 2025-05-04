@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block title %}
-  Dashboard
+  Students Management
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'a_school_admin/css/student-mang.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/sub_title.css' %}" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/students-mang.css' %}" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
 {% endblock %}
 
 {% block page_title %}
@@ -18,5 +18,159 @@
 {% endblock %}
 
 {% block content %}
+  <!-- Top Students Table -->
 
+  <div class="student-table-container top-student-container">
+    <div class="table-header">
+      <h2>Top Students</h2>
+      <a href="#"><button class="add-student-btn">Add Student</button></a>
+    </div>
+    <table id="TopStudentsTable">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Middle Name</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.first_name }}</td>
+            <td>{{ student.middle_name }}</td>
+            <td>{{ student.age }}</td>
+            <td class="student-crud">
+              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
+              <form action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn">Delete</button>
+              </form>
+              <a href="{% url 'student_detail_url' student_username=student.username %}" class="edit-btn">Detail</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Student Table -->
+
+  <div class="student-table-container">
+    <div class="table-header">
+      <h2>Students Table</h2>
+      <a href="#"><button class="add-student-btn">Add Student</button></a>
+    </div>
+    <table id="studentsTable">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Middle Name</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.first_name }}</td>
+            <td>{{ student.middle_name }}</td>
+            <td>{{ student.age }}</td>
+            <td class="student-crud">
+              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
+              <form action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn">Delete</button>
+              </form>
+              <a href="{% url 'student_detail_url' student_username=student.username %}" class="edit-btn">Detail</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      const table = $('#studentsTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+    $(document).ready(function () {
+      const table = $('#TopStudentsTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+  </script>
 {% endblock %}

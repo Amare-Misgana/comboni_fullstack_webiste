@@ -337,7 +337,7 @@ body.slide .checkbox:checked~.slider::before {
 }
 
 .top .greeting .user-info h1 {
-  color: var(--primary-text);
+  color: var(--primary-text) !important;
 }
 
 .top .greeting>h2 {

@@ -1,0 +1,94 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.student-edit-form {
+    width: 80%;
+    margin: 2em auto;
+    padding: 2em;
+    background: var(--light-background);
+    border-radius: 0.3em;
+    color: var(--primary-text);
+    font-family: sans-serif;
+}
+
+.student-edit-form h2 {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+/* Profile viewer */
+.profile-circle {
+    width: 9em;
+    height: 9em;
+    margin: 0 auto 1em;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary);
+    background: var(--light-background);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-circle input[type="file"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+
+.form-group {
+    margin-bottom: 1em;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: .3em;
+    color: var(--secondary-text);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: .6em;
+    border: 1px solid var(--primaryLL);
+    border-radius: .4em;
+    background: var(--light-background);
+    color: var(--dark-background);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+button {
+    width: 100%;
+    padding: .8em;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: .5em;
+    cursor: pointer;
+    transition: background .3s;
+}
+
+button:hover {
+    background: var(--primaryD);
+}

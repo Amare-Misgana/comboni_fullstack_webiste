@@ -7,7 +7,6 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'a_school_admin/css/class-mang.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/sub_title.css' %}" />
 {% endblock %}
 
 {% block page_title %}
@@ -18,5 +17,56 @@
 {% endblock %}
 
 {% block content %}
+  <div class="class-activity">
+    <canvas id="class-activity"></canvas>
+  </div>
+{% endblock %}
 
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const class_activity_ctx = document.getElementById('class-activity').getContext('2d')
+    
+    function getTheme() {
+      return localStorage.getItem('theme') === 'true'
+    }
+    
+    function getLabelColor() {
+      return getTheme() ? 'black' : 'white'
+    }
+    
+    new Chart(class_activity_ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Math', 'English', 'Science', 'History', 'English', 'Science', 'History'],
+        datasets: [
+          {
+            label: 'Score',
+            data: [85, 90, 75, 60, 90, 75, 60],
+            backgroundColor: '#196b21'
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y', // ⬅️ This makes it horizontal
+        responsive: true,
+        maintainAspectRatio: false, // Key to use the CSS-defined height
+        plugins: {
+          legend: {
+            labels: { color: getLabelColor() }
+          },
+          title: {
+            display: true,
+            text: 'Student Votes by Color',
+            color: getLabelColor(),
+            font: { size: 18 }
+          }
+        },
+        scales: {
+          x: { ticks: { color: getLabelColor() } },
+          y: { ticks: { color: getLabelColor() } }
+        }
+      }
+    })
+  </script>
 {% endblock %}

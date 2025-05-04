@@ -29,8 +29,18 @@ class CustomUserManager(BaseUserManager):
         else:
             user.username = base_username
 
+
         user.set_password(password)
         user.save(using=self._db)
+        
+        if role is not "admin":
+            user_profile = UserProfile(
+                user = user,
+                password = password
+            )
+            user_profile.save()
+            
+
         return user
 
     def create_superuser(self, first_name, middle_name, last_name, email, gender, phone_number, role, password):
@@ -75,8 +85,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    username = models.CharField(max_length=150)
-    user_pic = models.ImageField(upload_to="avatars")
+    username = models.CharField(max_length=150, blank=True, null=True)
+    user_pic = models.ImageField(upload_to="avatars", blank=True, null=True)
+    password = models.CharField(max_length=150)
     def save(self, *args, **kwargs):
         if self.user:
             self.username = f"{self.user.first_name} {self.user.middle_name}"

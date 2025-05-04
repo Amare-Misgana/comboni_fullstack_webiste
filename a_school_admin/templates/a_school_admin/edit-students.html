@@ -1,0 +1,70 @@
+{% extends 'a_school_admin/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/class-mang.css' %}" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/edit-students.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h2></h2>
+  <div class="user-info">
+    <h1 class="username">Edit Students</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form class="student-edit-form" autocomplete="off">
+    {% csrf_token %}
+    <h2>Edit Student Information</h2>
+
+    <div class="profile-circle">
+      <img id="profilePreview" src="https://via.placeholder.com/120" alt="Profile" />
+      <input type="file" id="profile_image" name="profile_image" accept="image/*" autocomplete="off" />
+    </div>
+
+    <!-- STUDENT FIELDS -->
+    <div class="form-group">
+      <label>First Name</label>
+      <input type="text" name="first_name" required autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label>Middle Name</label>
+      <input type="text" name="middle_name" autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label>Last Name</label>
+      <input type="text" name="last_name" required autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" name="phone_number" required autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email" required autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" autocomplete="new-password" />
+    </div>
+    <div class="form-group">
+      <label>Gender</label>
+      <select name="gender" required disabled>
+        <option value="" disabled selected>Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+
+    <button type="submit">Update</button>
+  </form>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_school_admin/js/edit-students.js' %}"></script>
+{% endblock %}

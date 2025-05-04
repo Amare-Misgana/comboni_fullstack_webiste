@@ -45,6 +45,15 @@ def edit_students(request, student_id):
         return redirect('students_mang_url')
     return render(request, "a_school_admin/edit-students.html")
 
+@login_required
+def edit_class(request, class_id):
+    return render(request, "a_school_admin/edit-class.html")
+
+@login_required
+def class_detial(request): #, class_id
+    return render(request, "a_school_admin/class-detail.html")
+
+
 
 @login_required
 def student_detail(request, student_username):

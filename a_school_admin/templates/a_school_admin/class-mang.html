@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block head %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
   <link rel="stylesheet" href="{% static 'a_school_admin/css/class-mang.css' %}" />
 {% endblock %}
 
@@ -20,22 +21,210 @@
   <div class="class-activity">
     <canvas id="class-activity"></canvas>
   </div>
+  <div class="class-container">
+    <div class="table-header">
+      <h2>Classes</h2>
+      <a href="#"><button class="add-student-btn">Add Class</button></a>
+    </div>
+    <table id="classTable">
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Total Students</th>
+          <th>Home Room Teacher</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for class in classes %}
+          <tr>
+            <td>{{ class.class_name }}</td>
+            <td>{{ class.total_students }}</td>
+            <td>{{ class.home_room_teacher }}</td>
+            <td class="class-crud">
+              <a href="{% url 'edit_class_url' class_id=class.id %}" class="edit-btn">Edit</a>
+              <a href="{% url 'class_detail_url' class_id=class.id %}" class="detail-btn">Detail</a>
+            </td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td>Grade 1A</td>
+          <td>28</td>
+          <td>Mr. Daniel Harper</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 1B</td>
+          <td>30</td>
+          <td>Ms. Olivia Blake</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 2A</td>
+          <td>27</td>
+          <td>Mrs. Emma Carson</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 2B</td>
+          <td>29</td>
+          <td>Mr. Noah Bennett</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 3A</td>
+          <td>25</td>
+          <td>Ms. Lily Nguyen</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 3B</td>
+          <td>31</td>
+          <td>Mr. James Porter</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 4A</td>
+          <td>26</td>
+          <td>Mrs. Sophia Jenkins</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 4B</td>
+          <td>30</td>
+          <td>Ms. Abigail Scott</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 5A</td>
+          <td>28</td>
+          <td>Mr. Benjamin Rhodes</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 5B</td>
+          <td>32</td>
+          <td>Mrs. Grace Murphy</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 6A</td>
+          <td>29</td>
+          <td>Ms. Amelia Hayes</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 6B</td>
+          <td>27</td>
+          <td>Mr. Logan Cruz</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 7A</td>
+          <td>30</td>
+          <td>Mrs. Charlotte Webb</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 7B</td>
+          <td>31</td>
+          <td>Ms. Mia Foster</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 8A</td>
+          <td>28</td>
+          <td>Mr. Ethan Brooks</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 8B</td>
+          <td>26</td>
+          <td>Mrs. Harper Green</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 9A</td>
+          <td>33</td>
+          <td>Mr. Lucas West</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 9B</td>
+          <td>30</td>
+          <td>Ms. Zoe Armstrong</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 10A</td>
+          <td>31</td>
+          <td>Mr. Henry Moore</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Grade 10B</td>
+          <td>29</td>
+          <td>Mrs. Natalie Cooper</td>
+          <td>
+            <button>View</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
 
 {% block script %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
   <script>
     const class_activity_ctx = document.getElementById('class-activity').getContext('2d')
     
-    function getTheme() {
-      return localStorage.getItem('theme') === 'true'
-    }
-    
     function getLabelColor() {
-      return getTheme() ? 'black' : 'white'
+      return localStorage.getItem('theme') === 'true' ? 'black' : 'white'
     }
     
-    new Chart(class_activity_ctx, {
+    const chart1 = new Chart(class_activity_ctx, {
       type: 'bar',
       data: {
         labels: ['Math', 'English', 'Science', 'History', 'English', 'Science', 'History'],
@@ -48,9 +237,9 @@
         ]
       },
       options: {
-        indexAxis: 'y', // ⬅️ This makes it horizontal
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: false, // Key to use the CSS-defined height
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             labels: { color: getLabelColor() }
@@ -59,14 +248,72 @@
             display: true,
             text: 'Student Votes by Color',
             color: getLabelColor(),
-            font: { size: 18 }
+            font: { size: 25 },
+            align: 'start'
+          },
+          datalabels: {
+            anchor: 'center',
+            align: 'center',
+            color: 'white',
+            font: { weight: 'bold' },
+            formatter: Math.round
           }
         },
         scales: {
           x: { ticks: { color: getLabelColor() } },
           y: { ticks: { color: getLabelColor() } }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
+    })
+    
+    document.querySelector('.theme-toggle').addEventListener('change', function () {
+      const newColor = getLabelColor()
+      chart1.options.plugins.legend.labels.color = newColor
+      chart1.options.plugins.title.color = newColor
+      chart1.options.scales.x.ticks.color = newColor
+      chart1.options.scales.y.ticks.color = newColor
+      chart1.update()
+    })
+    
+    $(document).ready(function () {
+      const table = $('#classTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
     })
   </script>
 {% endblock %}

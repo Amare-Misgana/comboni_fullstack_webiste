@@ -42,11 +42,7 @@
             <td>{{ student.age }}</td>
             <td class="student-crud">
               <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
-              <form action="" method="post">
-                {% csrf_token %}
-                <button type="submit" class="delete-btn">Delete</button>
-              </form>
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="edit-btn">Detail</a>
+              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn">Detail</a>
             </td>
           </tr>
         {% endfor %}
@@ -78,11 +74,7 @@
             <td>{{ student.age }}</td>
             <td class="student-crud">
               <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
-              <form action="" method="post">
-                {% csrf_token %}
-                <button type="submit" class="delete-btn">Delete</button>
-              </form>
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="edit-btn">Detail</a>
+              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn">Detail</a>
             </td>
           </tr>
         {% endfor %}

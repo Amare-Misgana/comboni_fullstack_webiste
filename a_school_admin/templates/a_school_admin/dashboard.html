@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block head %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
   <link rel="stylesheet" href="{% static 'a_school_admin/css/dashboard.css' %}" />
 {% endblock %}
 
@@ -59,7 +60,8 @@
     <canvas id="student-gender"></canvas>
   </div>
   <div class="admin-table">
-    <table>
+    <h2>Admins Recent Actions</h2>
+    <table id="adminTable">
       <thead>
         <tr>
           <th>Admin Name</th>
@@ -89,9 +91,54 @@
           <td>2025-05-02 18:45</td>
         </tr>
         <tr>
+          <td>John Doe</td>
+          <td>Added new user</td>
+          <td>2025-05-03 12:30</td>
+        </tr>
+        <tr>
+          <td>Jane Smith</td>
+          <td>Updated permissions</td>
+          <td>2025-05-03 11:10</td>
+        </tr>
+        <tr>
           <td>Alex Lee</td>
           <td>Deleted post</td>
           <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>John Doe</td>
+          <td>Added new user</td>
+          <td>2025-05-03 12:30</td>
+        </tr>
+        <tr>
+          <td>Jane Smith</td>
+          <td>Updated permissions</td>
+          <td>2025-05-03 11:10</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>Alex Lee</td>
+          <td>Deleted post</td>
+          <td>2025-05-02 18:45</td>
+        </tr>
+        <tr>
+          <td>John Doe</td>
+          <td>Added new user</td>
+          <td>2025-05-03 12:30</td>
+        </tr>
+        <tr>
+          <td>Jane Smith</td>
+          <td>Updated permissions</td>
+          <td>2025-05-03 11:10</td>
         </tr>
         <tr>
           <td>Alex Lee</td>
@@ -109,9 +156,48 @@
 {% endblock %}
 
 {% block script %}
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{% static 'a_school_admin/js/dashboard.js' %}"></script>
   <script>
+    $(document).ready(function () {
+      const table = $('#adminTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+    
     function getTheme() {
       return localStorage.getItem('theme') === 'true'
     }

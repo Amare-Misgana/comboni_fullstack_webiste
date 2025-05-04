@@ -1,0 +1,44 @@
+.class-card {
+    background-color: var(--light-background);
+    color: var(--primary-text);
+    border: 1px solid var(--background);
+    border-radius: 1em;
+    padding: 1.5em;
+    margin-bottom: 1.5em;
+    box-shadow: 0 4px 10px var(--background);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.class-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+}
+
+.class-name {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: var(--primary-text);
+}
+
+.class-buttons button {
+    margin-left: 0.5em;
+    padding: 0.4em 1em;
+    border: none;
+    border-radius: 0.6em;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: var(--primary);
+    color: var(--primary-text);
+}
+
+.class-details span {
+    color: var(--secondary-text);
+    font-weight: bold;
+}
+
+.class-details p {
+    margin: 0.4em 0;
+    color: var(--last-text);
+}

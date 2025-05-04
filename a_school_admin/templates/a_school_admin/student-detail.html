@@ -7,18 +7,18 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'a_school_admin/css/student-detail.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/sub_title.css' %}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block page_title %}
   <h2></h2>
   <div class="user-info">
-    <h1 class="username">Class Management</h1>
+    <h1 class="username">{{ request.user.username|capfirst }}</h1>
   </div>
 {% endblock %}
 
 {% block content %}
-  <div class="student-profile-card">
+  {% comment %} <div class="student-profile-card">
     <div class="profile-header">
       <img src="https://via.placeholder.com/120" alt="Profile Picture" class="profile-pic" />
       <div class="profile-actions">
@@ -65,5 +65,143 @@
         <span>Worst Subject:</span> [History]
       </p>
     </div>
+  </div> {% endcomment %}
+  {% comment %} <div class="student-card">
+    <img src="{% static 'images/profile-placeholder.jpg' %}" alt="Profile Image" class="profile-image" />
+
+    <div class="info-grid">
+      <div class="info-group">
+        <span class="label">First Name:</span><span class="value">John</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Middle Name:</span><span class="value">A.</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Last Name:</span><span class="value">Doe</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Age:</span><span class="value">16</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Gender:</span><span class="value">Male</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Phone:</span><span class="value">+123456789</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Status:</span><span class="value">85%</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Best Subject:</span><span class="value">Math</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Worst Subject:</span><span class="value">History</span>
+      </div>
+      <div class="info-group">
+        <span class="label">Class:</span><span class="value">10B</span>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="edit-btn">Edit</button>
+      <button class="delete-btn">Delete</button>
+    </div>
+  </div> {% endcomment %}
+  <div class="student-container">
+    <div class="chart-wrapper">
+      <h2>Status Overview</h2>
+      <p>This shows the student's current status out of 100%.</p>
+      <div class="chart-container">
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+
+    <div class="student-card">
+      <img src="{% static 'images/profile-placeholder.jpg' %}" alt="Profile Image" class="profile-image" />
+
+      <div class="info-grid">
+        <div class="info-group">
+          <span class="label">First Name</span><span class="value">John</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Middle Name</span><span class="value">A.</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Last Name</span><span class="value">Doe</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Age</span><span class="value">16</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Gender</span><span class="value">Male</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Phone</span><span class="value">+123456789</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Best Subject</span><span class="value">Math</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Worst Subject</span><span class="value">History</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Class</span><span class="value">10B</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Conduct</span><span class="value">A</span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </div>
+    </div>
   </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    let status = 85
+    Chart.register({
+      id: 'centerText',
+      beforeDraw(chart) {
+        const { width } = chart
+        const { height } = chart
+        const ctx = chart.ctx
+        ctx.restore()
+        const fontSize = (height / 140).toFixed(2)
+        ctx.font = `${fontSize}em sans-serif`
+        ctx.textBaseline = 'middle'
+    
+        const text = `${status}%`
+        const textX = Math.round((width - ctx.measureText(text).width) / 2)
+        const textY = height / 2
+    
+        ctx.fillStyle = 'rgb(118, 212, 121)'
+        ctx.fillText(text, textX, textY)
+        ctx.save()
+      }
+    })
+    const ctx = document.getElementById('statusChart').getContext('2d')
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Completed', 'Remaining'],
+        datasets: [
+          {
+            data: [status, 100 - status],
+            backgroundColor: ['#196b21', 'crimson'],
+            borderWidth: 0
+          }
+        ]
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    })
+  </script>
 {% endblock %}

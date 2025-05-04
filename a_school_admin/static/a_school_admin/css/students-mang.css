@@ -240,26 +240,34 @@ table#TopStudentsTable tbody tr:hover {
 
 .student-crud {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
+    gap: 0.4em;
 }
 
-.student-crud .delete-btn,
+.student-crud .detail-btn {
+    border-radius: 0 0.3em 0.3em 0;
+}
+
 .student-crud .edit-btn {
-    width: 4.5em;
+    border-radius: 0.3em 0 0 0.3em;
+}
+
+.student-crud .detail-btn,
+.student-crud .edit-btn {
+    width: 5.5em;
     text-align: center;
     text-decoration: none;
     background-color: var(--primary);
     color: white;
     padding: 0.3em 0.5em;
     border: none;
-    border-radius: 0.2em;
     font-size: 1em;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.student-crud .delete-btn:hover,
+.student-crud .detail-btn:hover,
 .student-crud .edit-btn:hover {
     background-color: var(--primaryL);
 }

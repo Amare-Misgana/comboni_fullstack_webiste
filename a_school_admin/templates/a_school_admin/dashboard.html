@@ -229,7 +229,8 @@
             display: true,
             text: 'Student Votes by Color',
             color: getLabelColor(),
-            font: { size: 18 }
+            font: { size: 25 },
+            align: 'start'
           }
         },
         scales: {
@@ -267,7 +268,8 @@
             display: true,
             text: 'Student Gender Per Grade',
             color: getLabelColor(),
-            font: { size: 18 }
+            font: { size: 25 },
+            align: 'start'
           }
         },
         scales: {
@@ -288,6 +290,19 @@
         chart.options.scales.y.ticks.color = newColor
         chart.update()
       })
+    })
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'F9') {
+        const newColor = getLabelColor()
+    
+        ;[chart1, chart2].forEach((chart) => {
+          chart.options.plugins.legend.labels.color = newColor
+          chart.options.plugins.title.color = newColor
+          chart.options.scales.x.ticks.color = newColor
+          chart.options.scales.y.ticks.color = newColor
+          chart.update()
+        })
+      }
     })
   </script>
 {% endblock %}

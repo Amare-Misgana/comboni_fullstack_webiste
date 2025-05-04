@@ -134,3 +134,18 @@ document
   });
 
 // EXCUTETION END
+
+
+
+// Logout Confirmation
+function showLogoutConfirm() {
+  document.getElementById('logoutPopup').style.display = 'flex';
+}
+
+function closeLogoutPopup() {
+  document.getElementById('logoutPopup').style.display = 'none';
+}
+
+function confirmLogout() {
+  document.getElementById('logoutForm').submit();
+}

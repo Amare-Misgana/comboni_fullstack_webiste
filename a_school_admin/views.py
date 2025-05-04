@@ -46,6 +46,10 @@ def edit_students(request, student_id):
     return render(request, "a_school_admin/edit-students.html")
 
 @login_required
+def add_student(request):
+    return render(request, "a_school_admin/add-student.html")
+
+@login_required
 def edit_class(request, class_id):
     return render(request, "a_school_admin/edit-class.html")
 
@@ -57,7 +61,14 @@ def class_detial(request): #, class_id
 
 @login_required
 def student_detail(request, student_username):
-    return render(request, "a_school_admin/student-detail.html")
+    Student = get_user_model()
+    student = Student.objects.get(username=student_username)
+    student_profile = get_object_or_404(UserProfile, user=student)
+    context = {
+        "student": student,
+        "student_profile": student_profile,
+    }
+    return render(request, "a_school_admin/student-detail.html", context)
 
 
 

@@ -21,9 +21,9 @@
   <div class="class-card">
     <div class="class-header">
       <h2 class="class-name">Grade 9 - A</h2>
-      <div class="class-buttons">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
+      <div class="class-buttons crud">
+        <button class="edit-btn left-btn">Edit</button>
+        <button class="delete-btn right-btn">Delete</button>
       </div>
     </div>
     <div class="class-details">
@@ -36,8 +36,66 @@
       <p>
         <span>Average Score:</span> 84.6%
       </p>
+      <p>
+        <span>Conduct ( A ) :</span> 96.6%
+      </p>
+      <p>
+        <span>Conduct ( B ) :</span> 2.3%
+      </p>
+      <p>
+        <span>Conduct ( C ) :</span> 1.1%
+      </p>
     </div>
   </div>
+  <div class="home-room-teacher class-card">
+    <div class="class-header">
+      <h2 class="class-name">Home Room Teacher</h2>
+      <div class="class-buttons crud">
+        <button class="edit-btn left-btn">Edit</button>
+        <button class="detail-btn right-btn">Detail</button>
+      </div>
+    </div>
+    <div class="class-details">
+      <p>
+        <span>Name:</span> Angela Morgan
+      </p>
+      <p>
+        <span>Subject:</span> Biology
+      </p>
+    </div>
+  </div>
+  <!-- Student Table -->
+
+  <div class="student-table-container">
+    <div class="table-header">
+      <h2>Students Table</h2>
+      <a href="#"><button class="add-student-btn">Add Student</button></a>
+    </div>
+    <table id="studentsTable">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Middle Name</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.first_name }}</td>
+            <td>{{ student.middle_name }}</td>
+            <td>{{ student.age }}</td>
+            <td class="student-crud">
+              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
+              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn">Detail</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
 {% endblock %}
 
 {% block script %}
@@ -45,5 +103,43 @@
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-  <script></script>
+  <script>
+    $(document).ready(function () {
+      const table = $('#studentsTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+  </script>
 {% endblock %}

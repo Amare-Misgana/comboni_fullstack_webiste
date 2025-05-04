@@ -16,12 +16,18 @@
   --dark-background: rgb(235, 235, 235);
   --transparent: 235, 235, 235;
   --switch-mode: 0.5s;
+  --edit-btn: #1f8029;
+  --edit-btn-hover: #29bb37;
+  --delete-btn: #ce1d1d;
+  --delete-btn-hover: #db2323;
+  --detail-btn: #21828d;
+  --detail-btn-hover: #269eac;
 }
 
 body.dark-mode {
   --transparent: 25, 25, 25;
   --primary-text: rgb(228, 228, 228);
-  --primary: #24722b;
+  --primary: #2e9237;
   --box-shadow: rgb(45, 45, 45);
   --tint: rgb(75, 75, 75);
   --primaryL: rgb(118, 212, 121);
@@ -35,5 +41,11 @@ body.dark-mode {
   --background: rgb(18, 18, 18);
   --light-background: rgb(43, 46, 42);
   --dark-background: rgb(32, 32, 32);
+  --edit-btn: #42c44f;
+  --edit-btn-hover: #36a142;
+  --delete-btn: #ff5b5c;
+  --delete-btn-hover: #cc4748;
+  --detail-btn: #4db7bd;
+  --detail-btn-hover: #3e959a;
   background-color: var(--background);
 }

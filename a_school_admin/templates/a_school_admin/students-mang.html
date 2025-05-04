@@ -23,7 +23,6 @@
   <div class="student-table-container top-student-container">
     <div class="table-header">
       <h2>Top Students</h2>
-      <a href="#"><button class="add-student-btn">Add Student</button></a>
     </div>
     <table id="TopStudentsTable">
       <thead>
@@ -40,9 +39,9 @@
             <td>{{ student.first_name }}</td>
             <td>{{ student.middle_name }}</td>
             <td>{{ student.age }}</td>
-            <td class="student-crud">
-              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn">Detail</a>
+            <td class="crud">
+              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn left-btn">Edit</a>
+              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn right-btn">Detail</a>
             </td>
           </tr>
         {% endfor %}
@@ -55,7 +54,7 @@
   <div class="student-table-container">
     <div class="table-header">
       <h2>Students Table</h2>
-      <a href="#"><button class="add-student-btn">Add Student</button></a>
+      <a href="{% url 'add_student_url' %}"><button class="add-student-btn">Add Student</button></a>
     </div>
     <table id="studentsTable">
       <thead>
@@ -72,9 +71,9 @@
             <td>{{ student.first_name }}</td>
             <td>{{ student.middle_name }}</td>
             <td>{{ student.age }}</td>
-            <td class="student-crud">
-              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn">Detail</a>
+            <td class="crud">
+              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn left-btn">Edit</a>
+              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn right-btn">Detail</a>
             </td>
           </tr>
         {% endfor %}

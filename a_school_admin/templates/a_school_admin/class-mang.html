@@ -276,6 +276,17 @@
       chart1.update()
     })
     
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'F9') {
+        const newColor = getLabelColor()
+        chart1.options.plugins.legend.labels.color = newColor
+        chart1.options.plugins.title.color = newColor
+        chart1.options.scales.x.ticks.color = newColor
+        chart1.options.scales.y.ticks.color = newColor
+        chart1.update()
+      }
+    })
+    
     $(document).ready(function () {
       const table = $('#classTable').DataTable({
         responsive: true,

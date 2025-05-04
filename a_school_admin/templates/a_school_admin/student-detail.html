@@ -18,95 +18,6 @@
 {% endblock %}
 
 {% block content %}
-  {% comment %} <div class="student-profile-card">
-    <div class="profile-header">
-      <img src="https://via.placeholder.com/120" alt="Profile Picture" class="profile-pic" />
-      <div class="profile-actions">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-      </div>
-    </div>
-
-    <div class="profile-details">
-      <p>
-        <span>First Name:</span> [First Name]
-      </p>
-      <p>
-        <span>Middle Name:</span> [Middle Name]
-      </p>
-      <p>
-        <span>Last Name:</span> [Last Name]
-      </p>
-      <p>
-        <span>Age:</span> [Age]
-      </p>
-      <p>
-        <span>Gender:</span> [Gender]
-      </p>
-      <p>
-        <span>Phone Number:</span> [Phone]
-      </p>
-      <p>
-        <span>Email:</span> [Email]
-      </p>
-      <p>
-        <span>Grade:</span> [Grade]
-      </p>
-      <p>
-        <span>Section:</span> [Section]
-      </p>
-      <p>
-        <span>Status:</span> [75%]
-      </p>
-      <p>
-        <span>Best Subject:</span> [Math]
-      </p>
-      <p>
-        <span>Worst Subject:</span> [History]
-      </p>
-    </div>
-  </div> {% endcomment %}
-  {% comment %} <div class="student-card">
-    <img src="{% static 'images/profile-placeholder.jpg' %}" alt="Profile Image" class="profile-image" />
-
-    <div class="info-grid">
-      <div class="info-group">
-        <span class="label">First Name:</span><span class="value">John</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Middle Name:</span><span class="value">A.</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Last Name:</span><span class="value">Doe</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Age:</span><span class="value">16</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Gender:</span><span class="value">Male</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Phone:</span><span class="value">+123456789</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Status:</span><span class="value">85%</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Best Subject:</span><span class="value">Math</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Worst Subject:</span><span class="value">History</span>
-      </div>
-      <div class="info-group">
-        <span class="label">Class:</span><span class="value">10B</span>
-      </div>
-    </div>
-
-    <div class="action-buttons">
-      <button class="edit-btn">Edit</button>
-      <button class="delete-btn">Delete</button>
-    </div>
-  </div> {% endcomment %}
   <div class="student-container">
     <div class="chart-wrapper">
       <h2>Status Overview</h2>
@@ -153,8 +64,8 @@
       </div>
 
       <div class="action-buttons">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
+        <a href="{% url 'edit_student_url' %}"><button class="edit-btn">Edit</button></a>
+        <a href=""><button class="delete-btn">Delete</button></a>
       </div>
     </div>
   </div>

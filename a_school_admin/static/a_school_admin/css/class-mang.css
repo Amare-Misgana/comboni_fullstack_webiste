@@ -178,7 +178,7 @@ table#classTable tbody tr:hover {
     width: 100%;
     box-sizing: border-box;
     font-size: 1rem;
-    background-color: var(--background) !important;
+    background-color: var(--tint) !important;
 }
 
 .dataTables_filter input:focus {
@@ -255,4 +255,61 @@ table#TopStudentsTable tbody tr:nth-child(odd) {
 table#TopStudentsTable tbody tr:hover {
     background: var(--primaryLL);
     cursor: pointer;
+}
+
+
+
+
+/* Edit/Delete Buttons */
+.crud {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.crud .right-btn {
+    border-radius: 0 0.3em 0.3em 0;
+}
+
+.crud .left-btn {
+    border-radius: 0.3em 0 0 0.3em;
+}
+
+.crud .delete-btn,
+.crud .edit-btn,
+.crud .detail-btn {
+    width: 5.5em;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    padding: 0.3em 0.5em;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.crud .edit-btn {
+    background: var(--edit-btn);
+}
+
+.crud .edit-btn:hover {
+    background: var(--edit-btn-hover);
+}
+
+.crud .delete-btn {
+    background: var(--delete-btn);
+}
+
+.crud .delete-btn:hover {
+    background: var(--delete-btn-hover);
+}
+
+.crud .detail-btn {
+    background: var(--detail-btn);
+}
+
+.crud .detail-btn:hover {
+    background: var(--detail-btn-hover);
 }

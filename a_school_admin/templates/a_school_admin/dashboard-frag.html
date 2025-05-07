@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'css/variables.css' %}" />
     <link rel="stylesheet" href="{% static 'a_school_admin/css/dashboard-frag.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/no_data_box.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/checkbox.css' %}" />
     <link rel="icon" href="{% static 'images/1x/Asset 7.png' %}" />
     {% block head %}
 
@@ -18,6 +20,7 @@
     </title>
   </head>
   <body>
+    {% include 'fragments/messages.html' %}
     <div class="dashboard">
       <header class="header" id="slide-bar">
         <div class="nav-head">
@@ -35,25 +38,31 @@
               <li>
                 <a href="{% url 'admin_dashboard_url' %}">
                   <i class="fas fa-tachometer-alt"></i>
-                  <p>Home</p>
+                  <p>Dashboard</p>
                 </a>
               </li>
               <li>
                 <a href="{% url 'students_mang_url' %}">
                   <i class="fas fa-user-graduate"></i>
-                  <p>Plus</p>
+                  <p>Students</p>
                 </a>
               </li>
               <li>
                 <a href="{% url 'teachers_mang_url' %}">
                   <i class="fas fa-chalkboard-teacher"></i>
-                  <p>Material</p>
+                  <p>Teachers</p>
                 </a>
               </li>
               <li>
                 <a href="{% url 'class_mang_url' %}">
                   <i class="fas fa-school"></i>
-                  <p>Calender</p>
+                  <p>Class</p>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'class_mang_url' %}">
+                  <i class="fas fa-school"></i>
+                  <p>Class</p>
                 </a>
               </li>
             </ul>
@@ -93,15 +102,13 @@
             </form>
           </div>
 
-          <div class="popup-overlay" id="logoutPopup">
-            <div class="popup-box">
-              <p>Are you sure you want to logout?</p>
-              <div class="popup-actions">
-                <button class="confirm" onclick="confirmLogout()">Yes</button>
-                <button class="cancel" onclick="closeLogoutPopup()">No</button>
-              </div>
-            </div>
-          </div>
+          <!-- Logout Confirmation -->
+
+          {% include 'fragments/confirm.html' with confirm_message='Are you sure you want to logout?' %}
+
+          <!-- Delete Confirmation -->
+
+          {% include 'fragments/delete_confirm.html' with delete_confirm_message='Are you sure you want to delete?' %}
         </div>
         <div class="content">
           <!-- CONTENTS OF THE DASHBOARD HERE -->

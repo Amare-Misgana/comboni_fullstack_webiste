@@ -18,39 +18,39 @@
 {% endblock %}
 
 {% block content %}
-  <form class="student-edit-form" autocomplete="off">
+  <form class="student-edit-form" autocomplete="off" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <h2>Edit Student Information</h2>
 
     <div class="profile-circle">
-      <img id="profilePreview" src="https://via.placeholder.com/120" alt="Profile" />
+      <img id="profilePreview" src="{{ student_profile.user_pic.url }}" alt="Profile" />
       <input type="file" id="profile_image" name="profile_image" accept="image/*" autocomplete="off" />
     </div>
 
     <!-- STUDENT FIELDS -->
     <div class="form-group">
       <label>First Name</label>
-      <input type="text" name="first_name" required autocomplete="off" />
+      <input type="text" name="first_name" required autocomplete="off" value="{{ student_profile.user.first_name }}" />
     </div>
     <div class="form-group">
       <label>Middle Name</label>
-      <input type="text" name="middle_name" autocomplete="off" />
+      <input type="text" name="middle_name" autocomplete="off" value="{{ student_profile.user.middle_name }}" />
     </div>
     <div class="form-group">
       <label>Last Name</label>
-      <input type="text" name="last_name" required autocomplete="off" />
+      <input type="text" name="last_name" required autocomplete="off" value="{{ student_profile.user.last_name }}" />
     </div>
     <div class="form-group">
       <label>Phone Number</label>
-      <input type="tel" name="phone_number" required autocomplete="off" />
+      <input type="tel" name="phone_number" required autocomplete="off" value="{{ student_profile.user.phone_number }}" />
     </div>
     <div class="form-group">
       <label>Email</label>
-      <input type="email" name="email" required autocomplete="off" />
+      <input type="email" name="email" required autocomplete="off" value="{{ student_profile.user.email }}" />
     </div>
     <div class="form-group">
       <label>Age</label>
-      <input type="number" name="age" autocomplete="off" />
+      <input type="number" name="age" autocomplete="off" value="{{ student_profile.user.age }}" />
     </div>
     <div class="form-group">
       <label>Password</label>
@@ -58,14 +58,22 @@
     </div>
     <div class="form-group">
       <label>Gender</label>
-      <select name="gender" required disabled>
-        <option value="" disabled selected>Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
+      <select name="gender" required>
+        <option value="" disabled>Select Gender</option>
+        {% if student_profile.user.gender == 'male' %}
+          <option value="Male" selected>Male</option>
+          <option value="Female">Female</option>
+        {% else %}
+          <option value="Male">Male</option>
+          <option value="Female" selected>Female</option>
+        {% endif %}
       </select>
     </div>
 
-    <button type="submit">Update</button>
+    <div class="crud">
+      <button type="submit" class="left-btn edit-btn btn">Update</button>
+      <a href="{% url 'students_mang_url' %}" class="right-btn delete-btn btn">Cancel</a>
+    </div>
   </form>
 {% endblock %}
 

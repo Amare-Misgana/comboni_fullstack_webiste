@@ -229,5 +229,6 @@ def login_view(request, role):
     return render(request, "a_visitor/login.html", context)
 
 def logout_view(request):
+    messages.success(request, "You have been successfully logged out. See you next time!")
     logout(request)
     return redirect("home_url")

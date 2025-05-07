@@ -1,0 +1,138 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2em;
+    padding-top: 3em;
+}
+
+.teacher-container {
+    display: flex;
+    justify-content: center;
+    padding: 2em;
+    width: 90%;
+}
+
+.teacher-card {
+    background: var(--light-background);
+    border-radius: 0.3em;
+    padding: 2em;
+    width: 100%;
+    max-width: 1000px;
+    color: var(--primary-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+}
+
+.profile-image {
+    width: 10em;
+    height: 10em;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px dashed var(--primaryL);
+    box-shadow: 0 0 0.5em var(--tint);
+}
+
+.info-flex {
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3em;
+}
+
+.info-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 0.9em;
+    color: var(--secondary-text);
+}
+
+.value {
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--primary-text);
+}
+
+
+
+/* Edit/Delete Buttons */
+.crud {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.crud .right-btn {
+    border-radius: 0 0.3em 0.3em 0;
+}
+
+.crud .left-btn {
+    border-radius: 0.3em 0 0 0.3em;
+}
+
+.crud .delete-btn,
+.crud .edit-btn,
+.crud .detail-btn {
+    width: 5.5em;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    padding: 0.3em 0.5em;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.crud .edit-btn {
+    background: var(--edit-btn);
+}
+
+.crud .edit-btn:hover {
+    background: var(--edit-btn-hover);
+}
+
+.crud .delete-btn {
+    background: var(--delete-btn);
+}
+
+.crud .delete-btn:hover {
+    background: var(--delete-btn-hover);
+}
+
+.crud .detail-btn {
+    background: var(--detail-btn);
+}
+
+.crud .detail-btn:hover {
+    background: var(--detail-btn-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .info-flex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .crud .delete-btn,
+    .crud .edit-btn,
+    .crud .detail-btn {
+        width: 9.5em;
+    }
+
+}

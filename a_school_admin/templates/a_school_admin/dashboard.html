@@ -13,7 +13,7 @@
 {% block page_title %}
   <h2>Welcome back,</h2>
   <div class="user-info">
-    <img src="https://picsum.photos/200" alt="" />
+    <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
     <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
   </div>
 {% endblock %}
@@ -24,7 +24,7 @@
       <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-user-graduate"></i>
       <div class="info">
-        <h1>734</h1>
+        <h1>{{ students_amount }}</h1>
         <p>Total Students</p>
       </div>
     </div>
@@ -32,7 +32,7 @@
       <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-chalkboard-teacher"></i>
       <div class="info">
-        <h1>734</h1>
+        <h1>{{ teachers_amount }}</h1>
         <p>Total Teachers</p>
       </div>
     </div>
@@ -40,7 +40,7 @@
       <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-school"></i>
       <div class="info">
-        <h1>734</h1>
+        <h1>{{ grades_amount }}</h1>
         <p>Total Classes</p>
       </div>
     </div>
@@ -48,7 +48,7 @@
       <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-layer-group"></i>
       <div class="info">
-        <h1>734</h1>
+        <h1>{{ sections_amount }}</h1>
         <p>Total Sections</p>
       </div>
     </div>
@@ -60,7 +60,9 @@
     <canvas id="student-gender"></canvas>
   </div>
   <div class="admin-table">
-    <h2>Admins Recent Actions</h2>
+    <div class="table-header">
+      <h2>Admins Recent Actions</h2>
+    </div>
     <table id="adminTable">
       <thead>
         <tr>
@@ -70,86 +72,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>John Doe</td>
-          <td>Added new user</td>
-          <td>2025-05-03 12:30</td>
-        </tr>
-        <tr>
-          <td>Jane Smith</td>
-          <td>Updated permissions</td>
-          <td>2025-05-03 11:10</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
-        <tr>
-          <td>John Doe</td>
-          <td>Added new user</td>
-          <td>2025-05-03 12:30</td>
-        </tr>
-        <tr>
-          <td>Jane Smith</td>
-          <td>Updated permissions</td>
-          <td>2025-05-03 11:10</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
-        <tr>
-          <td>John Doe</td>
-          <td>Added new user</td>
-          <td>2025-05-03 12:30</td>
-        </tr>
-        <tr>
-          <td>Jane Smith</td>
-          <td>Updated permissions</td>
-          <td>2025-05-03 11:10</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
-        <tr>
-          <td>John Doe</td>
-          <td>Added new user</td>
-          <td>2025-05-03 12:30</td>
-        </tr>
-        <tr>
-          <td>Jane Smith</td>
-          <td>Updated permissions</td>
-          <td>2025-05-03 11:10</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
-        <tr>
-          <td>Alex Lee</td>
-          <td>Deleted post</td>
-          <td>2025-05-02 18:45</td>
-        </tr>
+        {% for action, profile in admin_actions %}
+          <tr>
+            <td>{{ profile.username }}</td>
+            <td>{{ action.action }}</td>
+            <td>{{ action.timestamp|date:'Y-m-d H:i' }}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
@@ -229,7 +158,7 @@
             display: true,
             text: 'Student Votes by Color',
             color: getLabelColor(),
-            font: { size: 25 },
+            font: { size: 25, weight: 'normal' },
             align: 'start'
           }
         },
@@ -268,7 +197,7 @@
             display: true,
             text: 'Student Gender Per Grade',
             color: getLabelColor(),
-            font: { size: 25 },
+            font: { size: 25, weight: 'normal' },
             align: 'start'
           }
         },

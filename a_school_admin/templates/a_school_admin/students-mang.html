@@ -40,8 +40,8 @@
             <td>{{ student.middle_name }}</td>
             <td>{{ student.age }}</td>
             <td class="crud">
-              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn left-btn">Edit</a>
               <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn right-btn">Detail</a>
+              <a href="{% url 'edit_student_url' student_username=student.username %}" class="edit-btn left-btn">Edit</a>
             </td>
           </tr>
         {% endfor %}
@@ -72,8 +72,8 @@
             <td>{{ student.middle_name }}</td>
             <td>{{ student.age }}</td>
             <td class="crud">
-              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn left-btn">Edit</a>
               <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn right-btn">Detail</a>
+              <a href="{% url 'edit_student_url' student_username=student.username %}" class="edit-btn left-btn">Edit</a>
             </td>
           </tr>
         {% endfor %}

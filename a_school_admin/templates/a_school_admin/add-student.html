@@ -7,7 +7,6 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'a_school_admin/css/add-student.css' %}" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
 {% endblock %}
 
 {% block page_title %}
@@ -21,54 +20,61 @@
   <div class="add-student-form">
     <h2>Add Student</h2>
 
-    <div class="profile-wrapper">
-      <label for="profile_image" class="profile-label">
-        <img src="https://picsum.photos/120" id="profilePreview" alt="Profile Preview" />
-        <input type="file" id="profile_image" accept="image/*" hidden />
-      </label>
-    </div>
-
-    <form>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="profile-wrapper">
+        <label for="profile_image" class="profile-label">
+          <img src="https://picsum.photos/120" id="profilePreview" alt="Profile Preview" />
+          <input type="file" id="profile_image" accept="image/*" hidden name="profile_pic" required />
+        </label>
+      </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="fname">First Name</label>
-          <input type="text" id="fname" />
+          <label for="first_name">First Name</label>
+          <input type="text" id="first_name" name="first_name" required />
         </div>
         <div class="form-group">
-          <label for="mname">Middle Name</label>
-          <input type="text" id="mname" />
+          <label for="middle_name">Middle Name</label>
+          <input type="text" id="middle_name" name="middle_name" required />
         </div>
         <div class="form-group">
-          <label for="lname">Last Name</label>
-          <input type="text" id="lname" />
+          <label for="last_name">Last Name</label>
+          <input type="text" id="last_name" name="last_name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" />
+          <label for="phone_number">Phone Number</label>
+          <input type="tel" id="phone_number" name="phone_number" required />
         </div>
         <div class="form-group">
           <label for="age">Age</label>
-          <input type="number" id="age" min="1" />
+          <input type="number" id="age" name="age" min="1" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="gender">Gender</label>
-          <select id="gender">
-            <option value="">Select</option>
+          <select id="gender" name="gender" required>
+            <option value="" disabled>Select</option>
             <option>Male</option>
             <option>Female</option>
-            <option>Other</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="class">Class</label>
-          <select id="class">
-            <option value="">Select Class</option>
+          <label for="class_name">Class</label>
+          <select id="class_name" name="class_name" required>
+            <option value="" disabled activated>Select Class</option>
             <option>Grade 1</option>
             <option>Grade 2</option>
             <option>Grade 3</option>
@@ -78,7 +84,7 @@
       </div>
 
       <div class="crud">
-        <button class="edit-btn left-btn">Save</button>
+        <button class="edit-btn left-btn" type="submit">Save</button>
         <button class="delete-btn right-btn" type="reset">Clear</button>
       </div>
     </form>
@@ -86,11 +92,8 @@
 {% endblock %}
 
 {% block script %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-
   <script>
+    
     document.getElementById('profile_image').addEventListener('change', function (e) {
       const file = e.target.files[0]
       if (!file) return
@@ -99,44 +102,6 @@
         document.getElementById('profilePreview').src = ev.target.result
       }
       reader.readAsDataURL(file)
-    })
-    
-    $(document).ready(function () {
-      const table = $('#studentsTable').DataTable({
-        responsive: true,
-        initComplete: function () {
-          $('.dataTables_length label')
-            .contents()
-            .filter(function () {
-              return this.nodeType === 3
-            })
-            .each(function () {
-              this.textContent = this.textContent.replace('entries', '').trim()
-              this.textContent = this.textContent.replace('Show', '').trim()
-            })
-    
-          $('.dataTables_filter label')
-            .contents()
-            .filter(function () {
-              return this.nodeType === 3
-            })
-            .each(function () {
-              this.textContent = this.textContent.replace('Search:', '').trim()
-            })
-    
-          const labelEl = document.querySelector('.dataTables_length label')
-          const selectList = document.createElement('p')
-          selectList.className = 'select-label'
-          selectList.textContent = 'Show'
-          labelEl.appendChild(selectList)
-    
-          const labelSR = document.querySelector('.dataTables_filter label')
-          const searchList = document.createElement('p')
-          searchList.className = 'search-label'
-          searchList.textContent = 'Search'
-          labelSR.appendChild(searchList)
-        }
-      })
     })
   </script>
 {% endblock %}

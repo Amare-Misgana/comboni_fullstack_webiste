@@ -149,3 +149,41 @@ function closeLogoutPopup() {
 function confirmLogout() {
   document.getElementById('logoutForm').submit();
 }
+
+document.getElementById("logoutPopup").addEventListener("click", ()=>{
+  closeLogoutPopup()
+})
+
+document.querySelector(".header").addEventListener("click", ()=>{
+  closeLogoutPopup()
+})
+
+document.querySelector(".content").addEventListener("click", ()=>{
+  closeLogoutPopup()
+})
+
+
+
+
+function showDeletePopup(e) {
+  e.preventDefault();
+  document.getElementById("delete-popup").style.display = "flex";
+}
+
+function hideDeletePopup() {
+  document.getElementById("delete-popup").style.display = "none";
+}
+
+function confirmDelete() {
+  hideDeletePopup();
+  alert("Deleted successfully!");
+}
+
+document.getElementById("delete-popup").addEventListener("click", ()=>{
+  hideDeletePopup()
+})
+
+document.querySelector(".top").addEventListener("click", ()=>{
+  hideDeletePopup()
+})
+

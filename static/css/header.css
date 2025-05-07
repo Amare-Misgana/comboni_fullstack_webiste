@@ -1,280 +1,297 @@
-* {
+:root {
+  --lprimary: #196b21;
+  --lprimaryL: rgb(118, 212, 121);
+  --lprimaryLL: rgba(143, 212, 145, 0.664);
+  --lprimaryD: rgb(45, 170, 49);
+}
+
+/* 1. RESET & BASE */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Merriweather", sans-serif;
-}
-body {
-  background-color: #fdfdfd !important;
-}
-.logo_link {
-  text-decoration: none;
-}
-.hero_container {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  background-color: black;
-  isolation: isolate;
-  padding: 1em;
-}
-.hero_container .logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1em;
-}
-.hero_container .logo img {
-  width: 5.6em;
 }
 
-.hero_container .logo h1 {
-  color: white;
-  font-size: 4em;
+body {
+  background: var(--background);
+  color: var(--primary-text);
 }
-.hero_container nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.hero_container nav .nav_links {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2em;
-}
-.hero_container nav .nav_links a {
-  text-decoration: none;
-  color: var(--link);
+
+/* 2. HERO WRAPPER & BG IMAGE */
+.hero_container {
   position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.534);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-.hero_container nav .nav_links a::after {
+
+.hero_container::after {
   content: "";
   position: absolute;
-  width: 0;
-  height: 0.2em;
-  background-color: #fff;
+  inset: 0;
+  z-index: -1;
+  background: url("/static/a_visitor/images/hero_background.jpg") center/cover no-repeat;
+  opacity: 0.6;
+}
+
+/* 3. OVERLAY */
+.hero_container .menu_overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--transparent);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+}
+
+.hero_container .menu_overlay.active {
+  display: block;
+}
+
+/* 4. NAV BAR */
+.hero_container nav {
+  position: relative;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2%;
+}
+
+/* 5. HAMBURGER */
+.hero_container .menu-toggle {
+  display: block;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: rgb(224, 224, 224);
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* 6. LOGO */
+.hero_container nav .logo_link .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero_container nav .logo_link .logo img {
+  width: clamp(3rem, 10vw, 5rem);
+}
+
+.hero_container nav .logo_link .logo h1 {
+  font-size: clamp(1.5rem, 5vw, 4rem);
+  color: white;
+}
+
+.hero_container nav a {
+  text-decoration: none;
+
+}
+
+/* 7. SLIDING PANEL */
+.hero_container .nav_links {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 50%;
+  height: 100vh;
+  background: var(--lprimary);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 3rem 1.5rem;
+  /* overflow-y: auto; */
+  transition: right 0.3s ease;
+  z-index: 95;
+}
+
+.hero_container .nav_links.active {
+  right: 0;
+  gap: 0;
+  padding: 0;
+}
+
+/* 8. CLOSE BUTTON */
+.hero_container .nav_links .close-btn {
+  font-size: 2rem;
+  color: white;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+}
+
+/* 9. LINKS INSIDE PANEL */
+.hero_container .nav_links a {
+  font-size: 1.25rem;
+  color: var(--background);
+  text-decoration: none;
+  position: relative;
+}
+
+.hero_container .nav_links.active a {
+  padding: 1em 2em;
+}
+
+.hero_container .nav_links.active {
+  padding-top: 5em;
+}
+
+.hero_container .nav_links a::after {
+  content: "";
+  position: absolute;
   bottom: -3px;
   left: 50%;
-  transition: width 0.4s ease, left 0.4s ease;
+  width: 0;
+  height: 4px;
+  background: var(--background);
+  transition: width 0.3s, left 0.3s;
 }
-.hero_container nav .nav_links a:hover::after {
+
+.hero_container .nav_links a:hover::after {
   width: 100%;
   left: 0;
 }
-.hero_container nav .nav_links .nav_link_login::after {
-  display: none;
+
+.hero_container .nav_links.active a:hover::after {
+  width: 0;
 }
-.hero_container nav .nav_links a button {
-  padding: 0.3em 1em;
-  background-color: var(--primary);
-  color: var(--primary-text);
+
+.hero_container .nav_links.active a:hover {
+  background-color: var(--lprimaryLL);
+}
+
+.hero_container .nav_links.active a:hover:last-child {
+  background-color: var(--lprimary);
+}
+
+
+
+.hero_container .nav_links a:last-child:hover::after {
+  width: 0;
+}
+
+.hero_container .nav_links a.nav_link_login button {
+  background: var(--background);
+  color: var(--primary);
   border: none;
-  font-size: 1.2em;
-  border-radius: 0.2em;
-  font-family: "poppins", sans-serif;
-}
-.hero_container nav .nav_links a button:hover {
-  background-color: var(--primary-light);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
   cursor: pointer;
 }
+
+/* 10. HERO CONTENT */
 .hero_container .hero {
-  margin-top: 5em;
+  flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  text-align: center;
+  padding: 2rem 1rem;
+  gap: 1rem;
 }
-.hero_container .hero * {
-  color: var(--primary-text);
+
+.hero_container .slogn p {
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  color: var(--secondary-text);
+  font-style: italic;
   text-align: center;
 }
-.hero_container .hero .slogn {
-  font-size: 0.9em;
+
+.hero_container .main_header h1 {
+  font-size: clamp(1rem, 6vw, 6rem);
+  color: var(--background);
+  animation: slideIn 0.8s ease forwards;
 }
-.hero_container .hero .main_header h1 {
-  font-size: 6.3em;
+
+.hero_container .sub_header h3 {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  color: var(--primary-text);
+  max-width: 90%;
+  margin: 0.5rem 0 1.5rem;
 }
-.hero_container .hero .sub_header h3 {
-  font-size: 1.5em;
-  font-weight: 50;
-  margin: 1em 0 2em 0;
-  max-width: 70vw;
+
+body.small-header .slogn,
+body.small-header .sub_header {
+  display: none;
 }
-.hero_container .hero .cta {
+
+/* 11. CALL‑TO‑ACTION */
+.hero_container .cta {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2em;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
-.hero_container .hero .cta a button {
-  width: 12em;
-  padding: 0.6em;
-  border-radius: 0.4em;
+
+.hero_container .cta a button {
+  padding: 0.75em 1.5em;
+  font-size: 1rem;
   border: none;
-  background-color: var(--primary);
-  font-family: "poppins", sans-serif;
-  font-size: 1em;
-}
-.hero_container .hero .cta a button:hover {
+  border-radius: 0.25em;
+  background: var(--primary);
+  color: var(--background);
   cursor: pointer;
-  background-color: var(--primary-light);
 }
-.hero_container .hero .cta .optional_cta {
-  background-color: rgba(255, 255, 255, 0.226);
-  backdrop-filter: blur(1px);
-  border: 1px solid;
+
+.hero_container .cta a .optional_cta {
+  background: rgba(var(--transparent), 0.2);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--primary);
 }
-.hero_container .hero .cta .optional_cta:hover {
-  background-color: #fff;
+
+.hero_container .cta a .optional_cta:hover {
+  background: var(--background);
   color: var(--primary);
 }
-@media (max-width: 768px) {
-  .hero_container nav {
-    flex-direction: column;
-    gap: 1em;
-  }
-  .hero_container nav .nav_links {
-    transform: translateX(100%);
-    transition: transform 1s ease;
-    background-color: var(--primary);
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    width: 15em;
-    top: 0;
-    right: 0;
+
+/* 12. SLIDE‑IN KEYFRAME */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
 
-  .hero_container .logo img {
-    width: 10em;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  .hero_container .logo h1 {
+/* 13. DESKTOP OVERRIDES */
+@media (min-width: 768px) {
+  .hero_container .menu-toggle {
     display: none;
+  }
+
+  .hero_container .menu_overlay {
+    display: none !important;
   }
 
   .hero_container .nav_links {
-    flex-wrap: wrap;
-    gap: 0.5em;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    height: auto;
+    width: auto;
+    background: transparent;
+    padding: 0;
+    gap: 2rem;
+    transition: none;
+  }
+
+  .hero_container .nav_links .close-btn {
+    display: none;
   }
 
   .hero_container .hero {
-    margin-top: 3em;
-    padding: 0 1em;
+    padding: 4rem 2rem;
   }
-
-  .hero_container .hero .slogn p {
-    font-size: 0.7em;
-  }
-
-  .hero_container .hero .main_header h1 {
-    font-size: 3.9em;
-  }
-
-  .hero_container .hero .sub_header h3 {
-    font-size: 1.1em;
-    max-width: 100%;
-  }
-
-  .hero_container .hero .cta {
-    gap: 1em;
-  }
-  .nav_links {
-    transform: translateX(100%);
-  }
-  .nav_links.active {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    z-index: 9999999;
-    background-color: var(--primary);
-    height: 100vh;
-    width: 16em;
-    gap: 2em;
-    animation: slide-in 0.7s ease forwards;
-    transform: translateX(100%);
-  }
-  @keyframes slide-in {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(0);
-    }
-  }
-  .nav_links * {
-    font-size: 2em;
-  }
-  .nav_links a:last-child {
-    display: none;
-  }
-  .menu-toggle {
-    display: block !important;
-  }
-  .fa-times {
-    color: white;
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0.4em;
-  }
-  .fa-times:hover {
-    cursor: pointer;
-  }
-}
-@media (max-width: 480px) {
-  .hero_container .hero .main_header h1 {
-    font-size: 2.5em;
-    font-family: "merriweather", serif;
-    font-weight: 400;
-    margin: 1.2em;
-    width: 100vw;
-  }
-  .hero_container .hero .slogn p {
-    font-size: 1em;
-    transform: translateY(2em);
-  }
-  .hero_container .hero .sub_header h3 {
-    font-size: 1.2em;
-    font-weight: 400;
-    transform: translateY(-1em);
-  }
-  .hero_container .hero .cta a button {
-    width: 8em;
-    padding: 0.8em;
-  }
-}
-.menu-toggle {
-  font-size: 2em;
-  background: none;
-  border: none;
-  color: white;
-  display: none;
-  position: absolute;
-  top: 0.2em;
-  right: 0.6em;
-}
-.menu-toggle:hover {
-  cursor: pointer;
-}
-
-/* Over lay */
-.menu_overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.452);
-  z-index: 1;
-  display: none;
-  backdrop-filter: blur(2px);
-}
-.menu_overlay:hover {
-  cursor: pointer;
-}
-
-.menu_overlay.active {
-  display: block;
 }

@@ -157,7 +157,7 @@ table#studentsTable tbody tr:hover {
     width: 100%;
     box-sizing: border-box;
     font-size: 1rem;
-    background-color: var(--background) !important;
+    background-color: var(--tint) !important;
 }
 
 .dataTables_filter input:focus {
@@ -188,7 +188,7 @@ table#studentsTable tbody tr:hover {
 
 .dataTables_length label select {
     width: 9em;
-    background-color: var(--background) !important;
+    background-color: var(--tint) !important;
     color: var(--primary-text) !important;
     border: 1px solid var(--primaryD) !important;
     outline: none;

@@ -33,7 +33,7 @@ body {
   overflow: hidden;
   transition: width 0.7s ease;
   border-right: 1px solid var(--tint);
-  transition: background-color var(--switch-mode) ease, color var(--switch-mode) ease, border-right var(--switch-mode) ease;
+  transition: background-color var(--switch-mode) ease, color var(--switch-mode) ease, border-right var(--switch-mode) ease, width 0.5s ease;
 }
 
 body.slide .header {
@@ -135,8 +135,9 @@ body.slide .links ul {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.4em;
+  gap: 0.6em;
 }
+
 
 .nav .links ul li a i {
   font-size: 1em;
@@ -333,8 +334,10 @@ body.slide .checkbox:checked~.slider::before {
 }
 
 .top .greeting .user-info img {
-  width: 2em;
+  width: 3em;
+  height: 3em;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .top .greeting .user-info h1 {
@@ -343,7 +346,7 @@ body.slide .checkbox:checked~.slider::before {
 
 .top .greeting>h2 {
   font-size: 1.1em;
-  color: var(--primary-text);
+  color: var(--primary-text) !important;
 }
 
 /* Logout Section */
@@ -443,7 +446,7 @@ div {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: var(--primary);
+  background-color: var(--tint);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -455,60 +458,126 @@ div {
 
 
 
-/* Dashboard Logout Comfirmation */
-
-.popup-overlay {
+.delete-popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(var(--transparent), 0.7);
+  inset: 0;
+  top: 9em;
+  background: rgba(0, 0, 0, 0.4);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
 
-.popup-box {
-  border: 2px solid var(--primaryL);
-  background-color: var(--light-background);
-  color: var(--primary-text);
+.delete-popup-box {
+  background: var(--light-background);
+  border: 2px solid var(--tint);
   padding: 2em;
-  border-radius: 0.5em;
-  box-shadow: 0 0 15px var(--box-shadow);
+  border-radius: 1em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   text-align: center;
+  width: 320px;
+  max-width: 90%;
+  animation: fadeIn 0.25s ease, slideUp 0.25s ease;
+  color: var(--primary-text);
 }
 
-.popup-actions {
-  margin-top: 1em;
+.delete-popup-box p {
+  font-size: 1.1em;
+  color: var(--secondary-text);
+  margin-bottom: 1.5em;
+}
+
+.crud {
   display: flex;
+  /* flex-direction: row-reverse; */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+
+
+.logout-popup {
+  position: fixed;
+  inset: 0;
+  top: 9em;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
   justify-content: center;
-  gap: 1em;
+  align-items: center;
+  z-index: 9999;
 }
 
-.popup-actions .confirm {
-  background-color: var(--delete-btn);
-  color: white;
-  border: none;
-  padding: 0.5em 1.2em;
-  border-radius: 0.3em;
-  cursor: pointer;
+.logout-popup-box {
+  background: var(--light-background);
+  border: 2px solid var(--tint);
+  padding: 2em;
+  border-radius: 1em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 320px;
+  max-width: 90%;
+  animation: fadeIn 0.25s ease, slideUp 0.25s ease;
+  color: var(--primary-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.popup-actions .confirm:hover {
-  background-color: var(--delete-btn-hover);
+.logout-popup-box p {
+  font-size: 1.1em;
+  color: var(--secondary-text);
+  margin-bottom: 1.5em;
 }
 
-.popup-actions .cancel {
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  padding: 0.5em 1.2em;
-  border-radius: 0.3em;
-  cursor: pointer;
+.crud {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
 }
 
-.popup-actions .cancel:hover {
-  background-color: var(--primaryD);
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

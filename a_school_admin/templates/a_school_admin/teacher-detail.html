@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block title %}
-  Dashboard
+  Dashboard | Teacher Management
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'a_school_admin/css/teachers-mang.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/sub_title.css' %}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/teacher-detail.css' %}" />
 {% endblock %}
 
 {% block page_title %}
@@ -18,5 +18,97 @@
 {% endblock %}
 
 {% block content %}
+  <div class="teacher-container">
+    <div class="teacher-card">
+      <img src="{% static 'images/profile-placeholder.jpg' %}" alt="Profile Image" class="profile-image" />
 
+      <div class="info-flex">
+        <div class="first-column column">
+          <div class="info-group">
+            <span class="label">First Name</span><span class="value">John</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Middle Name</span><span class="value">A.</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Last Name</span><span class="value">Doe</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Age</span><span class="value">30</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Gender</span><span class="value">Male</span>
+          </div>
+        </div>
+        <div class="second-column column">
+          <div class="info-group">
+            <span class="label">Phone</span><span class="value">+123456789</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Subject</span><span class="value">Mathematics</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Experience</span><span class="value">5 Years</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Class Assigned</span><span class="value">10B</span>
+          </div>
+          <div class="info-group">
+            <span class="label">Performance</span><span class="value">Excellent</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="crud">
+        <a href="@"><button class="edit-btn left-btn">Edit</button></a>
+        <a href=""><button class="delete-btn right-btn">Delete</button></a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    let status = 85
+    Chart.register({
+      id: 'centerText',
+      beforeDraw(chart) {
+        const { width } = chart
+        const { height } = chart
+        const ctx = chart.ctx
+        ctx.restore()
+        const fontSize = (height / 140).toFixed(2)
+        ctx.font = `${fontSize}em sans-serif`
+        ctx.textBaseline = 'middle'
+    
+        const text = `${status}%`
+        const textX = Math.round((width - ctx.measureText(text).width) / 2)
+        const textY = height / 2
+    
+        ctx.fillStyle = 'rgb(118, 212, 121)'
+        ctx.fillText(text, textX, textY)
+        ctx.save()
+      }
+    })
+    const ctx = document.getElementById('statusChart').getContext('2d')
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Completed', 'Remaining'],
+        datasets: [
+          {
+            data: [status, 100 - status],
+            backgroundColor: ['#196b21', 'crimson'],
+            borderWidth: 0
+          }
+        ]
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    })
+  </script>
 {% endblock %}

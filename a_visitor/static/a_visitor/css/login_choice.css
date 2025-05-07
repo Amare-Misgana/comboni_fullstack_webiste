@@ -1,3 +1,7 @@
+body {
+  font-family: "Merriweather", serif;
+}
+
 .login-options {
   display: flex;
   justify-content: center;
@@ -64,9 +68,11 @@
     max-width: 20em;
   }
 }
+
 header {
   height: 70vh !important;
 }
+
 @media (max-width: 768px) {
   .login-options {
     flex-direction: column;

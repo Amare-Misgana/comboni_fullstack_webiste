@@ -33,7 +33,7 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         
-        if role is not "admin":
+        if role != "admin":
             user_profile = UserProfile(
                 user = user,
                 password = password
@@ -43,8 +43,8 @@ class CustomUserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, first_name, middle_name, last_name, email, gender, phone_number, role, password):
-        user = self.create_user(first_name, middle_name, last_name, email, gender, phone_number, role, password)
+    def create_superuser(self, first_name, middle_name, last_name, email, phone_number,gender, password):
+        user = self.create_user(first_name, middle_name, last_name, email, gender, phone_number,password)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -67,6 +67,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     middle_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
+    age = models.PositiveIntegerField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     phone_number = models.CharField(max_length=15)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
@@ -78,6 +79,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'middle_name', 'last_name', 'gender', 'phone_number', 'role']
+    
+    def save(self, *args, **kwargs):
+        base_username = f"{self.first_name}{self.middle_name}{self.last_name}".lower()
+        similar_users = CustomUser.objects.filter(username__startswith=base_username).exclude(pk=self.pk).count()
+
+        if similar_users > 0:
+            self.username = f"{base_username}-{similar_users + 1}"
+        else:
+            self.username = base_username
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username
@@ -87,25 +99,49 @@ class UserProfile(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     username = models.CharField(max_length=150, blank=True, null=True)
     user_pic = models.ImageField(upload_to="avatars", blank=True, null=True)
-    password = models.CharField(max_length=150)
+    password = models.CharField(max_length=150, blank=True, null=True)
     def save(self, *args, **kwargs):
         if self.user:
             self.username = f"{self.user.first_name} {self.user.middle_name}"
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.username}"
+
 class Message(models.Model):
-    sender = models.ForeignKey(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name='sent_messages'
-    )
-    receiver = models.ForeignKey(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name='received_messages'
-    )
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='received_messages')
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
+
+class Class(models.Model):
+    class_name = models.CharField(max_length=50, unique=True)
+
+class Subject(models.Model):
+    subject_name = models.CharField(max_length=50)
+
+class ClassSubject(models.Model):
+    class_room = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="class_subjects")
+    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="subject_classes")
+    teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="teaching_subjects")
+
+
+class ClassRoom(models.Model):
+    class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="classrooms")
+    student = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_students")
+    room_teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_teachers")
+
+class MarkList(models.Model):
+    class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="marklists")
+    student = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="student_marks")
+    teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="teacher_marks")
+    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="marklists")
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
+
+
+    

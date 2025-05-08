@@ -18,14 +18,31 @@
 {% endblock %}
 
 {% block content %}
+  <div class="batch-creation-card" onclick="window.location.href='{% url 'create_classes_url' %}'">
+    <div class="batch-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </div>
+    <div class="batch-card-content">
+      <h3>Batch Create Classes</h3>
+      <p>Add multiple classes at once with duplicate checking</p>
+      <div class="batch-card-action">
+        <span>Get Started</span>
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </div>
+    </div>
+  </div>
   {% if class_performance %}
     <div class="class-activity">
       <canvas id="class-activity"></canvas>
     </div>
   {% else %}
-    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class' empty_message='There is no availabe class, add to view it here' btn_name='+ Add Class' add_url='add_class_url' %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Acitivites" btn_name='+ Add Class' add_url='add_class_url' %}
   {% endif %}
-  {% if classes %}
+  {% if class_rooms %}
     <div class="class-container">
       <div class="table-header">
         <h2>Classes</h2>
@@ -41,11 +58,11 @@
           </tr>
         </thead>
         <tbody>
-          {% for class in classes %}
+          {% for class_room in class_rooms %}
             <tr>
-              <td>{{ class.class_name }}</td>
-              <td>{{ class.total_students }}</td>
-              <td>{{ class.home_room_teacher }}</td>
+              <td>{{ class_room.class_name }}</td>
+              <td>{{ class_room.total_students }}</td>
+              <td>{{ class_room.home_room_teacher }}</td>
               <td class="crud">
                 <a href="{% url 'edit_class_url' class_name=class.class_name %}" class="edit-btn left-btn">Edit</a>
                 <a href="{% url 'class_detail_url' class_name=class.class_name %}" class="detail-btn right-btn">Detail</a>
@@ -56,8 +73,22 @@
       </table>
     </div>
   {% else %}
-    {% include 'fragments/no_data_box.html' with title='Classes' message='There is no classes to display.' %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Tables" btn_name='+ Add Class' add_url='add_class_url' %}
   {% endif %}
+
+  <div class="class-container">
+    <h1>School Classes</h1>
+
+    <div class="classes-container">
+      {% if classes %}
+        {% for class in classes %}
+          <div class="class-card">{{ class }}</div>
+        {% endfor %}
+      {% else %}
+        <div class="no-classes">No classes found. Please add some classes to the system.</div>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block script %}

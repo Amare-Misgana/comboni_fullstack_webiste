@@ -162,6 +162,10 @@ def edit_student(request, student_username):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def add_student(request):
+    context = {
+        "class_list": Class.objects.values_list("class_name", flat=True)
+    }
+
     if request.method == 'POST':
         try:
             first_name = request.POST.get("first_name", "").strip()
@@ -173,56 +177,61 @@ def add_student(request):
             password = request.POST.get('password', "").strip()
             email = request.POST.get('email', "").strip()
             profile_pic = request.FILES.get("profile_pic")
+            class_name = request.POST.get("class_name")
+
+            if not class_name:
+                messages.error(request, "Class is required!")
+                return render(request, "a_school_admin/add-student.html", context)
 
             if not email:
                 messages.error(request, "Email is required!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
             
             if not validate_email(email):
                 messages.error(request, "Invalid email format!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
             
             if CustomUser.objects.filter(email=email).exists():
                 messages.error(request, "Email already exists.")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
 
             if not first_name:
                 messages.error(request, "First name is required!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
             
             if not last_name:
                 messages.error(request, "Last name is required!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
 
             if not phone_number:
                 messages.error(request, "Phone number is required!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
             
             if not re.match(r'^\+?[0-9]{8,15}$', phone_number):
                 messages.error(request, "Invalid phone number format. Use +1234567890 format.")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
 
             if not age:
                 messages.error(request, "Age is required!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
             
             try:
                 age = int(age)
                 if age < 5 or age > 90:
                     messages.error(request, "Age must be between 5 and 90.")
-                    return render(request, "a_school_admin/add-student.html")
+                    return render(request, "a_school_admin/add-student.html", context)
             except ValueError:
                 messages.error(request, "Age must be a valid number.")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
 
             if not gender:
                 messages.error(request, "Gender is required!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
             
 
             if not password:
                 messages.error(request, "Password cannot be empty!")
-                return render(request, "a_school_admin/add-student.html")
+                return render(request, "a_school_admin/add-student.html", context)
 
             student = CustomUser(
                 first_name=first_name,
@@ -236,6 +245,11 @@ def add_student(request):
             )
             student.set_password(password)
             student.save()
+
+            ClassRoom(
+                class_name=class_name,
+                student=student,
+            )
 
             # Save profile picture if provided
             if profile_pic:
@@ -257,9 +271,9 @@ def add_student(request):
 
         except Exception as e:
             messages.error(request, f"Failed to add student: {str(e)}")
-            return render(request, "a_school_admin/add-student.html")
+            return render(request, "a_school_admin/add-student.html", context)
 
-    return render(request, "a_school_admin/add-student.html")
+    return render(request, "a_school_admin/add-student.html", context)
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def student_detail(request, student_username):

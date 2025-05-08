@@ -119,6 +119,13 @@ class Message(models.Model):
 
 class Class(models.Model):
     class_name = models.CharField(max_length=50, unique=True)
+    
+    def __str__(self):
+        return self.class_name
+
+    def clean(self):
+        if self.class_name:
+            self.class_name = self.class_name.upper()
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=50)
@@ -132,7 +139,7 @@ class ClassSubject(models.Model):
 class ClassRoom(models.Model):
     class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="classrooms")
     student = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_students")
-    room_teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_teachers")
+    room_teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_teachers", null=True, blank=True)
 
 class MarkList(models.Model):
     class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="marklists")

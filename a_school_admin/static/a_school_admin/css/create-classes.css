@@ -10,14 +10,28 @@
     margin: 2rem auto;
     padding: 2rem;
     background: var(--light-background);
-    border-radius: 10px;
-    box-shadow: 0 4px 12px var(--box-shadow);
+    border-radius: 0.3em;
+    border: 1px solid var(--tint);
 }
+
+.class-creation-container h2 {
+    color: var(--primary-text);
+}
+
 
 .class-creation-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+.class-creation-form #class-input {
+    background-color: var(--light-background);
+}
+
+.class-creation-form #class-input:focus {
+    outline: none;
+    border: 1px solid var(--primary);
 }
 
 .input-group {
@@ -27,8 +41,8 @@
 }
 
 .input-group label {
-    font-weight: 600;
-    color: var(--primary-text);
+    font-weight: 200;
+    color: var(--secondary-text);
 }
 
 .input-group textarea {
@@ -57,22 +71,22 @@
 
 .submit-btn {
     background: var(--primary);
-    color: var(--high-dark);
+    font-weight: 200;
+    color: white;
 }
 
 .submit-btn:hover {
     background: var(--primaryD);
-    transform: translateY(-2px);
 }
 
 .check-btn {
     background: var(--detail-btn);
     color: white;
+    font-weight: 200;
 }
 
 .check-btn:hover {
     background: var(--detail-btn-hover);
-    transform: translateY(-2px);
 }
 
 .results-container {
@@ -94,9 +108,9 @@
 
 #duplicate-list li,
 #success-list li {
-    background: var(--low-light);
+    background: var(--light-background);
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: 0.3em;
     font-size: 0.9rem;
 }
 
@@ -113,7 +127,6 @@
 /* Dark mode adjustments */
 body.dark-mode .class-creation-container {
     background: var(--dark-background);
-    border: 1px solid var(--low-dark);
 }
 
 body.dark-mode .input-group textarea {

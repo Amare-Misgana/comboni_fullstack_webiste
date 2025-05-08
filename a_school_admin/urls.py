@@ -35,4 +35,5 @@ urlpatterns = [
     path("class-mang/class-detial/<str:class_name>/", view_class.class_detial, name="class_detail_url"),
     path("class-mang/edit-class/<str:class_name>", view_class.edit_class, name="edit_class_url" ),
     path("class-mang/add-class", view_class.add_class, name="add_class_url" ),
+    path("class-mang/create-classes", view_class.create_classes, name="create_classes_url"),
 ]

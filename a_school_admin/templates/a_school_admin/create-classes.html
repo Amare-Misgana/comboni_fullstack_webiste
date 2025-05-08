@@ -1,4 +1,4 @@
-{% extends 'a_school_admin/dashbaord-frag.html' %}
+{% extends 'a_school_admin/dashboard-frag.html' %}
 {% load static %}
 
 {% block title %}
@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'a_school_admin/create-classes.html' %}" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/create-classes.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,6 @@
 
       <div class="form-actions">
         <button type="submit" class="submit-btn">Create Classes</button>
-        <button type="button" class="check-btn" id="check-existing">Check Existing Classes</button>
       </div>
     </form>
 
@@ -40,5 +39,5 @@
 {% endblock %}
 
 {% block script %}
-
+  <script src="{% static 'a_school_admin/js/create-classes.js' %}"></script>
 {% endblock %}

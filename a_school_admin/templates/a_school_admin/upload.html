@@ -1,0 +1,69 @@
+{% extends 'a_school_admin/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Upload
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/upload.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h2></h2>
+  <div class="user-info">
+    <h1 class="username">{{ upload_title }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="upload-title">Upload {{ upload_for }} Data</h1>
+    <div class="upload-container">
+      <form action="{% url 'add_students_url' %}" method="post" enctype="multipart/form-data" id="excel-form" class="upload-form">
+        {% csrf_token %}
+        <div class="upload-box">
+          <svg class="upload-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M14,13V17H10V13H7L12,8L17,13H14M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z" />
+          </svg>
+          <div class="upload-content">
+            <label for="fileInput" class="browse-btn">Browse Files</label>
+            <span class="file-types">.xls .xlsx</span>
+          </div>
+          <input name="file" type="file" id="fileInput" class="visually-hidden" accept=".xls,.xlsx" onchange="handleFileSelect(event)" required />
+          <div class="selected-file" id="selectedFile"></div>
+        </div>
+        <button type="submit" class="submit-btn">Process Data</button>
+      </form>
+
+      {% if errors %}
+        <div class="error-card">
+          <div class="error-header">
+            <svg class="error-icon" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
+            </svg>
+            <h3 class="error-title">Validation Errors</h3>
+          </div>
+          <ul class="error-list">
+            {% for error in errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <div class="columns-card">
+        <h3 class="columns-title">Expected Data Structure</h3>
+        <div class="columns-grid">
+          {% for required_column in required_columns %}
+            <div class="column-item">{{ required_column|capfirst }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_school_admin/js/upload.js' %}"></script>
+{% endblock %}

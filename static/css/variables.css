@@ -22,6 +22,10 @@
   --delete-btn-hover: #db2323;
   --detail-btn: #21828d;
   --detail-btn-hover: #269eac;
+  --card-radius: 18px;
+  --hover-elevate: 8px;
+  --icon-size: 56px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.dark-mode {

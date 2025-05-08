@@ -1,0 +1,44 @@
+{% extends 'a_school_admin/dashbaord-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Add Classes
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/create-classes.html' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="class-creation-container">
+    <h2>Create Multiple Classes</h2>
+    <form method="post" class="class-creation-form">
+      {% csrf_token %}
+      <div class="input-group">
+        <label for="class-input">Enter class names (separated by commas):</label>
+        <textarea id="class-input" name="class_names" placeholder="e.g. 11A, 12B, 9C, 10D" required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">Create Classes</button>
+        <button type="button" class="check-btn" id="check-existing">Check Existing Classes</button>
+      </div>
+    </form>
+
+    <div class="results-container">
+      <div id="duplicate-results" class="hidden">
+        <h3>Existing Classes Found:</h3>
+        <ul id="duplicate-list"></ul>
+      </div>
+
+      <div id="success-message" class="hidden">
+        <h3>Successfully Created:</h3>
+        <ul id="success-list"></ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

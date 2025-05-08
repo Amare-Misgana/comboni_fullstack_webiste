@@ -1,0 +1,123 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.class-creation-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--light-background);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--box-shadow);
+}
+
+.class-creation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--primary-text);
+}
+
+.input-group textarea {
+    min-height: 120px;
+    padding: 1rem;
+    border: 1px solid var(--tint);
+    border-radius: 6px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.submit-btn,
+.check-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--switch-mode);
+}
+
+.submit-btn {
+    background: var(--primary);
+    color: var(--high-dark);
+}
+
+.submit-btn:hover {
+    background: var(--primaryD);
+    transform: translateY(-2px);
+}
+
+.check-btn {
+    background: var(--detail-btn);
+    color: white;
+}
+
+.check-btn:hover {
+    background: var(--detail-btn-hover);
+    transform: translateY(-2px);
+}
+
+.results-container {
+    margin-top: 2rem;
+}
+
+.hidden {
+    display: none;
+}
+
+#duplicate-list,
+#success-list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+#duplicate-list li,
+#success-list li {
+    background: var(--low-light);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+#duplicate-list li {
+    background: var(--delete-btn);
+    color: white;
+}
+
+#success-list li {
+    background: var(--primary);
+    color: var(--high-dark);
+}
+
+/* Dark mode adjustments */
+body.dark-mode .class-creation-container {
+    background: var(--dark-background);
+    border: 1px solid var(--low-dark);
+}
+
+body.dark-mode .input-group textarea {
+    background: var(--low-dark);
+    color: var(--primary-text);
+    border-color: var(--tint);
+}

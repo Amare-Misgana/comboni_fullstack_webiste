@@ -18,6 +18,49 @@
 {% endblock %}
 
 {% block content %}
+  <!-- Add Students Method -->
+  <div class="reg-portal">
+    <div class="portal-grid">
+      <!-- Manual Entry -->
+      <article class="reg-card manual-card">
+        <div class="card-ornament"></div>
+        <div class="card-core">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">fingerprint</span>
+          </div>
+          <h3 class="card-header">Precision Enrollment</h3>
+          <p class="card-excerpt">Artisanal student registration with granular control</p>
+          <div class="card-actions">
+            <a href="{% url 'add_student_url' %}" class="card-cta">
+              Begin Manual Process
+              <span class="cta-underline"></span>
+            </a>
+          </div>
+        </div>
+        <div class="card-badge">Recommended for accuracy</div>
+      </article>
+
+      <!-- Bulk Upload -->
+      <article class="reg-card bulk-card">
+        <div class="card-ornament"></div>
+        <div class="card-core">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">deployed_code</span>
+          </div>
+          <h3 class="card-header">Batch Integration</h3>
+          <p class="card-excerpt">Enterprise-grade mass enrollment via structured data</p>
+          <div class="card-actions">
+            <a href="{% url 'add_students_url' %}" class="card-cta">
+              Initiate Bulk Sequence
+              <span class="cta-underline"></span>
+            </a>
+          </div>
+        </div>
+        <div class="card-badge">XLSX optimized</div>
+      </article>
+    </div>
+  </div>
+
   <!-- Top Students Table -->
 
   <div class="student-table-container top-student-container">
@@ -79,6 +122,18 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+
+  <!-- Download Students -->
+  <div class="download-container">
+    <div class="download-card">
+      <div class="download-icon">
+        <i class="fas fa-file-excel"></i>
+      </div>
+      <h3>Export Student Data</h3>
+      <p>Download a complete list of all students in Excel format, including their class and teacher information.</p>
+      <a href="{% url 'download_students_excel_url' %}" class="download-btn"><i class="fas fa-download"></i> Download Excel</a>
+    </div>
   </div>
 {% endblock %}
 

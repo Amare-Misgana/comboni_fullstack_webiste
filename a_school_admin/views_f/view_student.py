@@ -10,6 +10,7 @@ from a_school_admin.models import AdminAction
 import pandas as pd
 from common.models import UserProfile, CustomUser, ClassRoom, Class
 import openpyxl
+from django.db.models.functions import Length
 from io import BytesIO
 import re
 import numpy as np
@@ -163,7 +164,7 @@ def edit_student(request, student_username):
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def add_student(request):
     context = {
-        "class_list": Class.objects.values_list("class_name", flat=True)
+        "class_list": Class.objects.values_list("class_name", flat=True).order_by(Length('class_name'), 'class_name')
     }
 
     if request.method == 'POST':

@@ -24,16 +24,16 @@
       </div>
     </form>
 
-    <div class="results-container">
-      <div id="duplicate-results" class="hidden">
-        <h3>Existing Classes Found:</h3>
-        <ul id="duplicate-list"></ul>
-      </div>
-
-      <div id="success-message" class="hidden">
-        <h3>Successfully Created:</h3>
-        <ul id="success-list"></ul>
-      </div>
+    <div class="existing-classes">
+      {% if classes %}
+        <ul>
+          {% for class in classes %}
+            <li>{{ class }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No classes assigned yet.</p>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

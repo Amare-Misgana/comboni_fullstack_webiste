@@ -27,6 +27,7 @@ urlpatterns = [
     path("teachers-mang/edit-teacher/<str:teacher_username>/", view_teacher.edit_teacher, name="edit_teacher_url"),
     path("teachers-mang/teacher-detail/<str:teacher_username>/", view_teacher.teacher_detail, name="teacher_detail_url"),
     path("teachers-mang/add-teacher/", view_teacher.add_teacher, name="add_teacher_url"),
+    path("teachers-mang/add-teachers/", view_teacher.add_teachers, name="add_teachers_url"),
 
     # Class Urls
 

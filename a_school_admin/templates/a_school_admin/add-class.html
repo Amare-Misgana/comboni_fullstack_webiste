@@ -35,7 +35,7 @@
         <select name="home_room_teacher" id="home-teacher" required>
           <option disabled selected value="">Home Room Teacher</option>
           {% for home_room_teacher in home_room_teachers %}
-            <option value="{{ home_room_teacher.room_teacher }}">{{ home_room_teacher.room_teacher }}</option>
+            <option value="{{ home_room_teacher.username }}">{{ home_room_teacher.username }}</option>
           {% endfor %}
         </select>
       </div>
@@ -52,10 +52,10 @@
             </tr>
           </thead>
           <tbody>
-            {% for profile, student in students %}
+            {% for student in students %}
               <tr>
-                <td>{{ profile.username }}</td>
-                <td>{{ student.age }}</td>
+                <td>{{ student.user.username }}</td>
+                <td>{{ student.user.age }}</td>
                 <td>
                   {% include 'fragments/checkbox.html' with checkbox_name=profile.username %}
                 </td>
@@ -67,7 +67,7 @@
     </div>
 
     <div class="crud">
-      <button type="reset" class="delete-btn right-btn">Clear</button>
+      <a href="{% url 'class_mang_url' %}"><button type="button" class="delete-btn right-btn">Cancel</button></a>
       <button type="submit" class="edit-btn left-btn">Save</button>
     </div>
   </form>

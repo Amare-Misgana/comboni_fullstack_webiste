@@ -401,12 +401,16 @@ h1 {
 }
 
 .classes-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 1em;
 }
 
 .class-card {
+    min-width: 7em;
     background-color: var(--primary);
     color: white;
     padding: 20px;
@@ -422,6 +426,7 @@ h1 {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     background-color: var(--primaryL);
+    cursor: pointer;
 }
 
 .no-classes {

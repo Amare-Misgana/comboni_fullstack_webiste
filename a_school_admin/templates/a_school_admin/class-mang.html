@@ -35,6 +35,25 @@
       </div>
     </div>
   </div>
+
+  <!-- Availabe Classes Container -->
+
+  {% if classes %}
+    <div class="class-container">
+      <h1>School Classes</h1>
+
+      <div class="classes-container">
+        {% for class in classes %}
+          <div class="class-card">{{ class }}</div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Classes Found' empty_message='Please add some classes to the system' %}
+  {% endif %}
+
+  <!-- Classes performance Graph -->
+
   {% if class_performance %}
     <div class="class-activity">
       <canvas id="class-activity"></canvas>
@@ -42,6 +61,9 @@
   {% else %}
     {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Acitivites" btn_name='+ Add Class' add_url='add_class_url' %}
   {% endif %}
+
+  <!-- Availabe Classes Rooms -->
+
   {% if class_rooms %}
     <div class="class-container">
       <div class="table-header">
@@ -75,20 +97,6 @@
   {% else %}
     {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Tables" btn_name='+ Add Class' add_url='add_class_url' %}
   {% endif %}
-
-  <div class="class-container">
-    <h1>School Classes</h1>
-
-    <div class="classes-container">
-      {% if classes %}
-        {% for class in classes %}
-          <div class="class-card">{{ class }}</div>
-        {% endfor %}
-      {% else %}
-        <div class="no-classes">No classes found. Please add some classes to the system.</div>
-      {% endif %}
-    </div>
-  </div>
 {% endblock %}
 
 {% block script %}

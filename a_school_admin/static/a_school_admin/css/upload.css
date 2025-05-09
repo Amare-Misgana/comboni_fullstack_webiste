@@ -159,3 +159,48 @@
     clip: rect(0, 0, 0, 0);
     border: 0;
 }
+
+
+/* Recommendations */
+/* Recommendation card - matching error card style */
+.recommendation-card {
+    background: var(--dark-background);
+    border-left: 4px solid var(--recommendation-accent);
+    /* Different accent color */
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+}
+
+.recommendation-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.recommendation-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--recommendation-accent);
+}
+
+.recommendation-title {
+    color: var(--primary-text);
+    margin: 0;
+}
+
+.recommendation-list {
+    color: var(--recommendation-text);
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+/* Add these to your CSS variables */
+:root {
+    /* ... your existing variables ... */
+    --recommendation-accent: #4CAF50;
+    /* Green accent */
+    --recommendation-text: #81C784;
+    /* Light green text */
+}

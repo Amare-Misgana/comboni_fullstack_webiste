@@ -20,7 +20,7 @@
   <div class="container">
     <h1 class="upload-title">Upload {{ upload_for }} Data</h1>
     <div class="upload-container">
-      <form action="{% url 'add_students_url' %}" method="post" enctype="multipart/form-data" id="excel-form" class="upload-form">
+      <form action="" method="post" enctype="multipart/form-data" id="excel-form" class="upload-form">
         {% csrf_token %}
         <div class="upload-box">
           <svg class="upload-icon" viewBox="0 0 24 24">
@@ -35,6 +35,23 @@
         </div>
         <button type="submit" class="submit-btn">Process Data</button>
       </form>
+
+      <h1>{{ recommendation.0.class_name }}</h1>
+      {% if recommendations %}
+        <div class="recommendation-card">
+          <div class="recommendation-header">
+            <svg class="recommendation-icon" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 2L15 8H9L12 2M12 22L9 16H15L12 22M2 12L8 15V9L2 12M22 12L16 9V15L22 12Z" />
+            </svg>
+            <h3 class="recommendation-title">Available Classes</h3>
+          </div>
+          <ul class="recommendation-list">
+            {% for rec in recommendations %}
+              <li>{{ rec }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
 
       {% if errors %}
         <div class="error-card">

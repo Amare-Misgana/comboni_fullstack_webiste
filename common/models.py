@@ -130,16 +130,25 @@ class Class(models.Model):
 class Subject(models.Model):
     subject_name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return f"{self.subject_name}"
+
 class ClassSubject(models.Model):
     class_room = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="class_subjects")
     subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="subject_classes")
     teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="teaching_subjects")
 
+    def __str__(self):
+        return f"{self.subject} in {self.class_room} by {self.teacher.username}"
+
 
 class ClassRoom(models.Model):
     class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="classrooms")
-    student = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_students")
-    room_teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_teachers", null=True, blank=True)
+    student = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_students", null=True, blank=True)
+    room_teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_teachers", null=True, blank=True, unique=True)
+
+    def __str__(self):
+        return f"{self.class_name}--{self.room_teacher}"
 
 class MarkList(models.Model):
     class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="marklists")

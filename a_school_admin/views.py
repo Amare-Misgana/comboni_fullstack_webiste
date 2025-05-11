@@ -18,7 +18,7 @@ def school_admin_dashboard(request):
     
     students = CustomUser.objects.filter(role="student")
     teachers = CustomUser.objects.filter(role="teacher")
-    
+    classes = sorted(set(int(item[:-1]) for item in Class.objects.values_list("class_name", flat=True)))
     classrooms = ClassRoom.objects.select_related('class_name', 'room_teacher').prefetch_related('students')
     
     grades = {}
@@ -50,7 +50,7 @@ def school_admin_dashboard(request):
         "user_profile": user_profile,
         "students_amount": students.count(),
         "teachers_amount": teachers.count(),
-        "classes_amount": classrooms.count(),
+        "classes_amount": len(classes),
         "sections_amount": classrooms.count(),  # Since ClassRoom is the section
         "classes": sorted({classroom.class_name.class_name[:-1] for classroom in classrooms}),  # Extract grade levels
         'action_profiles': action_profiles,  # Implement your action profiles logic

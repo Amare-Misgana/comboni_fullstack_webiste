@@ -83,10 +83,24 @@ table#classTable {
 }
 
 
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: var(--primary-text);
+    padding: 0.3em 1em;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_info {
+    align-self: flex-start !important;
+    margin-top: 1em;
+}
+
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
     background-color: var(--primaryL) !important;
     color: #fff !important;
-    padding: 0 1em;
+    padding: 0.3em 1em;
 }
 
 

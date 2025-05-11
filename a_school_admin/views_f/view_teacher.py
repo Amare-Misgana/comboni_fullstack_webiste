@@ -316,10 +316,9 @@ def add_teacher(request):
             return render(request, "a_school_admin/add-teacher.html", context)
 
     return render(request, "a_school_admin/add-teacher.html", context)
-
 @user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
 def add_teachers(request):
-    REQUIRED_COLUMNS = ['first name', 'last name', 'middle name', 'email', 'age', 'phone number', 'gender', 'home room class']
+    REQUIRED_COLUMNS = ['first name', 'middle name', 'last name', 'email', 'age', 'phone number', 'gender', 'home room class']
     CLASS_REGEX = r'^\d{1,2}[A-H]$'
 
     context = {
@@ -337,13 +336,15 @@ def add_teachers(request):
             return render(request, "a_school_admin/upload.html", context)
 
         try:
+            # Normalize column names and handle extra spaces
             df = pd.read_excel(file, dtype={'phone number': str, 'home room class': str}).fillna('')
+            df.columns = [col.strip().lower() for col in df.columns]  # Normalize to lowercase
         except Exception as e:
             context['errors'].append(f"Error reading file: {e}")
             return render(request, "a_school_admin/upload.html", context)
 
-        cols = [col.lower() for col in df.columns]
-        missing = [col for col in REQUIRED_COLUMNS if col.lower() not in cols]
+        # Check for missing columns (case-insensitive)
+        missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
         if missing:
             context['errors'].append(f"Missing columns: {', '.join(missing)}")
             return render(request, "a_school_admin/upload.html", context)
@@ -355,49 +356,59 @@ def add_teachers(request):
         errors, to_create = [], []
         for idx, row in df.iterrows():
             line = idx + 2
-            row_data = {col: str(row[col]).strip() for col in REQUIRED_COLUMNS}
+            try:
+                # Use normalized column names
+                row_data = {col: str(row[col]).strip() for col in REQUIRED_COLUMNS}
+            except KeyError as e:
+                errors.append(f"Column {e} not found in spreadsheet")
+                break
+
             row_errors = []
 
-            if any(not v for v in row_data.values()):
-                row_errors.append(f"Line {line}: Missing required fields.")
+            # Check for empty required fields
+            for field in ['first name', 'last name', 'email']:
+                if not row_data.get(field):
+                    row_errors.append(f"Line {line}: Missing required field '{field}'")
 
-            # Validate class
+            # Validate class format and existence
             home_class = row_data['home room class'].upper()
-            if home_class and not re.match(CLASS_REGEX, home_class):
+            if not re.match(CLASS_REGEX, home_class):
                 row_errors.append(f"Line {line}: Invalid class format '{home_class}'")
             elif home_class not in existing_classes:
                 context['recommendations'] = sorted(existing_classes)
                 row_errors.append(f"Line {line}: Class '{home_class}' not found")
+                taken_home_rooms.add(Class.objects.get(class_name=home_class))
             elif home_class in taken_home_rooms:
-                row_errors.append(f"Line {line}: Class '{home_class}' already assigned")
+                pass
 
-            # Validate age
+            # Validate age (18-65 for teachers)
             try:
                 age = int(row_data['age'])
-                if not 4 <= age <= 80:
-                    row_errors.append(f"Line {line}: Invalid age {age}")
-            except:
+                if not 18 <= age <= 65:
+                    row_errors.append(f"Line {line}: Invalid teacher age {age}")
+            except ValueError:
                 row_errors.append(f"Line {line}: Age must be a number")
 
-            # Validate phone
+            # Validate phone number format
             phone = row_data['phone number']
-            if not (phone.isdigit() and len(phone) == 10):
-                row_errors.append(f"Line {line}: Invalid phone number '{phone}'")
+            if not re.match(r'^\d{10}$', phone):
+                row_errors.append(f"Line {line}: Invalid phone number format '{phone}'")
 
-            # Gender
+            # Validate gender
             gender = row_data['gender'].upper()
             if gender not in ['M', 'F']:
                 row_errors.append(f"Line {line}: Invalid gender '{gender}'")
 
-            # Names
-            for n in ['first name', 'middle name', 'last name']:
-                if not re.match(r'^[A-Za-z\- ]+$', row_data[n]):
-                    row_errors.append(f"Line {line}: Invalid {n} '{row_data[n]}'")
+            # Validate names
+            for name_field in ['first name', 'middle name', 'last name']:
+                name = row_data[name_field]
+                if not re.match(r'^[A-Za-z\-\s]+$', name):
+                    row_errors.append(f"Line {line}: Invalid characters in {name_field} '{name}'")
 
-            # Email
+            # Validate email format and uniqueness
             email = row_data['email'].lower()
-            if not validate_email(email):
-                row_errors.append(f"Line {line}: Invalid email format")
+            if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+                row_errors.append(f"Line {line}: Invalid email format '{email}'")
             elif email in existing_emails:
                 row_errors.append(f"Line {line}: Email already exists")
 
@@ -415,10 +426,12 @@ def add_teachers(request):
                 new_users = []
                 for row_data, home_class, age, gender, email in to_create:
                     pwd = generate_password()
+                    
+                    # Create the user (teacher)
                     user = CustomUser.objects.create(
-                        first_name=row_data['first name'],
-                        middle_name=row_data['middle name'],
-                        last_name=row_data['last name'],
+                        first_name=row_data['first name'].title(),
+                        middle_name=row_data['middle name'].title(),
+                        last_name=row_data['last name'].title(),
                         email=email,
                         age=age,
                         gender='male' if gender == 'M' else 'female',
@@ -428,28 +441,42 @@ def add_teachers(request):
                     user.set_password(pwd)
                     user.save()
 
+                    # Get or create the class object
                     class_obj = Class.objects.get(class_name=home_class)
-                    ClassRoom.objects.create(class_name=class_obj, room_teacher=user)
+
+                    # Check if a ClassRoom already exists for the class and assign the teacher to it
+                    class_room, created = ClassRoom.objects.get_or_create(class_name=class_obj)
+                    
+                      # If a new ClassRoom was created, assign the room teacher
+                    class_room.room_teacher = user
+                    class_room.save()
+
+                    # Assign the user to the user profile
                     UserProfile.objects.create(user=user, password=pwd)
+                    
                     new_users.append(user)
 
+                # Save the admin action
                 AdminAction.objects.create(
                     admin=request.user,
                     action=f"Bulk added {len(new_users)} teachers"
                 )
+
                 messages.success(request, f"Successfully added {len(new_users)} teachers")
                 return redirect('teachers_mang_url')
 
         except Exception as e:
             context['errors'].append(f"System error: {str(e)}")
+            return render(request, "a_school_admin/upload.html", context)
 
     return render(request, "a_school_admin/upload.html", context)
+
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def download_teacher_excel_template(request):
     columns = ['first name', 'last name', 'middle name', 'email',
-               'age', 'phone number', 'gender', 'home room class', 'class']
+               'age', 'phone number', 'gender', 'home room class']
 
     # Optional: Add an empty DataFrame with the right columns
     df = pd.DataFrame(columns=columns)

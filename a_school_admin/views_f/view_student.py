@@ -325,9 +325,16 @@ def add_student(request):
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
+
 def add_students(request):
-    REQUIRED_COLUMNS = ['first name', 'middle name', 'last name', 'email', 'age', 'phone number', 'gender', 'class']
-    context = {'required_columns': REQUIRED_COLUMNS, 'errors': []}
+    REQUIRED_COLUMNS = [
+        'first name', 'middle name', 'last name',
+        'email', 'age', 'phone number', 'gender', 'class'
+    ]
+    context = {
+        'required_columns': REQUIRED_COLUMNS,
+        'errors': []
+    }
 
     if request.method == "POST":
         uploaded_file = request.FILES.get('file')
@@ -336,62 +343,67 @@ def add_students(request):
             return render(request, "a_school_admin/upload.html", context)
 
         try:
-            df = pd.read_excel(uploaded_file, dtype={'phone number': str, 'class': str}).fillna('')
+            df = pd.read_excel(
+                uploaded_file,
+                dtype={'phone number': str, 'class': str}
+            ).fillna('')
         except Exception as e:
-            context['errors'].append(f"Error reading file: {str(e)}")
+            context['errors'].append(f"Error reading file: {e}")
             return render(request, "a_school_admin/upload.html", context)
 
-        columns_lower = [col.lower() for col in df.columns]
-        missing = [col for col in REQUIRED_COLUMNS if col.lower() not in columns_lower]
+        # Check required columns
+        cols_lower = [c.lower() for c in df.columns]
+        missing = [c for c in REQUIRED_COLUMNS if c.lower() not in cols_lower]
         if missing:
             context['errors'].append(f"Missing columns: {', '.join(missing)}")
             return render(request, "a_school_admin/upload.html", context)
 
+        # Validate each row
         errors = []
         for idx, row in df.iterrows():
             line = idx + 2
             row_err = []
-
             def field(col): return str(row[col]).strip()
 
-            # Check empty
-            empty = [col for col in REQUIRED_COLUMNS if not field(col)]
-            if empty: row_err.append(f"Line {line}: Missing values for {', '.join(empty)}")
+            # Empty?
+            empty = [c for c in REQUIRED_COLUMNS if not field(c)]
+            if empty:
+                row_err.append(f"Line {line}: Missing {', '.join(empty)}")
 
-            # Validate class
+            # Class format & existence
             class_name = field('class').upper()
             if not re.fullmatch(r'\d{1,2}[A-H]', class_name):
-                row_err.append(f"Line {line}: Invalid class '{class_name}' (e.g., '11A')")
+                row_err.append(f"Line {line}: Invalid class '{class_name}'")
             elif not Class.objects.filter(class_name=class_name).exists():
                 row_err.append(f"Line {line}: Class '{class_name}' not found")
 
-            # Validate age
+            # Age
             try:
-                age = int(row['age'])
+                age = int(field('age'))
                 if not 4 <= age <= 80:
-                    row_err.append(f"Line {line}: Age {age} not in range 4-80")
+                    row_err.append(f"Line {line}: Age {age} out of range")
             except:
-                row_err.append(f"Line {line}: Invalid age format")
+                row_err.append(f"Line {line}: Invalid age")
 
             # Phone
             phone = field('phone number')
             if not (phone.isdigit() and len(phone) == 10):
-                row_err.append(f"Line {line}: Invalid phone number '{phone}'")
+                row_err.append(f"Line {line}: Invalid phone '{phone}'")
 
             # Gender
-            gender = field('gender').upper()
-            if gender not in ['M', 'F']:
-                row_err.append(f"Line {line}: Invalid gender '{gender}' (M/F only)")
+            g = field('gender').upper()
+            if g not in ('M','F'):
+                row_err.append(f"Line {line}: Invalid gender '{g}'")
 
-            # Name fields
-            for name_field in ['first name', 'middle name', 'last name']:
-                if not re.fullmatch(r'[A-Za-z\- ]+', field(name_field)):
-                    row_err.append(f"Line {line}: Invalid {name_field} '{field(name_field)}'")
+            # Names
+            for n in ['first name','middle name','last name']:
+                if not re.fullmatch(r'[A-Za-z\- ]+', field(n)):
+                    row_err.append(f"Line {line}: Invalid {n}")
 
             # Email
             email = field('email').lower()
             if not validate_email(email):
-                row_err.append(f"Line {line}: Invalid email format")
+                row_err.append(f"Line {line}: Invalid email")
             elif CustomUser.objects.filter(email=email).exists():
                 row_err.append(f"Line {line}: Email already exists")
 
@@ -402,37 +414,51 @@ def add_students(request):
             context['errors'] = errors
             return render(request, "a_school_admin/upload.html", context)
 
+        # Everything validated—create users
         try:
             with transaction.atomic():
                 created = 0
-                for _, row in df.iterrows():
+                for idx, row in df.iterrows():
+                    def field(col): return str(row[col]).strip()
+
+                    # Create user
                     user = CustomUser(
                         first_name=field('first name'),
                         middle_name=field('middle name'),
                         last_name=field('last name'),
                         email=field('email').lower(),
-                        age=int(row['age']),
-                        gender='male' if field('gender').upper() == 'M' else 'female',
+                        age=int(field('age')),
+                        gender='male' if field('gender').upper()=='M' else 'female',
                         phone_number=field('phone number'),
                         role='student'
                     )
                     user.set_password(generate_password())
                     user.save()
 
-                    # Assign class if related
-                    if hasattr(user, 'classroom'):
-                        user.classroom = ClassRoom.objects.get(class_name=field('class').upper())
-                        user.save()
+                    # Get or create classroom
+                    class_name = field('class').upper()
+                    cls = Class.objects.get(class_name=class_name)
+                    class_room, _ = ClassRoom.objects.get_or_create(class_name=cls)
 
-                    UserProfile.objects.create(user=user)
+                    # Assign student to classroom
+                    class_room.students.add(user)
+
+                    # Get or create profile
+                    profile, created_profile = UserProfile.objects.get_or_create(user=user)
+                    if created_profile:
+                        profile.save()
+
                     created += 1
 
-                AdminAction.objects.create(admin=request.user, action=f"Bulk added {created} students")
+                AdminAction.objects.create(
+                    admin=request.user,
+                    action=f"Bulk added {created} students"
+                )
                 messages.success(request, f"Successfully added {created} students")
                 return redirect('students_mang_url')
 
         except Exception as e:
-            context['errors'].append(f"System error: {str(e)}")
+            context['errors'].append(f"System error: {e}")
 
     return render(request, "a_school_admin/upload.html", context)
 

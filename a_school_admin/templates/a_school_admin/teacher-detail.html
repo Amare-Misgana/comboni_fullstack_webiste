@@ -56,7 +56,7 @@
 
       <div class="crud">
         <a href=""><button class="delete-btn right-btn">Delete</button></a>
-        <a href="@"><button class="edit-btn left-btn">Edit</button></a>
+        <a href="{% url 'edit_teacher_url' teacher_username=teacher.user.username %}"><button class="edit-btn left-btn">Edit</button></a>
       </div>
     </div>
   </div>

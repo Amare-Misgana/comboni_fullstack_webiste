@@ -23,7 +23,11 @@
     <h2>Edit Student Information</h2>
 
     <div class="profile-circle">
-      <img id="profilePreview" src="{{ student_profile.user_pic.url }}" alt="Profile" />
+      {% if student_profile.user_pic %}
+        <img src="{{ student_profile.user_pic.url }}" alt="{{ student_profile.username }}'s profile picture" id="profilePreview" class="profile-image" />
+      {% else %}
+        <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" class="profile-image" id="profilePreview" />
+      {% endif %}
       <input type="file" id="profile_image" name="profile_image" accept="image/*" autocomplete="off" />
     </div>
 
@@ -71,8 +75,8 @@
     </div>
 
     <div class="crud">
-      <button type="submit" class="left-btn edit-btn btn">Update</button>
       <a href="{% url 'students_mang_url' %}" class="right-btn delete-btn btn">Cancel</a>
+      <button type="submit" class="left-btn edit-btn btn">Update</button>
     </div>
   </form>
 {% endblock %}

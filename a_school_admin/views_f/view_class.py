@@ -27,7 +27,8 @@ import re
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def class_mang(request):
     context = {
-        "classes": Class.objects.all().order_by(Length('class_name'), 'class_name')
+        "classes": Class.objects.all().order_by(Length('class_name'), 'class_name'),
+        "class_rooms": ClassRoom.objects.all()
     }
     # waiting classes and class_performance
     return render(request, "a_school_admin/class-mang.html", context)
@@ -142,3 +143,55 @@ def create_classes(request):
     return render(request, 'a_school_admin/create-classes.html', {
         'classes': Class.objects.all().order_by(Length('class_name'), 'class_name')
     })
+
+
+@user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
+def edit_class(request, class_name):
+    cls = get_object_or_404(Class, class_name=class_name)
+    # current assignments
+    entries = ClassRoom.objects.filter(class_name=cls).select_related('room_teacher', 'student')
+    current_teacher = entries.first().room_teacher if entries.exists() else None
+
+    all_teachers = UserProfile.objects.filter(user__role='teacher')
+    students_in = UserProfile.objects.filter(
+        user__in=[e.student for e in entries]
+    )
+
+    if request.method == 'POST':
+        # example: change home-room teacher
+        new_teacher_id = request.POST.get('room_teacher')
+        if new_teacher_id and (not current_teacher or current_teacher.id != int(new_teacher_id)):
+            # remove old, assign new
+            ClassRoom.objects.filter(class_name=cls).delete()
+            ClassRoom.objects.create(
+                class_name=cls,
+                room_teacher=UserProfile.objects.get(pk=new_teacher_id).user
+            )
+        return redirect('class_detail_url', class_name=class_name)
+
+    return render(request, "a_school_admin/edit-class.html", {
+        'cls': cls,
+        'entries': entries,
+        'all_teachers': all_teachers,
+        'students_in': students_in,
+        'current_teacher': current_teacher,
+    })
+
+@user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
+def class_detail(request, class_name):
+    cls = get_object_or_404(Class, class_name=class_name)
+    entries = ClassRoom.objects.filter(class_name=cls).select_related('room_teacher', 'student')
+    rows = []
+    for e in entries:
+        prof_s = UserProfile.objects.get(user=e.student)
+        prof_t = UserProfile.objects.get(user=e.room_teacher)
+        rows.append({
+            'student': prof_s.username,
+            'teacher': prof_t.username,
+            'since':   e.timestamp,            # adjust if your model has a timestamp
+        })
+    return render(request, "a_school_admin/class-detail.html", {
+        'cls': cls,
+        'rows': rows,
+    })
+

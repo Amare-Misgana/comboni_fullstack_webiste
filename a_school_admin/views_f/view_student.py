@@ -11,9 +11,9 @@ import pandas as pd
 from common.models import UserProfile, CustomUser, ClassRoom, Class
 import openpyxl
 from django.db.models.functions import Length
+from django.core.exceptions import ObjectDoesNotExist
 from io import BytesIO
 import re
-import numpy as np
 
 
 #    helper function
@@ -25,25 +25,30 @@ student_excel = {}
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def students_mang(request):
-    User = get_user_model()
-    students = User.objects.filter(role='student')
+    try:
+        classrooms = ClassRoom.objects.all()
+    except ObjectDoesNotExist:
+        messages.warning(request, "No classrooms found")
+        classrooms = None
+
     context = {
-        "students": students,
+        'classrooms': classrooms,
     }
     return render(request, "a_school_admin/students-mang.html", context)
 
-
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def delete_student(request, student_username):
-    student = CustomUser.objects.get(username=student_username)
-    try:
-        student_name = UserProfile.objects.get(user=student)
-        student.delete()
-        messages.success(request, f"Deleting {student_name.username} successfully.")
-    except Exception as e:
-        messages.error(request, f"Deletion faild: {e}")
+    Student = get_user_model()
+    if request.method == "POST":
+        try:
+            student = Student.objects.get(username=student_username)
+            student.delete()
+            messages.success(request, "Student deleted successfully.")
+        except Student.DoesNotExist:
+            messages.error(request, "Student couldn't be found.")
+            
+    return redirect("students_mang_url")
 
-    return render(request, "a_school_admin/students-mang.html", context)
 
 
 
@@ -161,6 +166,37 @@ def edit_student(request, student_username):
     return render(request, "a_school_admin/edit-students.html", context)
 
 
+
+    
+
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+def student_detail(request, student_username):
+    Student = get_user_model()
+
+    try:
+        student = Student.objects.get(username=student_username)
+        student_class = student.classroom_students.first()
+        try:
+            student_profile = UserProfile.objects.get(user=student)
+            if not student_profile.user_pic:
+                messages.warning(request, "Student Profile is incomplete. Add profile picture")
+        except UserProfile.DoesNotExist:
+            messages.warning(request, "Student Profile is incomplete. Compelete Profile")
+            return redirect(reverse("edit_student_url", kwargs={"student_username":student_username}))
+
+    except Student.DoesNotExist:
+        messages.error(request, "Student can't be found!")
+        return redirect("students_mang_url")
+    context = {
+        "student": student,
+        "student_profile": student_profile,
+        "student_class": student_class,
+    }
+    return render(request, "a_school_admin/student-detail.html", context)
+
+
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def add_student(request):
     context = {
@@ -247,16 +283,20 @@ def add_student(request):
             student.set_password(password)
             student.save()
 
-            ClassRoom(
-                class_name=class_name,
-                student=student,
+            class_instance = Class.objects.get(class_name=class_name)
+
+            class_room = ClassRoom(
+                class_name=class_instance,
             )
+            class_room.save()
+            class_room.students.add(student)
 
             # Save profile picture if provided
             if profile_pic:
                 student_profile = UserProfile(
                     user=student,
                     user_pic=profile_pic,
+                    password=password,
                 )
                 student_profile.save()
 
@@ -265,6 +305,11 @@ def add_student(request):
                 admin=request.user,
                 action=f"Added User ({student.first_name})"
             )
+            #Failed to add student: "<ClassRoom: 9A--None>" needs to have a value for field "id" before this many-to-many relationship can be used.
+            #Failed to add student: Direct assignment to the forward side of a many-to-many set is prohibited. Use students.set() instead.
+            #Failed to add student: ClassRoom() got unexpected keyword arguments: 'studen
+#Failed to add student: Cannot assign "'11C'": "ClassRoom.class_name" must be a "Class" instance.
+#Failed to add student: Cannot assign "<QuerySet [<Class: 9A>]>": "ClassRoom.class_name" must be a "Class" instance.
             admin_action.save()
 
             messages.success(request, 'Student added successfully.')
@@ -276,31 +321,12 @@ def add_student(request):
 
     return render(request, "a_school_admin/add-student.html", context)
 
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
-def student_detail(request, student_username):
-    Student = get_user_model()
-    try:
-        student = Student.objects.get(username=student_username)
-        try:
-            student_profile = UserProfile.objects.get(user=student)
-        except UserProfile.DoesNotExist:
-            messages.warning(request, "Student Profile is incomplete. Compelete Profile")
-            return redirect(reverse("edit_student_url", kwargs={"student_username":student_username}))
-
-    except Student.DoesNotExist:
-        messages.error(request, "Student can't be found!")
-        return redirect(reverse("student_mang_url"))
-    context = {
-        "student": student,
-        "student_profile": student_profile,
-    }
-    return render(request, "a_school_admin/student-detail.html", context)
 
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
 def add_students(request):
-    REQUIRED_COLUMNS = ['first name', 'last name', 'middle name', 'email', 'age', 'phone number', 'gender', 'class']
+    REQUIRED_COLUMNS = ['first name', 'middle name', 'last name', 'email', 'age', 'phone number', 'gender', 'class']
     context = {'required_columns': REQUIRED_COLUMNS, 'errors': []}
 
     if request.method == "POST":
@@ -409,6 +435,20 @@ def add_students(request):
             context['errors'].append(f"System error: {str(e)}")
 
     return render(request, "a_school_admin/upload.html", context)
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+def download_student_excel_template(request):
+    columns = ['first name', 'middle name', 'last name', 'email',
+               'age', 'phone number', 'gender', 'class']
+
+    # Optional: Add an empty DataFrame with the right columns
+    df = pd.DataFrame(columns=columns)
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="student_template.xlsx"'
+
+    df.to_excel(response, index=False)
+    return response
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")

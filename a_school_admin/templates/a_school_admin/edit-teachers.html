@@ -1,0 +1,97 @@
+{% extends 'a_school_admin/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Edit Teacher | Dashboard
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/add-teacher.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Edit Teacher</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="content">
+    <form class="add-teacher-form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <h2>Edit Teacher</h2>
+
+      <div class="profile-wrapper">
+        <label for="teacher-profile" class="profile-label">
+          <input type="file" id="teacher-profile" name="profile_image" accept="image/*" hidden />
+          {% if teacher_profile.user_pic %}
+            <img src="{{ teacher_profile.user_pic.url }}" alt="Teacher profile picture" id="teacher-preview" class="profile-image" />
+          {% else %}
+            <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" class="profile-image" id="teacher-preview" />
+          {% endif %}
+        </label>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first-name">First Name</label>
+          <input type="text" id="first-name" name="first_name" required value="{{ teacher_profile.user.first_name }}" />
+        </div>
+
+        <div class="form-group">
+          <label for="middle-name">Middle Name</label>
+          <input type="text" id="middle-name" name="middle_name" value="{{ teacher_profile.user.middle_name }}" />
+        </div>
+
+        <div class="form-group">
+          <label for="last-name">Last Name</label>
+          <input type="text" id="last-name" name="last_name" required value="{{ teacher_profile.user.last_name }}" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="home_room_class">Home Room Class</label>
+          <select name="home_room_class" id="home_room_class">
+            {% for room in available_class_rooms %}
+              <option value="{{ room }}" {% if room == home_room_class %}selected{% endif %}>{{ room }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" required value="{{ teacher_profile.user.age }}" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required value="{{ teacher_profile.user.email }}" />
+        </div>
+
+        <div class="form-group">
+          <label for="phone_number">Phone Number</label>
+          <input type="tel" id="phone_number" name="phone_number" required value="{{ teacher_profile.user.phone_number }}" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">New Password</label>
+          <input type="password" id="password" name="password" />
+        </div>
+      </div>
+
+      <div class="crud">
+        <a href="{% url 'teachers_mang_url' %}">
+          <button type="button" class="delete-btn right-btn">Clear</button>
+        </a>
+        <button type="submit" class="edit-btn left-btn">Save</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_school_admin/js/edit-teachers.js' %}"></script>
+{% endblock %}

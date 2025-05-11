@@ -63,66 +63,79 @@
 
   <!-- Top Students Table -->
 
-  <div class="student-table-container top-student-container">
-    <div class="table-header">
-      <h2>Top Students</h2>
-    </div>
-    <table id="TopStudentsTable">
-      <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Age</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in students %}
+  {% if students %}
+    <div class="student-table-container top-student-container">
+      <div class="table-header">
+        <h2>Top Students</h2>
+      </div>
+      <table id="TopStudentsTable">
+        <thead>
           <tr>
-            <td>{{ student.first_name }}</td>
-            <td>{{ student.middle_name }}</td>
-            <td>{{ student.age }}</td>
-            <td class="crud">
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn right-btn">Detail</a>
-              <a href="{% url 'edit_student_url' student_username=student.username %}" class="edit-btn left-btn">Edit</a>
-            </td>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Age</th>
+            <th>Actions</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          {% for student in students %}
+            <tr>
+              <td>{{ student.students.first_name }}</td>
+              <td>{{ student.students.middle_name }}</td>
+              <td>{{ student.class_room }}</td>
+              <td class="crud">
+                <a href="{% url 'student_detail_url' student_username=student.students.username %}" class="detail-btn right-btn">Detail</a>
+                <a href="{% url 'edit_student_url' student_username=student.students.username %}" class="edit-btn left-btn">Edit</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Mark list found. Ranking is unavialable' empty_message="There are currently no students in the system. We can't show the top students." btn_name='+ Add Student' add_url='add_student_url' %}
+  {% endif %}
 
   <!-- Student Table -->
-
-  <div class="student-table-container">
-    <div class="table-header">
-      <h2>Students Table</h2>
-      <a href="{% url 'add_student_url' %}"><button class="add-student-btn">Add Student</button></a>
-    </div>
-    <table id="studentsTable">
-      <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Age</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in students %}
+  {% if classrooms %}
+    <div class="student-table-container">
+      <div class="table-header">
+        <h2>Students Table</h2>
+        <a href="{% url 'add_student_url' %}"><button class="add-student-btn">Add Student</button></a>
+      </div>
+      <table id="studentsTable">
+        <thead>
           <tr>
-            <td>{{ student.first_name }}</td>
-            <td>{{ student.middle_name }}</td>
-            <td>{{ student.age }}</td>
-            <td class="crud">
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn right-btn">Detail</a>
-              <a href="{% url 'edit_student_url' student_username=student.username %}" class="edit-btn left-btn">Edit</a>
-            </td>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Class</th>
+            <th>Actions</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          {% for classroom in classrooms %}
+            {% for student in classroom.students.all %}
+              <tr>
+                <td>{{ student.first_name }}</td>
+                <td>{{ student.middle_name }}</td>
+                <td>
+                  {% for student_class in student.classroom_students.all %}
+                    {{ student_class.class_name }}
+                  {% endfor %}
+                </td>
+                <td class="crud">
+                  <a href="{% url 'student_detail_url' student_username=student.username %}" class="detail-btn right-btn">Detail</a>
+                  <a href="{% url 'edit_student_url' student_username=student.username %}" class="edit-btn left-btn">Edit</a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Students Found' empty_message="There are currently no students in the system. We can't show students tabel." btn_name='+ Add Student' add_url='add_student_url' %}
+  {% endif %}
 
   <!-- Download Students -->
   <div class="download-container">

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db import transaction
@@ -33,7 +35,124 @@ def teachers_mang(request):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def edit_teacher(request, teacher_username):
-    return render(request, "a_school_admin/edit-teacher.html")
+    Teacher = get_user_model()
+    teacher = get_object_or_404(Teacher, username=teacher_username)
+    teacher_profile = get_object_or_404(UserProfile, user=teacher)
+    available_class_rooms = Class.objects.exclude(class_name__in=ClassRoom.objects.values("class_name"))
+
+    context = {
+        "teacher_profile": teacher_profile,
+        "available_class_rooms": available_class_rooms,
+        "home_room_class": ClassRoom.objects.filter(room_teacher=teacher).first().class_name if ClassRoom.objects.filter(room_teacher=teacher).exists() else "",
+    }
+
+    if request.method == 'POST':
+        try:
+            first_name = request.POST.get('first_name', '').strip()
+            middle_name = request.POST.get('middle_name', '').strip()
+            last_name = request.POST.get('last_name', '').strip()
+            phone_number = request.POST.get('phone_number', '').strip()
+            age = request.POST.get('age', '').strip()
+            email = request.POST.get('email', '').strip()
+            home_room_class = request.POST.get('home_room_class', '').strip()
+            password = request.POST.get('password', '').strip()
+            profile_image = request.FILES.get('profile_image')
+
+            has_changes = False
+            changes = []
+
+            if not Class.objects.filter(class_name=home_room_class).exists():
+                messages.error(request, f"'{home_room_class}' doesn't exist.")
+                return render(request, "a_school_admin/edit-teachers.html", context)
+
+            current_classroom = ClassRoom.objects.filter(room_teacher=teacher).first()
+            new_class = Class.objects.get(class_name=home_room_class)
+
+            if not current_classroom or current_classroom.class_name != new_class:
+                if ClassRoom.objects.filter(class_name=new_class).exists():
+                    messages.error(request, f"There is already a home room teacher for '{home_room_class}'.")
+                    return render(request, "a_school_admin/edit-teachers.html", context)
+                if current_classroom:
+                    current_classroom.delete()
+                ClassRoom.objects.create(class_name=new_class, room_teacher=teacher)
+                changes.append("home room class")
+                has_changes = True
+
+            if email and email != teacher.email:
+                if not validate_email(email):
+                    messages.error(request, "Invalid Email Format!")
+                    return render(request, "a_school_admin/edit-teachers.html", context)
+                if CustomUser.objects.filter(email=email).exclude(pk=teacher.pk).exists():
+                    messages.error(request, "Email already exists.")
+                    return render(request, "a_school_admin/edit-teachers.html", context)
+                teacher.email = email
+                changes.append("email")
+                has_changes = True
+
+            if first_name and first_name != teacher.first_name:
+                teacher.first_name = first_name
+                changes.append("first name")
+                has_changes = True
+
+            if middle_name != teacher.middle_name:
+                teacher.middle_name = middle_name
+                changes.append("middle name")
+                has_changes = True
+
+            if last_name and last_name != teacher.last_name:
+                teacher.last_name = last_name
+                changes.append("last name")
+                has_changes = True
+
+            if phone_number and re.match(r'^\+?[0-9]{8,15}$', phone_number) and phone_number != teacher.phone_number:
+                teacher.phone_number = phone_number
+                changes.append("phone number")
+                has_changes = True
+            elif not re.match(r'^\+?[0-9]{8,15}$', phone_number):
+                messages.error(request, "Invalid phone number format. Use +1234567890 format.")
+                return render(request, "a_school_admin/edit-teachers.html", context)
+
+            try:
+                age = int(age)
+                if not (1 <= age <= 120):
+                    messages.error(request, "Age must be between 1 and 120.")
+                    return render(request, "a_school_admin/edit-teachers.html", context)
+                if age != teacher.age:
+                    teacher.age = age
+                    changes.append("age")
+                    has_changes = True
+            except ValueError:
+                messages.error(request, "Age must be a valid number.")
+                return render(request, "a_school_admin/edit-teachers.html", context)
+
+            if password and not check_password(password, teacher.password):
+                teacher.set_password(password)
+                changes.append("password")
+                has_changes = True
+
+            if profile_image and profile_image != teacher_profile.user_pic:
+                teacher_profile.user_pic = profile_image
+                changes.append("profile image")
+                has_changes = True
+
+            if has_changes:
+                teacher.save()
+                teacher_profile.save()
+                AdminAction.objects.create(
+                    admin=request.user,
+                    action=f"Edited User ({teacher.username}): Updated {', '.join(changes)}"
+                )
+                messages.success(request, 'Teacher updated successfully.')
+            else:
+                messages.info(request, 'No changes detected.')
+
+            return redirect('teachers_mang_url')
+
+        except Exception as e:
+            messages.error(request, f"Update failed: {str(e)}")
+
+    return render(request, "a_school_admin/edit-teachers.html", context)
+
 
 def teacher_detail(request, teacher_username):
     try:

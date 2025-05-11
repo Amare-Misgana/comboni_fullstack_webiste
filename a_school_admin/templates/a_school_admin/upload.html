@@ -77,9 +77,15 @@
           {% endfor %}
         </div>
       </div>
-      <p class="excel-template">
-        Click <a href="{% url 'download_teachers_excel_template_url' %}">here</a> to download the startup template for uploading teachers.
-      </p>
+      {% if upload_for == 'Teachers' %}
+        <p class="excel-template">
+          Click <a href="{% url 'download_teachers_excel_template_url' %}">here</a> to download the startup template for uploading teachers.
+        </p>
+      {% else %}
+        <p class="excel-template">
+          Click <a href="{% url 'download_students_excel_template_url' %}">here</a> to download the startup template for uploading students.
+        </p>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

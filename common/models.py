@@ -154,7 +154,7 @@ class ClassSubject(models.Model):
 
 
 class ClassRoom(models.Model):
-    class_name = models.OneToOneField(Class, on_delete=models.PROTECT)
+    class_name = models.OneToOneField(Class, on_delete=models.PROTECT, related_name="classroom_set")
     room_teacher = models.OneToOneField(CustomUser, on_delete=models.PROTECT, null=True, limit_choices_to={'role': 'teacher'})
     students = models.ManyToManyField(CustomUser, related_name='classroom_students', limit_choices_to={'role': 'student'})
     def __str__(self):

@@ -150,23 +150,21 @@ function confirmLogout() {
   document.getElementById('logoutForm').submit();
 }
 
-document.getElementById("logoutPopup").addEventListener("click", ()=>{
+document.getElementById("logoutPopup").addEventListener("click", () => {
   closeLogoutPopup()
 })
 
-document.querySelector(".header").addEventListener("click", ()=>{
+document.querySelector(".header").addEventListener("click", () => {
   closeLogoutPopup()
 })
 
-document.querySelector(".content").addEventListener("click", ()=>{
+document.querySelector(".content").addEventListener("click", () => {
   closeLogoutPopup()
 })
 
 
-
-
-function showDeletePopup(e) {
-  e.preventDefault();
+// Confirm a Delete request 
+function showDeletePopup() {
   document.getElementById("delete-popup").style.display = "flex";
 }
 
@@ -174,16 +172,17 @@ function hideDeletePopup() {
   document.getElementById("delete-popup").style.display = "none";
 }
 
-function confirmDelete() {
+function confirmDelete(formId) {
   hideDeletePopup();
-  alert("Deleted successfully!");
+  document.getElementById(formId).submit();
 }
 
-document.getElementById("delete-popup").addEventListener("click", ()=>{
-  hideDeletePopup()
-})
+// Optional: hide popup when clicking outside the box
+document.getElementById("delete-popup").addEventListener("click", function (e) {
+  if (e.target === this) {
+    hideDeletePopup();
+  }
+});
 
-document.querySelector(".top").addEventListener("click", ()=>{
-  hideDeletePopup()
-})
+
 

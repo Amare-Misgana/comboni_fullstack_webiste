@@ -19,6 +19,8 @@ urlpatterns = [
     path("students-mang/add-student/", view_student.add_student, name="add_student_url"),
     path("students-mang/add-students/", view_student.add_students, name="add_students_url"),
     path("students-mang/download-students-excel", view_student.download_students_excel, name="download_students_excel_url"),
+    path("students-mang/download-students-excel-template", view_student.download_student_excel_template, name="download_students_excel_template_url"),
+    path("students-mang/delete-student/<str:student_username>/", view_student.delete_student, name="delete_student_url"),
 
     # Teacher Urls
 

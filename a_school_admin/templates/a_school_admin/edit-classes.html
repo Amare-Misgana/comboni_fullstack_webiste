@@ -1,0 +1,42 @@
+{% extends 'a_school_admin/dashboard-frag.html' %}
+{% load static %}
+{% block content %}
+  <h2>Edit Class {{ cls.class_name }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <label>Home-Room Teacher:</label>
+    <select name="room_teacher">
+      {% for prof in all_teachers %}
+        <option value="{{ prof.id }}"
+          {% if current_teacher and prof.user.id == current_teacher.id %}selected{% endif %}>
+          {{ prof.username }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit">Save</button>
+  </form>
+
+  <h3>Students in {{ cls.class_name }}</h3>
+  <table id="studentsTable" class="display">
+    <thead>
+      <tr><th>Student</th><th>Teacher</th><th>Joined</th></tr>
+    </thead>
+    <tbody>
+      {% for e in entries %}
+        <tr>
+          <td>{{ e.student.userprofile.username }}</td>
+          <td>{{ e.room_teacher.userprofile.username }}</td>
+          <td>{{ e.timestamp|date:"Y-m-d H:i" }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(() => {
+      $('#studentsTable').DataTable({ responsive: true });
+    });
+  </script>
+{% endblock %}

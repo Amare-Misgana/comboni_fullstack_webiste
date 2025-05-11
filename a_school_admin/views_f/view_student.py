@@ -298,138 +298,115 @@ def student_detail(request, student_username):
 
 
 
-
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+@user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
 def add_students(request):
-    context = {
-        'required_columns': ['first name', 'last name', 'middle name', 'email', 
-                           'age', 'phone number', 'gender', 'class'],
-        'errors': []
-    }
+    REQUIRED_COLUMNS = ['first name', 'last name', 'middle name', 'email', 'age', 'phone number', 'gender', 'class']
+    context = {'required_columns': REQUIRED_COLUMNS, 'errors': []}
 
     if request.method == "POST":
-        # File validation
-        if 'file' not in request.FILES or not request.FILES['file'].name.endswith(('.xls', '.xlsx')):
+        uploaded_file = request.FILES.get('file')
+        if not uploaded_file or not uploaded_file.name.endswith(('.xls', '.xlsx')):
             context['errors'].append("Please upload a valid Excel file.")
             return render(request, "a_school_admin/upload.html", context)
 
         try:
-            # Read Excel with proper type handling
-            df = pd.read_excel(
-                request.FILES["file"],
-                dtype={'phone number': str, 'class': str}
-            ).fillna('')  # Replace NaN with empty string
+            df = pd.read_excel(uploaded_file, dtype={'phone number': str, 'class': str}).fillna('')
         except Exception as e:
             context['errors'].append(f"Error reading file: {str(e)}")
             return render(request, "a_school_admin/upload.html", context)
 
-        # Column validation
-        missing_columns = [col for col in context['required_columns'] 
-                         if col.lower() not in map(str.lower, df.columns)]
-        if missing_columns:
-            context['errors'].append(f"Missing columns: {', '.join(missing_columns)}")
+        columns_lower = [col.lower() for col in df.columns]
+        missing = [col for col in REQUIRED_COLUMNS if col.lower() not in columns_lower]
+        if missing:
+            context['errors'].append(f"Missing columns: {', '.join(missing)}")
             return render(request, "a_school_admin/upload.html", context)
 
-        # Data validation
-        validation_errors = []
+        errors = []
         for idx, row in df.iterrows():
-            row_errors = []
-            line_num = idx + 2  # Excel is 1-indexed + header row
-            
-            # Check for empty values
-            empty_fields = [col for col in context['required_columns'] 
-                          if not str(row[col]).strip()]
-            if empty_fields:
-                row_errors.append(f"Line {line_num}: Missing values for {', '.join(empty_fields)}")
+            line = idx + 2
+            row_err = []
 
-            # Class validation
-            class_name = str(row['class']).strip().upper()
-            if not re.match(r'^\d{1,2}[A-H]$', class_name):
-                row_errors.append(f"Line {line_num}: Invalid class format '{class_name}' (expected format like '11A' with section being from A-H)")
+            def field(col): return str(row[col]).strip()
+
+            # Check empty
+            empty = [col for col in REQUIRED_COLUMNS if not field(col)]
+            if empty: row_err.append(f"Line {line}: Missing values for {', '.join(empty)}")
+
+            # Validate class
+            class_name = field('class').upper()
+            if not re.fullmatch(r'\d{1,2}[A-H]', class_name):
+                row_err.append(f"Line {line}: Invalid class '{class_name}' (e.g., '11A')")
             elif not Class.objects.filter(class_name=class_name).exists():
-                row_errors.append(f"Line {line_num}: Class '{class_name}' not found in system")
+                row_err.append(f"Line {line}: Class '{class_name}' not found")
 
-            # Age validation
+            # Validate age
             try:
                 age = int(row['age'])
                 if not 4 <= age <= 80:
-                    row_errors.append(f"Line {line_num}: Invalid age {age} (4-80 only)")
-            except (ValueError, TypeError):
-                row_errors.append(f"Line {line_num}: Invalid age format")
+                    row_err.append(f"Line {line}: Age {age} not in range 4-80")
+            except:
+                row_err.append(f"Line {line}: Invalid age format")
 
-            # Phone validation
-            phone = str(row['phone number']).strip()
-            if len(phone) != 10 or not phone.isdigit():
-                row_errors.append(f"Line {line_num}: Invalid phone number '{phone}' (10 digits required)")
+            # Phone
+            phone = field('phone number')
+            if not (phone.isdigit() and len(phone) == 10):
+                row_err.append(f"Line {line}: Invalid phone number '{phone}'")
 
-            # Gender validation
-            gender = str(row['gender']).upper()
+            # Gender
+            gender = field('gender').upper()
             if gender not in ['M', 'F']:
-                row_errors.append(f"Line {line_num}: Invalid gender '{gender}' (M/F only)")
+                row_err.append(f"Line {line}: Invalid gender '{gender}' (M/F only)")
 
-            # Name validation (allowing spaces and hyphens)
-            for field in ['first name', 'middle name', 'last name']:
-                name = str(row[field]).strip()
-                if not re.match(r'^[A-Za-z\- ]+$', name):
-                    row_errors.append(f"Line {line_num}: Invalid {field} '{name}' (letters and hyphens only)")
+            # Name fields
+            for name_field in ['first name', 'middle name', 'last name']:
+                if not re.fullmatch(r'[A-Za-z\- ]+', field(name_field)):
+                    row_err.append(f"Line {line}: Invalid {name_field} '{field(name_field)}'")
 
-            # Email validation
-            email = str(row['email']).strip().lower()
+            # Email
+            email = field('email').lower()
             if not validate_email(email):
-                row_errors.append(f"Line {line_num}: Invalid email format")
+                row_err.append(f"Line {line}: Invalid email format")
             elif CustomUser.objects.filter(email=email).exists():
-                row_errors.append(f"Line {line_num}: Email already exists")
+                row_err.append(f"Line {line}: Email already exists")
 
-            if row_errors:
-                validation_errors.extend(row_errors)
+            if row_err:
+                errors.extend(row_err)
 
-        if validation_errors:
-            context['errors'] = validation_errors
+        if errors:
+            context['errors'] = errors
             return render(request, "a_school_admin/upload.html", context)
 
-        # Create users in transaction
         try:
             with transaction.atomic():
-                created_users = []
+                created = 0
                 for _, row in df.iterrows():
-                    password = generate_password()
-                    class_name = str(row['class']).strip().upper()
-                    
                     user = CustomUser(
-                        first_name=row['first name'].strip(),
-                        middle_name=row['middle name'].strip(),
-                        last_name=row['last name'].strip(),
-                        email=row['email'].strip().lower(),
+                        first_name=field('first name'),
+                        middle_name=field('middle name'),
+                        last_name=field('last name'),
+                        email=field('email').lower(),
                         age=int(row['age']),
-                        gender='male' if str(row['gender']).upper() == 'M' else 'female',
-                        phone_number=str(row['phone number']).strip(),
-                        role="student"
+                        gender='male' if field('gender').upper() == 'M' else 'female',
+                        phone_number=field('phone number'),
+                        role='student'
                     )
-                    user.set_password(password)
+                    user.set_password(generate_password())
                     user.save()
-                    
-                    # Assign classroom if relationship exists
+
+                    # Assign class if related
                     if hasattr(user, 'classroom'):
-                        classroom = ClassRoom.objects.get(class_name=class_name)
-                        user.classroom = classroom
+                        user.classroom = ClassRoom.objects.get(class_name=field('class').upper())
                         user.save()
-                    
-                    # Create profile
+
                     UserProfile.objects.create(user=user)
-                    created_users.append(user)
+                    created += 1
 
-                # Log admin action
-                AdminAction.objects.create(
-                    admin=request.user,
-                    action=f"Bulk added {len(created_users)} students"
-                )
-
-                messages.success(request, f"Successfully added {len(created_users)} students")
+                AdminAction.objects.create(admin=request.user, action=f"Bulk added {created} students")
+                messages.success(request, f"Successfully added {created} students")
                 return redirect('students_mang_url')
 
         except Exception as e:
             context['errors'].append(f"System error: {str(e)}")
-            return render(request, "a_school_admin/upload.html", context)
 
     return render(request, "a_school_admin/upload.html", context)
 

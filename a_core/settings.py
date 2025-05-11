@@ -151,6 +151,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'a_teacher' / 'static',
     BASE_DIR / 'a_student' / 'static',
     BASE_DIR / 'a_message' / 'static',
+    BASE_DIR / 'media',
 ]
 MEDIA_URL = '/media-url/'
 MEDIA_ROOT = BASE_DIR / 'media'

@@ -4,6 +4,7 @@
     align-items: center;
     flex-direction: column;
     gap: 1em;
+    width: 90%;
 }
 
 .add-teacher-form {
@@ -11,6 +12,9 @@
     color: var(--primary-text);
     padding: 2em;
     border-radius: 0.3em;
+    max-width: 80%;
+    display: flex;
+    flex-direction: column;
 }
 
 .add-teacher-form h2 {
@@ -77,56 +81,107 @@
     border: 1px solid var(--primary);
 }
 
-.crud {
+#teacher-profile {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+
+/* Error Style  */
+
+.error-card {
+    background: var(--dark-background);
+    border-left: 4px solid var(--delete-btn);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+    display: none;
+}
+
+.error-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.error-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--delete-btn);
+}
+
+.error-title {
+    color: var(--primary-text);
+    margin: 0;
+}
+
+.error-list {
+    color: var(--delete-btn);
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+
+
+/* Password icon */
+
+.password-wrapper .toggle-visibility {
+    --size: 1.3em;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.2em;
-    padding: 1em 2em;
-}
-
-.crud .right-btn {
-    border-radius: 0 0.3em 0.3em 0;
-}
-
-.crud .left-btn {
-    border-radius: 0.3em 0 0 0.3em;
-}
-
-.crud .delete-btn,
-.crud .edit-btn,
-.crud .detail-btn {
-    width: 8.5em;
-    text-align: center;
-    text-decoration: none;
-    color: white;
-    padding: 0.3em 0.5em;
-    border: none;
-    font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    user-select: none;
+    position: relative;
 }
 
-.crud .edit-btn {
-    background: var(--edit-btn);
+.pass-icon {
+    position: absolute;
+    right: 0.3em;
+    bottom: 0.7em;
+    fill: var(--primary);
 }
 
-.crud .edit-btn:hover {
-    background: var(--edit-btn-hover);
+body.dark-mode .pass-icon {
+    fill: var(--primaryL);
 }
 
-.crud .delete-btn {
-    background: var(--delete-btn);
+.toggle-visibility .icon-show {
+    animation: keyframes-fill 0.5s;
+    width: 2em;
 }
 
-.crud .delete-btn:hover {
-    background: var(--delete-btn-hover);
+.toggle-visibility .icon-hide {
+    animation: keyframes-fill 0.5s;
+    display: none;
+    right: 0.6em;
 }
 
-.crud .detail-btn {
-    background: var(--detail-btn);
+.toggle-visibility input {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
 }
 
-.crud .detail-btn:hover {
-    background: var(--detail-btn-hover);
+.toggle-visibility input:checked~.icon-show {
+    display: none;
+}
+
+.toggle-visibility input:checked~.icon-hide {
+    display: block;
+}
+
+@keyframes keyframes-fill {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
 }

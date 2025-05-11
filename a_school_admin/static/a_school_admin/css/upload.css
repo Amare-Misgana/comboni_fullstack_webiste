@@ -204,3 +204,15 @@
     --recommendation-text: #81C784;
     /* Light green text */
 }
+
+
+.excel-template {
+    margin-top: 0.6em;
+    color: var(--secondary-text);
+    text-align: left;
+}
+
+.excel-template a {
+    text-decoration: none;
+    color: var(--primary);
+}

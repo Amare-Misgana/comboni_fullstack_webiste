@@ -28,6 +28,7 @@ urlpatterns = [
     path("teachers-mang/teacher-detail/<str:teacher_username>/", view_teacher.teacher_detail, name="teacher_detail_url"),
     path("teachers-mang/add-teacher/", view_teacher.add_teacher, name="add_teacher_url"),
     path("teachers-mang/add-teachers/", view_teacher.add_teachers, name="add_teachers_url"),
+    path("teachers-mang/download-teachers-excel-template", view_teacher.download_teacher_excel_template, name="download_teachers_excel_template_url"),
 
     # Class Urls
 

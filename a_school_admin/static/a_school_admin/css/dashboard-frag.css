@@ -106,10 +106,29 @@ body.slide .nav {
 
 .nav .links ul li {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 1em;
-  padding: 1em 4em 1em 2em;
+  padding: 1em 2em 1em 2em;
   transition: all var(--switch-mode) ease;
+}
+
+body.slide .nav .links ul {
+  align-items: center;
+}
+
+body.slide .nav .links ul li {
+  padding: 1em 4.4em 1em 2em;
+  justify-content: center;
+}
+
+.nav .links ul li .icon-holder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+  padding: 0 0.7em 0 0;
 }
 
 body.slide .links ul {
@@ -118,7 +137,7 @@ body.slide .links ul {
 
 .nav .links ul li:hover {
   cursor: pointer;
-  background-color: var(--primary) !important;
+  background-color: var(--primary);
 }
 
 .nav .links ul li:hover a p,
@@ -580,4 +599,61 @@ div {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+
+/* Edit/Delete Buttons */
+/* Edit/Delete Buttons */
+.crud {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2em;
+  padding: 1em 2em;
+}
+
+.crud .right-btn {
+  border-radius: 0 0.3em 0.3em 0;
+}
+
+.crud .left-btn {
+  border-radius: 0.3em 0 0 0.3em;
+}
+
+.crud .delete-btn,
+.crud .edit-btn,
+.crud .detail-btn {
+  width: 8.5em;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  padding: 0.3em 0.5em;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.crud .edit-btn {
+  background: var(--edit-btn);
+}
+
+.crud .edit-btn:hover {
+  background: var(--edit-btn-hover);
+}
+
+.crud .delete-btn {
+  background: var(--delete-btn);
+}
+
+.crud .delete-btn:hover {
+  background: var(--delete-btn-hover);
+}
+
+.crud .detail-btn {
+  background: var(--detail-btn);
+}
+
+.crud .detail-btn:hover {
+  background: var(--detail-btn-hover);
 }

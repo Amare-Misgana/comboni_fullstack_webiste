@@ -196,6 +196,7 @@ def login_choice(request):
     }
     return render(request, "a_visitor/login_choice.html", context)
 
+
 def login_view(request, role):
     if request.method == 'POST':
         email = request.POST['email']
@@ -204,17 +205,16 @@ def login_view(request, role):
 
         try:
             user = UserModel.objects.get(email=email)
+            if not user.check_password(password):
+                messages.error(request, "Incorrect password.")
+                return redirect(reverse('login_url', kwargs={'role': role}))
+
+            if user.role != role:
+                messages.error(request, f"Wrong portal. You are not registered in {role}.")
+                return redirect(reverse('login_url', kwargs={'role': role}))
         except UserModel.DoesNotExist:
             messages.error(request, "Email does not exist.")
-            return redirect(reverse('login_url', kwargs={'role': request.user.role}))
-
-        if not user.check_password(password):
-            messages.error(request, "Incorrect password.")
-            return redirect(reverse('login_url', kwargs={'role': request.user.role}))
-
-        if user.role != role:
-            messages.error(request, f"Wrong portal. You are not registered in {role}.")
-            return redirect(reverse('login_url', kwargs={'role': request.user.role}))
+            return redirect(reverse('login_url', kwargs={'role': role}))
 
         login(request, user)
         messages.success(request, "Logged in successfully.")

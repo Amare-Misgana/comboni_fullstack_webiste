@@ -20,48 +20,43 @@
 {% block content %}
   <div class="teacher-container">
     <div class="teacher-card">
-      <img src="{% static 'images/profile-placeholder.jpg' %}" alt="Profile Image" class="profile-image" />
+      {% if teacher.user_pic %}
+        <img src="{{ teacher.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" class="profile-image" />
+      {% else %}
+        <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" class="profile-image" />
+      {% endif %}
 
       <div class="info-flex">
         <div class="first-column column">
           <div class="info-group">
-            <span class="label">First Name</span><span class="value">John</span>
+            <span class="label">First Name</span><span class="value">{{ teacher.user.first_name }}</span>
           </div>
           <div class="info-group">
-            <span class="label">Middle Name</span><span class="value">A.</span>
+            <span class="label">Middle Name</span><span class="value">{{ teacher.user.middle_name }}</span>
           </div>
           <div class="info-group">
-            <span class="label">Last Name</span><span class="value">Doe</span>
+            <span class="label">Last Name</span><span class="value">{{ teacher.user.last_name }}</span>
           </div>
           <div class="info-group">
-            <span class="label">Age</span><span class="value">30</span>
+            <span class="label">Age</span><span class="value">{{ teacher.user.age }}</span>
           </div>
           <div class="info-group">
-            <span class="label">Gender</span><span class="value">Male</span>
+            <span class="label">Gender</span><span class="value">{{ teacher.user.gender }}</span>
           </div>
         </div>
         <div class="second-column column">
           <div class="info-group">
-            <span class="label">Phone</span><span class="value">+123456789</span>
+            <span class="label">Phone</span><span class="value">{{ teacher.user.phone_number }}</span>
           </div>
           <div class="info-group">
-            <span class="label">Subject</span><span class="value">Mathematics</span>
-          </div>
-          <div class="info-group">
-            <span class="label">Experience</span><span class="value">5 Years</span>
-          </div>
-          <div class="info-group">
-            <span class="label">Class Assigned</span><span class="value">10B</span>
-          </div>
-          <div class="info-group">
-            <span class="label">Performance</span><span class="value">Excellent</span>
+            <span class="label">Class Assigned</span><span class="value">{{ home_room }}</span>
           </div>
         </div>
       </div>
 
       <div class="crud">
-        <a href="@"><button class="edit-btn left-btn">Edit</button></a>
         <a href=""><button class="delete-btn right-btn">Delete</button></a>
+        <a href="@"><button class="edit-btn left-btn">Edit</button></a>
       </div>
     </div>
   </div>

@@ -61,14 +61,10 @@
       </article>
     </div>
   </div>
-  {% if subjects %}
+  {% if teachers %}
     <div class="teachers-per-subject">
       <canvas id="teachersPerSubject"></canvas>
     </div>
-  {% else %}
-    {% include 'fragments/no_data_box.html' with title='Subjects' message='There is no subjects to relate with teachers.' %}
-  {% endif %}
-  {% if teachers %}
     <div class="teachers-container">
       <div class="table-header">
         <h2>Teacher</h2>
@@ -90,8 +86,8 @@
               <td>{{ teacher.middle_name }}</td>
               <td>{{ teacher.age }}</td>
               <td class="crud">
-                <a href="{% url 'edit_teacher_url' teacher_username=teacher.username %}" class="edit-btn left-btn">Edit</a>
                 <a href="{% url 'teacher_detail_url' teacher_username=teacher.username %}" class="detail-btn right-btn">Details</a>
+                <a href="{% url 'edit_teacher_url' teacher_username=teacher.username %}" class="edit-btn left-btn">Edit</a>
               </td>
             </tr>
           {% endfor %}
@@ -99,7 +95,7 @@
       </table>
     </div>
   {% else %}
-    {% include 'fragments/no_data_box.html' with title='Teachers' message='No Teachers' %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Teachers Found' empty_message='There are currently no teachers in the system.' btn_name='+ Add Teacher' add_url='add_teacher_url' %}
   {% endif %}
 {% endblock %}
 

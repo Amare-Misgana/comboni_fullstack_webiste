@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.http import HttpResponse
@@ -18,14 +18,17 @@ from a_school_admin.helper_func import validate_email, generate_password
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def teachers_mang(request):
+    try:
+        teachers = CustomUser.objects.filter(role="teacher")
+    except Exception:
+        messages.warning(request, "No teacher found in the system. Add teachers above.")
+        teachers = None
+
     context = {
+        "teachers": teachers, 
     }
     # waiting subjects and teachers
     return render(request, "a_school_admin/teachers-mang.html", context)
-
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
-def add_teacher(request):
-    return render(request, "a_school_admin/add-teacher.html")
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -33,186 +36,310 @@ def edit_teacher(request, teacher_username):
     return render(request, "a_school_admin/edit-teacher.html")
 
 def teacher_detail(request, teacher_username):
-    print("\n\n\n\n", teacher_username)
-    return render(request, "a_school_admin/teacher-detail.html")
+    try:
+        teacher_user = CustomUser.objects.get(username=teacher_username)
+        teacher = get_object_or_404(UserProfile, user=teacher_user)
+    except UserProfile.DoesNotExist:
+        messages.error(request, "UserProfile not found for the given username.")
+        return redirect("teachers_mang_url")
 
+    context = {
+        "teacher": teacher,
+        "home_room": ClassRoom.objects.get(room_teacher=teacher.user).class_name,
+    }
+    return render(request, "a_school_admin/teacher-detail.html", context)
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+def add_teacher(request):
+    teachers_not_in_classroom = UserProfile.objects.filter(
+        user__role='teacher'
+    ).exclude(
+        user__id__in=ClassRoom.objects.values_list("room_teacher", flat=True)
+    )
+    available_class_rooms = Class.objects.exclude(class_name__in=ClassRoom.objects.values("class_name"))
+    context = {
+        "class_list": Class.objects.values_list("class_name", flat=True).order_by(Length('class_name'), 'class_name'),
+        "available_class_rooms": available_class_rooms,
+    }
+
+    if request.method == 'POST':
+        try:
+            first_name = request.POST.get("first_name", "").strip()
+            middle_name = request.POST.get("middle_name", "").strip()
+            last_name = request.POST.get("last_name", "").strip()
+            phone_number = request.POST.get("phone_number", "").strip()
+            age = request.POST.get("age", "").strip()
+            gender = request.POST.get("gender", "").strip()
+            email = request.POST.get('email', "").strip()
+            profile_pic = request.FILES.get("profile_pic")
+            home_room_class = request.POST.get('home_room_class')
+            password = request.POST.get('password', "").strip()
+            conf_password = request.POST.get('confirm_password', "").strip()
+
+            # Check if class exists and no home room teacher is already assigned
+            if ClassRoom.objects.filter(class_name__class_name=home_room_class).exists():
+                messages.warning(request, f"There is already a home room teacher for {home_room_class}.")
+                return render(request, "a_school_admin/add-teacher.html", context)
+            elif not Class.objects.filter(class_name=home_room_class).exists():
+                messages.error(request, f"'{home_room_class}' Doesn't exist.")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            # Validate email
+            if not email:
+                messages.error(request, "Email is required!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+            
+            if not validate_email(email):
+                messages.error(request, "Invalid email format!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+            
+            if CustomUser.objects.filter(email=email).exists():
+                messages.error(request, "Email already exists.")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            # Validate other fields
+            if not first_name:
+                messages.error(request, "First name is required!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+            
+            if not last_name:
+                messages.error(request, "Last name is required!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            if not phone_number:
+                messages.error(request, "Phone number is required!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+            
+            if not re.match(r'^\+?[0-9]{8,15}$', phone_number):
+                messages.error(request, "Invalid phone number format. Use +1234567890 format.")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            if not age:
+                messages.error(request, "Age is required!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+            
+            try:
+                age = int(age)
+                if age < 18 or age > 90:
+                    messages.error(request, "Age must be between 18 and 90.")
+                    return render(request, "a_school_admin/add-teacher.html", context)
+            except ValueError:
+                messages.error(request, "Age must be a valid number.")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            if not gender:
+                messages.error(request, "Gender is required!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+            elif gender.upper() not in ["MALE", "FEMALE"]:
+                messages.error(request, "Invalid gender value")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            if not password:
+                messages.error(request, "Password cannot be empty!")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            if not password == conf_password:
+                messages.error(request, f"Passwords doesn't match.")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+            # Create teacher
+            teacher = CustomUser(
+                first_name=first_name,
+                middle_name=middle_name,
+                last_name=last_name,
+                phone_number=phone_number,
+                age=age,
+                role="teacher",
+                gender=gender,
+                email=email,
+            )
+            teacher.set_password(password)
+            teacher.save()
+
+            # Create ClassRoom object
+            try:
+                class_obj = Class.objects.get(class_name=home_room_class)
+                classroom = ClassRoom(
+                    class_name=class_obj,
+                    room_teacher=teacher,
+                )
+                classroom.save()
+
+                # Save profile picture if provided
+
+                if profile_pic:
+                    teacher_profile = UserProfile(
+                        user=teacher,
+                        user_pic=profile_pic,
+                    )
+                    teacher_profile.save()
+                else:
+                    messages.error("Profile picture faile to load.")
+                    return redirect('teachers_mang_url')
+                
+
+                # Log admin action
+                admin_action = AdminAction(
+                    admin=request.user,
+                    action=f"Added User ({teacher.first_name})"
+                )
+                admin_action.save()
+
+                messages.success(request, 'Teacher added successfully.')
+                return redirect('teachers_mang_url')  # Ensure this URL exists in your urls.py
+
+            except Class.DoesNotExist:
+                messages.error(request, f"Class {home_room_class} does not exist.")
+                return render(request, "a_school_admin/add-teacher.html", context)
+
+        except Exception as e:
+            messages.error(request, f"Failed to add teacher: {str(e)}")
+            return render(request, "a_school_admin/add-teacher.html", context)
+
+    return render(request, "a_school_admin/add-teacher.html", context)
+
+@user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
 def add_teachers(request):
+    REQUIRED_COLUMNS = ['first name', 'last name', 'middle name', 'email', 'age', 'phone number', 'gender', 'home room class']
+    CLASS_REGEX = r'^\d{1,2}[A-H]$'
+
     context = {
         'upload_for': "Teachers",
         'upload_title': 'Upload Teachers',
-        'required_columns': ['first name', 'last name', 'middle name', 'email', 
-                           'age', 'phone number', 'gender', 'home room class'],
+        'required_columns': REQUIRED_COLUMNS,
         'errors': [],
         'recommendations': [],
     }
 
     if request.method == "POST":
-        
-        if 'file' not in request.FILES or not request.FILES['file'].name.endswith(('.xls', '.xlsx')):
+        file = request.FILES.get("file")
+        if not file or not file.name.endswith(('.xls', '.xlsx')):
             context['errors'].append("Please upload a valid Excel file.")
             return render(request, "a_school_admin/upload.html", context)
 
         try:
-            
-            df = pd.read_excel(
-                request.FILES["file"],
-                dtype={'phone number': str, 'home room class': str}
-            ).fillna('')  
+            df = pd.read_excel(file, dtype={'phone number': str, 'home room class': str}).fillna('')
         except Exception as e:
-            context['errors'].append(f"Error reading file: {str(e)}")
+            context['errors'].append(f"Error reading file: {e}")
             return render(request, "a_school_admin/upload.html", context)
 
-        
-        missing_columns = [col for col in context['required_columns'] 
-                         if col.lower() not in map(str.lower, df.columns)]
-        if missing_columns:
-            context['errors'].append(f"Missing columns: {', '.join(missing_columns)}")
+        cols = [col.lower() for col in df.columns]
+        missing = [col for col in REQUIRED_COLUMNS if col.lower() not in cols]
+        if missing:
+            context['errors'].append(f"Missing columns: {', '.join(missing)}")
             return render(request, "a_school_admin/upload.html", context)
 
-        
-        validation_errors = []
-        show_recommendations = False
+        existing_classes = set(Class.objects.values_list("class_name", flat=True))
+        taken_home_rooms = set(ClassRoom.objects.values_list("class_name__class_name", flat=True))
+        existing_emails = set(CustomUser.objects.values_list("email", flat=True))
 
+        errors, to_create = [], []
         for idx, row in df.iterrows():
+            line = idx + 2
+            row_data = {col: str(row[col]).strip() for col in REQUIRED_COLUMNS}
             row_errors = []
-            line_num = idx + 2 
-            
-            
-            empty_fields = [col for col in context['required_columns'] 
-                          if not str(row[col]).strip()]
-            if empty_fields:
-                row_errors.append(f"Line {line_num}: Missing values for {', '.join(empty_fields)}")
 
-            
-            class_name = str(row['class']).strip().upper()
-            if not re.match(r'^\d{1,2}[A-H]$', class_name):
-                row_errors.append(f"Line {line_num}: Invalid class format '{class_name}' (expected format like '11A')")
-            if not Class.objects.filter(class_name=class_name).exists():
-                show_recommendations = True
-                row_errors.append(f"Line {line_num}: Class '{class_name}' not found in system")
+            if any(not v for v in row_data.values()):
+                row_errors.append(f"Line {line}: Missing required fields.")
 
-            home_room_class = str(row["home room class"]).strip().upper()
-            if home_room_class:
-                print("checking.....")
-                # 1) format
-                if not re.match(r'^\d{1,2}[A-H]$', home_room_class):
-                    row_errors.append(
-                        f"Line {line_num}: Invalid class format '{home_room_class}' (expected like '11A')"
-                    )
-                # 2) existence
-                if not Class.objects.filter(class_name=home_room_class).exists():
-                    show_recommendations = True
-                    row_errors.append(
-                        f"Line {line_num}: Class '{home_room_class}' not found in system"
-                    )
-                # 3) already assigned
-                if ClassRoom.objects.filter(class_name__class_name=home_room_class).exists():
-                    row_errors.append(
-                        f"Line {line_num}: Home-room position already taken for '{home_room_class}'"
-                    )
-            else:
-                print("checked!!!!!")
-                home_room_class = None 
+            # Validate class
+            home_class = row_data['home room class'].upper()
+            if home_class and not re.match(CLASS_REGEX, home_class):
+                row_errors.append(f"Line {line}: Invalid class format '{home_class}'")
+            elif home_class not in existing_classes:
+                context['recommendations'] = sorted(existing_classes)
+                row_errors.append(f"Line {line}: Class '{home_class}' not found")
+            elif home_class in taken_home_rooms:
+                row_errors.append(f"Line {line}: Class '{home_class}' already assigned")
 
-            
+            # Validate age
             try:
-                age = int(row['age'])
+                age = int(row_data['age'])
                 if not 4 <= age <= 80:
-                    row_errors.append(f"Line {line_num}: Invalid age {age} (4-80 only)")
-            except (ValueError, TypeError):
-                row_errors.append(f"Line {line_num}: Invalid age format")
+                    row_errors.append(f"Line {line}: Invalid age {age}")
+            except:
+                row_errors.append(f"Line {line}: Age must be a number")
 
-            
-            phone = str(row['phone number']).strip()
-            if len(phone) != 10 or not phone.isdigit():
-                row_errors.append(f"Line {line_num}: Invalid phone number '{phone}' (10 digits required)")
+            # Validate phone
+            phone = row_data['phone number']
+            if not (phone.isdigit() and len(phone) == 10):
+                row_errors.append(f"Line {line}: Invalid phone number '{phone}'")
 
-            
-            gender = str(row['gender']).upper()
+            # Gender
+            gender = row_data['gender'].upper()
             if gender not in ['M', 'F']:
-                row_errors.append(f"Line {line_num}: Invalid gender '{gender}' (M/F only)")
+                row_errors.append(f"Line {line}: Invalid gender '{gender}'")
 
-            
-            for field in ['first name', 'middle name', 'last name']:
-                name = str(row[field]).strip()
-                if not re.match(r'^[A-Za-z\- ]+$', name):
-                    row_errors.append(f"Line {line_num}: Invalid {field} '{name}' (letters and hyphens only)")
+            # Names
+            for n in ['first name', 'middle name', 'last name']:
+                if not re.match(r'^[A-Za-z\- ]+$', row_data[n]):
+                    row_errors.append(f"Line {line}: Invalid {n} '{row_data[n]}'")
 
-            
-            email = str(row['email']).strip().lower()
+            # Email
+            email = row_data['email'].lower()
             if not validate_email(email):
-                row_errors.append(f"Line {line_num}: Invalid email format")
-            elif CustomUser.objects.filter(email=email).exists():
-                row_errors.append(f"Line {line_num}: Email already exists")
+                row_errors.append(f"Line {line}: Invalid email format")
+            elif email in existing_emails:
+                row_errors.append(f"Line {line}: Email already exists")
 
             if row_errors:
-                validation_errors.extend(row_errors)
-        if show_recommendations:
-            context['recommendations'].extend(
-                Class.objects.values_list("class_name", flat=True).order_by(Length('class_name'), 'class_name')
-            )
+                errors.extend(row_errors)
+            else:
+                to_create.append((row_data, home_class, age, gender, email))
 
-    
-        if validation_errors:
-            context['errors'] = validation_errors
+        if errors:
+            context['errors'] = errors
             return render(request, "a_school_admin/upload.html", context)
 
-        
         try:
             with transaction.atomic():
-                created_users = []
-                for _, row in df.iterrows():
-                    password = generate_password()
-                    class_name = str(row['home room class']).strip().upper()
-                    
-                    user = CustomUser(
-                        first_name=row['first name'].strip(),
-                        middle_name=row['middle name'].strip(),
-                        last_name=row['last name'].strip(),
-                        email=row['email'].strip().lower(),
-                        age=int(row['age']),
-                        gender='male' if str(row['gender']).upper() == 'M' else 'female',
-                        phone_number=str(row['phone number']).strip(),
+                new_users = []
+                for row_data, home_class, age, gender, email in to_create:
+                    pwd = generate_password()
+                    user = CustomUser.objects.create(
+                        first_name=row_data['first name'],
+                        middle_name=row_data['middle name'],
+                        last_name=row_data['last name'],
+                        email=email,
+                        age=age,
+                        gender='male' if gender == 'M' else 'female',
+                        phone_number=row_data['phone number'],
                         role="teacher"
                     )
-                    user.set_password(password)
+                    user.set_password(pwd)
                     user.save()
 
-                    class_name_ = Class.objects.get(class_name=row['class'])
-                    ClassRoom.objects.create(
-                        class_name=class_name_,
-                        room_teacher=user,
-                    )
-                    
-                    
-                    if hasattr(user, 'classroom'):
-                        classroom = Class.objects.get(class_name=class_name)
-                        user.classroom = classroom
-                        user.save()
-                    
-                    
-                    UserProfile.objects.create(
-                        user=user,
-                        password=password,
-                    )
-                    created_users.append(user)
+                    class_obj = Class.objects.get(class_name=home_class)
+                    ClassRoom.objects.create(class_name=class_obj, room_teacher=user)
+                    UserProfile.objects.create(user=user, password=pwd)
+                    new_users.append(user)
 
-                
                 AdminAction.objects.create(
                     admin=request.user,
-                    action=f"Bulk added {len(created_users)} teachers"
+                    action=f"Bulk added {len(new_users)} teachers"
                 )
-
-                messages.success(request, f"Successfully added {len(created_users)} teachers")
+                messages.success(request, f"Successfully added {len(new_users)} teachers")
                 return redirect('teachers_mang_url')
 
         except Exception as e:
             context['errors'].append(f"System error: {str(e)}")
-            return render(request, "a_school_admin/upload.html", context)
 
     return render(request, "a_school_admin/upload.html", context)
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+def download_teacher_excel_template(request):
+    columns = ['first name', 'last name', 'middle name', 'email',
+               'age', 'phone number', 'gender', 'home room class', 'class']
+
+    # Optional: Add an empty DataFrame with the right columns
+    df = pd.DataFrame(columns=columns)
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="teacher_template.xlsx"'
+
+    df.to_excel(response, index=False)
+    return response
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def download_teacher_excel(request):

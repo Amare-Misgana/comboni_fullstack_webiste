@@ -13,7 +13,11 @@
 {% block page_title %}
   <h2>Welcome back,</h2>
   <div class="user-info">
-    <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
+    {% if user_profile.user_pic %}
+      <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
+    {% else %}
+      <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" />
+    {% endif %}
     <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
   </div>
 {% endblock %}
@@ -40,7 +44,7 @@
       <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-school"></i>
       <div class="info">
-        <h1>{{ grades_amount }}</h1>
+        <h1>{{ classes_amount }}</h1>
         <p>Total Classes</p>
       </div>
     </div>
@@ -170,21 +174,21 @@
     })
     
     // Chart 2
-    const ctx2 = document.getElementById('student-gender').getContext('2d')
+    const ctx2 = document.getElementById('student-gender').getContext('2d');
     let chart2 = new Chart(ctx2, {
       type: 'bar',
       data: {
-        labels: ['Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'],
+        labels: {{ labels|safe }},
         datasets: [
           {
-            label: 'Votes',
-            data: [12, 1, 3, 4],
+            label: 'Male',
+            data: {{ male_data|safe }},
             backgroundColor: '#196b21'
           },
           {
-            label: 'Votes',
-            data: [1, 19, 3, 2],
-            backgroundColor: '#196b21'
+            label: 'Female',
+            data: {{ female_data|safe }},
+            backgroundColor: '#c41f1f'
           }
         ]
       },
@@ -206,7 +210,7 @@
           y: { ticks: { color: getLabelColor() } }
         }
       }
-    })
+    }); 
     
     // Update both charts on theme toggle
     document.querySelector('.theme-toggle').addEventListener('change', function () {

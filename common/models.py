@@ -43,11 +43,17 @@ class CustomUserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, first_name, middle_name, last_name, email, phone_number,gender, password):
-        user = self.create_user(first_name, middle_name, last_name, email, gender, phone_number,password)
+    def create_superuser(self, first_name, middle_name, last_name, email, phone_number,gender,role, password):
+        user = self.create_user(first_name, middle_name, last_name, email, gender, phone_number,role,password)
         user.is_staff = True
         user.is_superuser = True
+        user.role = "admin"
         user.save(using=self._db)
+        user_profile = UserProfile(
+            user = user
+        )
+        user_profile.save()
+            
         return user
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -117,15 +123,6 @@ class Message(models.Model):
     def __str__(self):
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
 
-class Class(models.Model):
-    class_name = models.CharField(max_length=50, unique=True)
-    
-    def __str__(self):
-        return self.class_name
-
-    def clean(self):
-        if self.class_name:
-            self.class_name = self.class_name.upper()
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=50)
@@ -133,20 +130,33 @@ class Subject(models.Model):
     def __str__(self):
         return f"{self.subject_name}"
 
+class Class(models.Model):
+    class_name = models.CharField(max_length=50, unique=True, primary_key=True)
+    
+    def __str__(self):
+        return self.class_name
+
+    def clean(self):
+        if self.class_name:
+            self.class_name = self.class_name.upper()
+            
 class ClassSubject(models.Model):
-    class_room = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="class_subjects")
+    class_room = models.ForeignKey("ClassRoom", on_delete=models.PROTECT, related_name="class_subjects")
     subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="subject_classes")
-    teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="teaching_subjects")
+    teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="teaching_subjects", limit_choices_to={'role': 'teacher'})
+
+    class Meta:
+        unique_together = ('class_room', 'subject')  # ✅ Only one teacher per subject in a class
+
 
     def __str__(self):
         return f"{self.subject} in {self.class_room} by {self.teacher.username}"
 
 
 class ClassRoom(models.Model):
-    class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="classrooms")
-    student = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_students", null=True, blank=True)
-    room_teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="classroom_teachers", null=True, blank=True, unique=True)
-
+    class_name = models.OneToOneField(Class, on_delete=models.PROTECT)
+    room_teacher = models.OneToOneField(CustomUser, on_delete=models.PROTECT, null=True, limit_choices_to={'role': 'teacher'})
+    students = models.ManyToManyField(CustomUser, related_name='classroom_students', limit_choices_to={'role': 'student'})
     def __str__(self):
         return f"{self.class_name}--{self.room_teacher}"
 

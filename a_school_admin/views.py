@@ -8,20 +8,35 @@ from django.http import HttpResponse
 from .models import AdminAction
 import pandas as pd
 from common.models import UserProfile, CustomUser, ClassRoom, Class
-import openpyxl
-import secrets
-import string
-from io import BytesIO
-import re
+import json
 
 # ==================  HOME ==================
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def school_admin_dashboard(request):
     user_profile = UserProfile.objects.get(user=request.user)
+    
     students = CustomUser.objects.filter(role="student")
     teachers = CustomUser.objects.filter(role="teacher")
-    sections = Class.objects.all().count()
+    
+    classrooms = ClassRoom.objects.select_related('class_name', 'room_teacher').prefetch_related('students')
+    
+    grades = {}
+    for classroom in classrooms:
+        class_students = classroom.students.all()
+        grades[classroom.class_name.class_name] = {
+            "male": class_students.filter(gender="male").count(),
+            "female": class_students.filter(gender="female").count()
+        }
+    
+    classes_json = {
+        "classes": [str(classroom.class_name) for classroom in classrooms],
+        "data": [{
+            "class": str(classroom.class_name),
+            "male": grades[str(classroom.class_name)]["male"],
+            "female": grades[str(classroom.class_name)]["female"]
+        } for classroom in classrooms]
+    }
     admin_actions = AdminAction.objects.select_related('admin').all().order_by('-timestamp')
     admin_profiles = UserProfile.objects.select_related('user').all()
 
@@ -31,28 +46,18 @@ def school_admin_dashboard(request):
         if profile:
             action_profiles.append((action, profile))
 
-    classes = sorted(set(int(item[:-1]) for item in Class.objects.values_list("class_name", flat=True)))
-
-
-    grades = {}
-
-    for class_room in classes:
-        grades[class_room] = {}
-        grades[class_room]["male"] = students.filter(gender="male").count()
-        grades[class_room]["female"] = students.filter(gender="female").count()
-    
     context = {
         "user_profile": user_profile,
         "students_amount": students.count(),
         "teachers_amount": teachers.count(),
-        "classes_amount": len(classes),
-        "sections_amount": sections,
-        "classes": classes,
-        'action_profiles': action_profiles,
-        'labels': [f'Grade {g}' for g in grades],
-        'male_data': [grades[g]['male'] for g in grades],
-        'female_data': [grades[g]['female'] for g in grades],
+        "classes_amount": classrooms.count(),
+        "sections_amount": classrooms.count(),  # Since ClassRoom is the section
+        "classes": sorted({classroom.class_name.class_name[:-1] for classroom in classrooms}),  # Extract grade levels
+        'action_profiles': action_profiles,  # Implement your action profiles logic
+        "gender_json": json.dumps(grades),
+        "class_json": json.dumps(classes_json)
     }
+    
     return render(request, "a_school_admin/dashboard.html", context)
 
 # =================== Students View =================

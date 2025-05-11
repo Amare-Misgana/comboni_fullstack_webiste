@@ -61,16 +61,18 @@
       </article>
     </div>
   </div>
-  {% if teachers %}
-    <div class="teachers-per-subject">
-      <canvas id="teachersPerSubject"></canvas>
+  {% if not subjects %}
+    <div class="teachers-per-subject generic-graph-container">
+      <canvas id="teachersPerSubject" class="generic-graph"></canvas>
     </div>
-    <div class="teachers-container">
+  {% endif %}
+  {% if teachers %}
+    <div class="table-container">
       <div class="table-header">
         <h2>Teacher</h2>
-        <a href="{% url 'add_teacher_url' %}"><button class="add-student-btn">Add Student</button></a>
+        <a href="{% url 'add_teacher_url' %}"><button class="add-student-btn action-btn">Add Student</button></a>
       </div>
-      <table id="teachersTable">
+      <table id="teachersTable" class="classTable">
         <thead>
           <tr>
             <th>First Name</th>
@@ -104,11 +106,10 @@
 
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script>
-    const teachers_per_subject_ctx = document.getElementById('teachersPerSubject').getContext('2d')
-    
     function getLabelColor() {
       return localStorage.getItem('theme') === 'true' ? 'black' : 'white'
     }
+    const teachers_per_subject_ctx = document.getElementById('teachersPerSubject').getContext('2d')
     
     const teachersPerSubject = new Chart(teachers_per_subject_ctx, {
       type: 'bar',

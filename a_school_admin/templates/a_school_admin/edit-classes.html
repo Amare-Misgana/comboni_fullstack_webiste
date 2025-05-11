@@ -16,9 +16,9 @@
     </select>
     <button type="submit">Save</button>
   </form>
-
+<div class="table-container">
   <h3>Students in {{ cls.class_name }}</h3>
-  <table id="studentsTable" class="display">
+  <table id="studentsTable" class="classTable">
     <thead>
       <tr><th>Student</th><th>Teacher</th><th>Joined</th></tr>
     </thead>
@@ -32,7 +32,7 @@
       {% endfor %}
     </tbody>
   </table>
-
+</div>
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script>
     $(document).ready(() => {

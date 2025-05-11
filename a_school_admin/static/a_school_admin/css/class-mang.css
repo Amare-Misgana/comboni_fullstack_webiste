@@ -63,157 +63,30 @@
 }
 
 table#classTable {
-    width: 100%;
+    max-width: 100%;
     table-layout: auto;
     border-collapse: collapse;
     border-radius: var(--border-radius);
 }
 
-table#classTable thead {
-    background: var(--primary);
-    color: #fff;
+
+.dataTables_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
-table#classTable thead th {
-    padding: 1em;
-    text-align: left;
-    font-size: 1.1rem;
+.dataTables_wrapper .dataTables-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
-table#classTable tbody td {
-    padding: 0.9em;
-    border-bottom: 1px solid var(--tint);
-    font-size: 1rem;
-}
-
-table#classTable tbody tr:nth-child(even) {
-    background: var(--tint);
-    color: var(--primary-text);
-}
-
-table#classTable tbody tr:nth-child(odd) {
-    color: var(--primary-text);
-}
-
-table#classTable tbody tr:hover {
-    background: var(--primaryLL);
-    cursor: pointer;
-}
-
-.dataTables_wrapper .dataTables_paginate {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.dataTables_info {
-    color: var(--secondary-text) !important;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    border: none !important;
-    color: var(--primary-text) !important;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.previous {
-    background-color: #fff !important;
-    border-radius: 0.3em 0 0 0.3em;
-}
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
     background-color: var(--primaryL) !important;
     color: #fff !important;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.next {
-    background-color: #fff !important;
-    border-radius: 0 0.3em 0.3em 0;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.next:hover::after {
-    display: none;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.next:hover::before {
-    display: none;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.previous,
-.dataTables_wrapper .dataTables_paginate .paginate_button.next {
-    color: var(--primary-text) !important;
-    background-color: var(--light-backgroundL) !important;
-    position: relative !important;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.previous.disabled,
-.dataTables_wrapper .dataTables_paginate .paginate_button.next.disabled {
-    color: var(--last-text) !important;
-    background-color: var(--light-backgroundD) !important;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.previous):not(.next) {
-    background: var(--primaryL);
-    color: white !important;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.previous:hover,
-.dataTables_wrapper .dataTables_paginate .paginate_button.next:hover {
-    color: var(--primary-text) !important;
-    background-color: var(--tint) !important;
-}
-
-.dataTables_filter label {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    gap: 0.1em;
-    color: var(--primary-text);
-}
-
-.dataTables_filter input {
-    color: var(--primary-text);
-    border: 1px solid var(--primary) !important;
-    padding: 0.5em;
-    border-radius: var(--border-radius);
-    margin-bottom: 20px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 1rem;
-    background-color: var(--tint) !important;
-}
-
-.dataTables_filter input:focus {
-    outline: 1px solid var(--primary) !important;
-}
-
-.dataTables_length label {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-.dataTables_length label p {
-    color: var(--primary-text);
-}
-
-.dataTables_length select {
-    background: var(--light-background);
-    border: 1px solid var(--primary);
-    color: var(--primary-text);
-    padding: 0.5em;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.dataTables_length label select {
-    width: 9em;
-    background-color: var(--background) !important;
-    color: var(--primary-text) !important;
-    border: 1px solid var(--primaryD) !important;
-    outline: none;
-    cursor: pointer;
+    padding: 0 1em;
 }
 
 

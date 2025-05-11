@@ -64,11 +64,11 @@
   <!-- Top Students Table -->
 
   {% if students %}
-    <div class="student-table-container top-student-container">
+    <div class="table-container">
       <div class="table-header">
         <h2>Top Students</h2>
       </div>
-      <table id="TopStudentsTable">
+      <table id="TopStudentsTable" class="classTable">
         <thead>
           <tr>
             <th>First Name</th>
@@ -98,12 +98,12 @@
 
   <!-- Student Table -->
   {% if classrooms %}
-    <div class="student-table-container">
+    <div class="table-container">
       <div class="table-header">
         <h2>Students Table</h2>
         <a href="{% url 'add_student_url' %}"><button class="add-student-btn">Add Student</button></a>
       </div>
-      <table id="studentsTable">
+      <table id="studentsTable" class="classTable">
         <thead>
           <tr>
             <th>First Name</th>

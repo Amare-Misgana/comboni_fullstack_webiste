@@ -17,31 +17,75 @@
 {% endblock %}
 
 {% block content %}
-  <table id="detailTable" class="display">
-    <thead>
-      <tr>
-        <th>Student Name</th>
-        <th>Home-Room Teacher</th>
-        <th>Joined On</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in rows %}
+  <div class="table-container">
+    <div class="table-header">
+      <h2>Classes</h2>
+      <a href="{% url 'add_defined_student_url' defined_class_room='hi' %}"><button class="add-student-btn">Add Student</button></a>
+    </div>
+    <table id="detailTable" class="classTable">
+      <thead>
         <tr>
-          <td>{{ row.student }}</td>
-          <td>{{ row.teacher }}</td>
-          <td>{{ row.since|date:'Y-m-d H:i' }}</td>
+          <th>First Name</th>
+          <th>Second Name</th>
+          <th>Age</th>
+          <th>Avarage</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.first_name }}</td>
+            <td>{{ student.middle_name }}</td>
+            <td>{{ student.age }}</td>
+            <td>86%</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
 
 {% block script %}
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script>
     $(function () {
-      $('#detailTable').DataTable({ responsive: true })
+      $('#detailTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
     })
   </script>
 {% endblock %}

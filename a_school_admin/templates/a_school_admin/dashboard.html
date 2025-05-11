@@ -57,17 +57,17 @@
       </div>
     </div>
   </div>
-  <div class="student-per-grade">
-    <canvas id="sutent-per-grade"></canvas>
+  <div class="student-per-grade generic-graph-container">
+    <canvas id="sutent-per-grade" class="generic-graph"></canvas>
   </div>
-  <div class="student-gender">
-    <canvas id="student-gender"></canvas>
+  <div class="student-gender generic-graph-container">
+    <canvas id="student-gender" class="generic-graph"></canvas>
   </div>
-  <div class="admin-table">
+  <div class="table-container">
     <div class="table-header">
       <h2>Admins Recent Actions</h2>
     </div>
-    <table id="adminTable">
+    <table id="adminTable" class="classTable">
       <thead>
         <tr>
           <th>Admin Name</th>
@@ -174,35 +174,38 @@
     })
     
     // Chart 2
-    const ctx2 = document.getElementById('student-gender').getContext('2d');
-    let chart2 = new Chart(ctx2, {
+    const genderData = JSON.parse('{{ gender_json|escapejs }}')
+    const classData = JSON.parse('{{ class_json|escapejs }}')
+    
+    let chart2 = new Chart(document.getElementById('student-gender'), {
       type: 'bar',
       data: {
-        labels: {{ labels|safe }},
+        labels: classData.classes,
         datasets: [
           {
             label: 'Male',
-            data: {{ male_data|safe }},
+            data: classData.data.map((item) => item.male),
             backgroundColor: '#196b21'
           },
           {
             label: 'Female',
-            data: {{ female_data|safe }},
+            data: classData.data.map((item) => item.female),
             backgroundColor: '#c41f1f'
           }
         ]
       },
       options: {
+        responsive: true,
         plugins: {
-          legend: {
-            labels: { color: getLabelColor() }
-          },
           title: {
             display: true,
-            text: 'Student Gender Per Grade',
+            text: 'Student Gender Distribution by Class',
             color: getLabelColor(),
             font: { size: 25, weight: 'normal' },
             align: 'start'
+          },
+          legend: {
+            labels: { color: getLabelColor() }
           }
         },
         scales: {
@@ -210,7 +213,7 @@
           y: { ticks: { color: getLabelColor() } }
         }
       }
-    }); 
+    })
     
     // Update both charts on theme toggle
     document.querySelector('.theme-toggle').addEventListener('change', function () {
@@ -224,6 +227,7 @@
         chart.update()
       })
     })
+    
     document.addEventListener('keydown', function (event) {
       if (event.key === 'F9') {
         const newColor = getLabelColor()

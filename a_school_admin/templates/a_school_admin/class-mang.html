@@ -43,7 +43,7 @@
 
       <div class="classes-container">
         {% for class in classes %}
-          <div class="class-card">{{ class }}</div>
+          <a href="{% url 'class_detail_url' class_name=class.class_name %}"><div class="class-card">{{ class }}</div></a>
         {% endfor %}
       </div>
     </div>
@@ -58,7 +58,7 @@
       <canvas id="class-activity"></canvas>
     </div>
   {% else %}
-    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Acitivites" btn_name='+ Add Class' add_url='add_class_url' %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Acitivites" btn_name='+ Add Class' add_url='create_classes_url' %}
   {% endif %}
 
   <!-- Availabe Classes Rooms -->
@@ -67,7 +67,7 @@
     <div class="table-container class-container">
       <div class="table-header">
         <h2>Classes</h2>
-        <a href="{% url 'add_class_url' %}"><button class="add-student-btn">Add Class</button></a>
+        <a href="{% url 'create_classes_url' %}"><button class="add-student-btn">Add Class</button></a>
       </div>
       <table id="classTable" class="classTable">
         <thead>
@@ -83,7 +83,11 @@
             <tr>
               <td>{{ class_room.class_name }}</td>
               <td>{{ class_room.students.count }}</td>
-              <td>{{ class_room.room_teacher }}</td>
+              {% for user in users %}
+                {% if user.user.username == class_room.room_teacher.username %}
+                  <td>{{ user.username|capfirst }}</td>
+                {% endif %}
+              {% endfor %}
               <td class="crud">
                 <a href="{% url 'class_detail_url' class_name=class_room.class_name %}" class="detail-btn right-btn">Detail</a>
                 <a href="{% url 'edit_class_url' class_name=class_room.class_name %}" class="edit-btn left-btn">Edit</a>
@@ -94,7 +98,7 @@
       </table>
     </div>
   {% else %}
-    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Tables" btn_name='+ Add Class' add_url='add_class_url' %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Tables" btn_name='+ Add Class' add_url='create_classes_url' %}
   {% endif %}
 {% endblock %}
 
@@ -170,7 +174,7 @@
         chart1.options.scales.y.ticks.color = newColor
         chart1.update()
       }
-    })
+    }) 
     
     {% endif %}
     {% if class_rooms %}

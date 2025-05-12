@@ -128,7 +128,7 @@ class Subject(models.Model):
     subject_name = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.subject_name}"
+        return f"{self.subject_name}" 
 
 class Class(models.Model):
     class_name = models.CharField(max_length=50, unique=True, primary_key=True)
@@ -160,14 +160,65 @@ class ClassRoom(models.Model):
     def __str__(self):
         return f"{self.class_name}--{self.room_teacher}"
 
-class MarkList(models.Model):
-    class_name = models.ForeignKey(Class, on_delete=models.PROTECT, related_name="marklists")
-    student = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="student_marks")
-    teacher = models.ForeignKey(CustomUser, on_delete=models.PROTECT, related_name="teacher_marks")
-    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="marklists")
-    timestamp = models.DateTimeField(auto_now_add=True)
+
+class Activity(models.Model):
+    """
+    One scored activity (test/quiz/homework) in a class & subject.
+    """
+    class_room    = models.ForeignKey(
+        ClassRoom,
+        on_delete=models.PROTECT,
+        related_name="activities",
+    )
+    subject       = models.ForeignKey(
+        Subject,
+        on_delete=models.PROTECT,
+        related_name="activities",
+    )
+    teacher       = models.ForeignKey(
+        UserProfile,
+        on_delete=models.PROTECT,
+        related_name="activities_created",
+    )
+    activity_type = models.CharField(
+        max_length=20,
+        choices=[
+            ("test","Test"), 
+            ("quiz","Quiz"), 
+            ("homework","Homework")
+        ],
+    )
+    activity_name = models.CharField(max_length=100)
+    date_created  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("class_room","subject","activity_name")
+        ordering        = ["-date_created"]
+
+    def __str__(self):
+        return f"{self.get_activity_type_display()}: {self.activity_name}"
 
 
+class Mark(models.Model):
+    """
+    A single student's score on one Activity.
+    """
+    activity  = models.ForeignKey(
+        Activity,
+        on_delete=models.CASCADE,
+        related_name="marks",
+    )
+    student   = models.ForeignKey(
+        UserProfile,
+        on_delete=models.PROTECT,
+        related_name="marks_received",
+    )
+    score     = models.DecimalField(max_digits=5, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ("activity","student")
+        ordering        = ["activity","student"]
 
-    
+    def __str__(self):
+        return f"{self.student} → {self.score} on {self.activity}"

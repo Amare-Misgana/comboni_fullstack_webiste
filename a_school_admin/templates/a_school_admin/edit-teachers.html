@@ -53,8 +53,9 @@
         <div class="form-group">
           <label for="home_room_class">Home Room Class</label>
           <select name="home_room_class" id="home_room_class">
+            <option value="{{ room_class.class_name }}" selected>{{ room_class.class_name }}</option>
             {% for room in available_class_rooms %}
-              <option value="{{ room }}" {% if room == home_room_class %}selected{% endif %}>{{ room }}</option>
+              <option value="{{ room }}">{{ room }}</option>
             {% endfor %}
           </select>
         </div>
@@ -83,9 +84,7 @@
       </div>
 
       <div class="crud">
-        <a href="{% url 'teachers_mang_url' %}">
-          <button type="button" class="delete-btn right-btn">Clear</button>
-        </a>
+        <a href="{% url 'teachers_mang_url' %}"><button type="button" class="delete-btn right-btn">Clear</button></a>
         <button type="submit" class="edit-btn left-btn">Save</button>
       </div>
     </form>

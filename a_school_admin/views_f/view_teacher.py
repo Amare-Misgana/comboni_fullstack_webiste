@@ -39,10 +39,12 @@ def edit_teacher(request, teacher_username):
     teacher = get_object_or_404(Teacher, username=teacher_username)
     teacher_profile = get_object_or_404(UserProfile, user=teacher)
     available_class_rooms = Class.objects.exclude(class_name__in=ClassRoom.objects.values("class_name"))
+    room_class = ClassRoom.objects.get(room_teacher__username=teacher_username)
 
     context = {
         "teacher_profile": teacher_profile,
         "available_class_rooms": available_class_rooms,
+        "room_class": room_class,
         "home_room_class": ClassRoom.objects.filter(room_teacher=teacher).first().class_name if ClassRoom.objects.filter(room_teacher=teacher).exists() else "",
     }
 
@@ -475,7 +477,7 @@ def add_teachers(request):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def download_teacher_excel_template(request):
-    columns = ['first name', 'last name', 'middle name', 'email',
+    columns = ['first name',  'middle name','last name', 'email',
                'age', 'phone number', 'gender', 'home room class']
 
     # Optional: Add an empty DataFrame with the right columns

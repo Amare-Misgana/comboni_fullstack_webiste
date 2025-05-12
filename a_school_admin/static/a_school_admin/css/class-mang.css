@@ -296,6 +296,10 @@ h1 {
     gap: 1em;
 }
 
+.classes-container a {
+    text-decoration: none;
+}
+
 .class-card {
     min-width: 7em;
     background-color: var(--primary);

@@ -22,3 +22,15 @@ def validate_email(email):
     if not re.match(email_regex, email):
         return False
     return True
+
+
+
+def separate_letters_and_digits(text):
+    letters = ''
+    digits = ''
+    for character in text:
+        if character.isdigit():
+            digits += character
+        elif character.isalpha():
+            letters += character
+    return letters, digits

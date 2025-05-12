@@ -1,0 +1,97 @@
+.content {}
+
+.profile-settings {
+    position: fixed;
+    background-color: var(--dark-background);
+    width: 40%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 0.3em;
+    border: 1px solid var(--tint);
+}
+
+.profile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1em 1.5em;
+    background-color: var(--light-background);
+}
+
+.profile-settings .profile-top h3 {
+    color: var(--primary-text);
+}
+
+.profile-settings .profile-top .actions {
+    display: flex;
+    gap: 1.2em;
+}
+
+.profile-settings .profile-top .actions i {
+    color: var(--secondary-text);
+}
+
+.profile-settings .profile-info {
+    padding: 0 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 1em;
+    background-color: var(--light-background);
+}
+
+.profile-settings .profile-info .img-holder {
+    width: 6em;
+    height: 6em;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    border-radius: 50%;
+}
+
+.profile-settings .profile-info .img-holder img {
+    width: 7.2em;
+    height: 7.2em;
+    border-radius: 50%;
+    position: absolute;
+    right: 0;
+}
+
+.profile-settings .profile-info h1 {
+    font-size: 1.7em;
+    color: var(--primary-text);
+}
+
+.profile-settings hr {
+    width: 100%;
+}
+
+.profile-settings .user-info {
+    margin-top: 0.4em;
+    padding: 1em 1.5em;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    background-color: var(--light-background);
+}
+
+.profile-settings .user-info .fa-info-circle {
+    color: var(--primary);
+    font-size: 2em;
+}
+
+.profile-settings .user-info .info {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}

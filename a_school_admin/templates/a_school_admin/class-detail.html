@@ -12,14 +12,14 @@
 
 {% block page_title %}
   <div class="user-info">
-    <h1 class="username">Class Detail: {{ cls.class_name }}</h1>
+    <h1 class="username">Class Detail: {{ class_object.class_name.class_name }}</h1>
   </div>
 {% endblock %}
 
 {% block content %}
   <div class="table-container">
     <div class="table-header">
-      <h2>Classes</h2>
+      <h2>Class Detail</h2>
       <a href="{% url 'add_defined_student_url' defined_class_room='hi' %}"><button class="add-student-btn">Add Student</button></a>
     </div>
     <table id="detailTable" class="classTable">

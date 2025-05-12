@@ -28,7 +28,9 @@
       {% if classes %}
         <ul>
           {% for class in classes %}
-            <li>{{ class }}</li>
+            <li>
+              <span>{{ forloop.counter }}.&nbsp&nbsp&nbsp&nbsp</span>{{ class }}
+            </li>
           {% endfor %}
         </ul>
       {% else %}

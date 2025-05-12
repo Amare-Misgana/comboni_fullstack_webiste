@@ -28,7 +28,8 @@ import re
 def class_mang(request):
     context = {
         "classes": Class.objects.all().order_by(Length('class_name'), 'class_name'),
-        "class_rooms": ClassRoom.objects.all()
+        "class_rooms": ClassRoom.objects.all().order_by(Length('class_name__class_name'), 'class_name__class_name'),
+        "users": UserProfile.objects.all(),
     }
     # waiting classes and class_performance
     return render(request, "a_school_admin/class-mang.html", context)
@@ -44,59 +45,14 @@ def edit_class(request, class_name):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def class_detial(request, class_name): 
+    class_object = ClassRoom.objects.get(class_name__class_name=class_name)
     context = {
-
+        "class_object": class_object,
+        "students": class_object.students.all(),
     }
     #, waiting class_info
     return render(request, "a_school_admin/class-detail.html", context)
 
-
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
-def add_class(request):
-    try:
-        teachers_not_in_classroom = UserProfile.objects.filter(
-            user__role='teacher'
-        ).exclude(
-            user__id__in=ClassRoom.objects.values_list("room_teacher", flat=True)
-        )
-        if not teachers_not_in_classroom:
-            messages.warning(request, "You don't have any teachers stored in the system!")
-            return redirect("class_mang_url")
-    except Exception as e:
-        messages.error(request, "Failed to load teacher data. Please try again.")
-        return redirect("class_mang_url")
-
-
-    try:
-        students_not_in_classroom = UserProfile.objects.filter(
-            user__role='student'
-        ).exclude(
-            user__id__in=ClassRoom.objects.values_list('student', flat=True)
-        )
-        if not students_not_in_classroom:
-            messages.warning(request, "You don't have any studetns stored in the system!")
-            return redirect("class_mang_url")
-    except Exception as e:
-        messages.error(request, "Failed to load student data. Please try again.")
-        return redirect("class_mang_url")
-
-    try:
-        classes_not_in_classroom = Class.objects.exclude(
-            id__in=ClassRoom.objects.values_list('class_name', flat=True)
-        )
-        if not classes_not_in_classroom:
-            messages.warning(request, "You don't have any classes stored in the stystem!")
-            return redirect("class_mang_url")
-    except Exception:
-        messages.error(request, "Failed to load class information. Please try again.")
-        return redirect("class_mang_url")
-
-    context = {
-        'students': students_not_in_classroom,
-        'home_room_teachers': teachers_not_in_classroom,
-        'classes': classes_not_in_classroom,
-    }
-    return render(request, "a_school_admin/add-class.html", context)
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")

@@ -1,97 +1,132 @@
-.content {}
-
-.profile-settings {
-    position: fixed;
-    background-color: var(--dark-background);
-    width: 40%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.content {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
-    border-radius: 0.3em;
-    border: 1px solid var(--tint);
+    padding: 1em 0 0 0;
 }
 
-.profile-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 1em 1.5em;
-    background-color: var(--light-background);
-}
 
-.profile-settings .profile-top h3 {
-    color: var(--primary-text);
-}
 
-.profile-settings .profile-top .actions {
-    display: flex;
-    gap: 1.2em;
-}
 
-.profile-settings .profile-top .actions i {
-    color: var(--secondary-text);
-}
 
-.profile-settings .profile-info {
-    padding: 0 1.5em;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    gap: 1em;
-    background-color: var(--light-background);
-}
 
-.profile-settings .profile-info .img-holder {
-    width: 6em;
-    height: 6em;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    overflow: hidden;
-    position: relative;
-    border-radius: 50%;
-}
 
-.profile-settings .profile-info .img-holder img {
-    width: 7.2em;
-    height: 7.2em;
-    border-radius: 50%;
-    position: absolute;
-    right: 0;
-}
+/* .overview code  */
 
-.profile-settings .profile-info h1 {
-    font-size: 1.7em;
-    color: var(--primary-text);
-}
-
-.profile-settings hr {
-    width: 100%;
-}
-
-.profile-settings .user-info {
-    margin-top: 0.4em;
-    padding: 1em 1.5em;
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    background-color: var(--light-background);
-}
-
-.profile-settings .user-info .fa-info-circle {
-    color: var(--primary);
-    font-size: 2em;
-}
-
-.profile-settings .user-info .info {
+.content .overview {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    width: 91%;
 }
+
+.content .overview .info-card {
+    width: 23%;
+    padding: 1em 2em;
+    border-radius: 0.2em;
+    background-color: var(--light-background);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 6em;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.content .overview .info-card .fas {
+    color: var(--primary);
+    font-size: 2em;
+    z-index: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content .overview .info-card .fas::after {
+    content: "";
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    z-index: -1;
+    border-radius: 50%;
+    border: 1px solid rgba(2, 158, 2, 0.76);
+    background-color: #fcfcfc;
+}
+
+.content .overview .info-card:hover .fas::after {
+    border: 1px solid rgba(2, 158, 2, 0.918);
+    background-color: #f7f7f7;
+}
+
+.content .overview .info-card a {
+    background-color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2em;
+    height: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 50%;
+    margin: 0.3em;
+    border: 1px solid var(--primaryL);
+}
+
+.content .overview .info-card .fa-ellipsis {
+    color: var(--last-text);
+}
+
+.content .overview .info-card .fa-ellipsis:hover {
+    color: var(--second-text);
+    cursor: pointer;
+}
+
+
+
+.content .overview .info-card .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transform: translateX(10%);
+}
+
+.content .overview .info-card .info h1 {
+    color: var(--primary-text);
+}
+
+.content .overview .info-card .info p {
+    color: var(--last-text);
+}
+
+@media (max-width: 1280px) {
+    .content .overview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 1em;
+        place-items: center;
+
+    }
+
+    .content .overview .info-card {
+        width: 98%;
+    }
+}
+
+@media (max-width: 600px) {
+    .content .overview {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 0 1em;
+    }
+}
+
+/* OVERVIEW CARDS END!!!!!!!!!!!!!!!!! */

@@ -1,0 +1,29 @@
+.user-avatar img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.role-header {
+    padding: 1rem;
+    margin: 0;
+    background: var(--primaryLL);
+    color: var(--primary);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.no-users {
+    padding: 1rem;
+    color: var(--secondary-text);
+    text-align: center;
+}
+
+.user-group {
+    margin-bottom: 1.5rem;
+    background: var(--light-background);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+}

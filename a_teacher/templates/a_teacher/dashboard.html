@@ -22,27 +22,42 @@
 {% endblock %}
 
 {% block content %}
-  <div class="profile-settings">
-    <div class="profile-top">
-      <h3>My Profile</h3>
-      <div class="actions">
-        <i class="far fa-pen-to-square"></i>
-        <i class="fas fa-times"></i>
+  <div class="overview">
+    <div class="info-card" id="total-students">
+      <i class="fas fa-user-graduate"></i>
+      <div class="info">
+        <h1>{{ students_amount }}</h1>
+        <p>Total Students</p>
       </div>
     </div>
-    <div class="profile-info">
-      <div class="img-holder">
-        {% if user_profile.user_pic %}
-          <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
-        {% else %}
-          <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" />
-        {% endif %}
+    <div class="info-card" id="total-teachers">
+      <i class="fas fa-chalkboard-teacher"></i>
+      <div class="info">
+        <h1>{{ teachers_amount }}</h1>
+        <p>Total Teachers</p>
       </div>
-      <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
     </div>
-    <div class="user-info">
-      <i class="fas fa-info-circle"></i>
-      <div class="info">lkjlk</div>
+    <div class="info-card" id="total-classes">
+      <i class="fas fa-school"></i>
+      <div class="info">
+        <h1>{{ classes_amount }}</h1>
+        <p>Total Classes</p>
+      </div>
+    </div>
+    <div class="info-card" id="total-sections">
+      <i class="fas fa-layer-group"></i>
+      <div class="info">
+        <h1>{{ sections_amount }}</h1>
+        <p>Total Sections</p>
+      </div>
     </div>
   </div>
+
+  <!-- Profile Detail Template -->
+  {% include 'fragments/profile_detail.html' %}
+  <div class="sub-layer"></div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_teacher/js/dashboard.js' %}"></script>
 {% endblock %}

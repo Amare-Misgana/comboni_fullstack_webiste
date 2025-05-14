@@ -1,0 +1,103 @@
+{% extends 'a_teacher/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Chat
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_teacher/css/chat.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h2>Welcome back,</h2>
+  <div class="user-info">
+    {% if user_profile.user_pic %}
+      <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
+    {% else %}
+      <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" />
+    {% endif %}
+    <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="chat-container">
+    <div class="users-sidebar" id="usersSidebar">
+      <div class="search-bar">
+        <input type="text" placeholder="Search users..." id="userSearch" class="search-input" />
+      </div>
+      <div class="users-list">
+        <!-- Recent Chats -->
+        <div class="user-group">
+          <h3 class="role-header">Recent Chats</h3>
+          {% for partner in message_partners %}
+            <div class="user-card">
+              <div class="user-avatar">
+                {% if partner.user_pic %}
+                  <img src="{{ partner.user_pic.url }}" alt="{{ partner.username }}" />
+                {% else %}
+                  <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Profile Picture" />
+                {% endif %}
+              </div>
+              <div class="user-info">
+                <h4>{{ partner.username }}</h4>
+                <p class="last-message">
+                  {% with last_msg=partner.received_messages.last %}
+                    {{ last_msg.message|truncatechars:30|default:'No messages yet' }}
+                  {% endwith %}
+                </p>
+              </div>
+            </div>
+          {% empty %}
+            <div class="no-users">No recent chats</div>
+          {% endfor %}
+        </div>
+
+        <!-- Students -->
+        <div class="user-group">
+          <h3 class="role-header">Students</h3>
+          {% for student in students %}
+            <div class="user-card">
+              <!-- Same student card structure as before -->
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Teachers -->
+        <div class="user-group">
+          <h3 class="role-header">Teachers</h3>
+          {% for teacher in teachers %}
+            <div class="user-card">
+              <div class="user-avatar">
+                {% if teacher.latest_profile %}
+                  <img src="{{ teacher.latest_profile.url }}" alt="{{ teacher.get_full_name }}" />
+                {% else %}
+                  <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Profile Picture" />
+                {% endif %}
+              </div>
+              <div class="user-info">
+                <h4>{{ teacher.first_name }} {{ teacher.middle_name }} {{ teacher.last_name }}</h4>
+                <p class="last-message">{{ teacher.email }}</p>
+              </div>
+            </div>
+          {% empty %}
+            <div class="no-users">No other teachers found</div>
+          {% endfor %}
+        </div>
+
+        <!-- Admins -->
+        <div class="user-group">
+          <h3 class="role-header">Administrators</h3>
+          {% for admin in admins %}
+            <div class="user-card">
+              <!-- Similar structure to teachers -->
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Area remains the same -->
+  </div>
+{% endblock %}

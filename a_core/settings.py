@@ -39,12 +39,14 @@ EMAIL_HOST_PASSWORD = 'iumq ztrn hktn ztjt'
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'common',
     'a_message',
     'a_student',
     'a_teacher',
     'a_school_admin',
     'a_visitor',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -161,3 +163,15 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = 'common.CustomUser'
+
+ASGI_APPLICATION = 'a_core.asgi.application'
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+    "CONFIG": {
+            "hosts": [('127.0.0.1', 6379)], 
+        },
+}

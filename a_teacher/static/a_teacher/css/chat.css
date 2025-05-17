@@ -241,6 +241,10 @@ i.fa-brands {
     flex-direction: column;
 }
 
+.user-list a {
+    text-decoration: none !important;
+}
+
 .message-content .message-data {
     width: 100%;
     height: 100%;
@@ -420,6 +424,10 @@ i.fa-brands {
     background: #196b21;
 }
 
+.content {
+    position: relative;
+}
+
 .click-for-message {
     text-align: center;
     color: #666;
@@ -428,4 +436,25 @@ i.fa-brands {
     padding: 1em;
     border-radius: 8px;
     font-size: 4em;
+    position: absolute;
+    width: 80%;
+    height: 10%;
+    transform: translate(-50%);
+}
+
+#no-users {
+    color: var(--last-text) !important;
+    font-size: clamp(0.8em, 1.2em, 1.4em);
+    align-self: center;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.error-message {
+    color: #dc3545;
+    padding: 10px;
+    text-align: center;
 }

@@ -5,5 +5,15 @@
     margin: 2em 0;
     padding: 1em;
     border-radius: 8px;
-    font-size: 4em;
+    font-size: 4em !important;
+}
+
+#no-users {
+    color: var(--last-text) !important;
+    font-size: clamp(0.8em, 1.2em, 1.4em);
+    align-self: center;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

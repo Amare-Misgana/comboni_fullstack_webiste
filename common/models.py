@@ -106,6 +106,7 @@ class UserProfile(models.Model):
     username = models.CharField(max_length=150, blank=True, null=True)
     user_pic = models.ImageField(upload_to="avatars", blank=True, null=True)
     password = models.CharField(max_length=150, blank=True, null=True)
+    online_status = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
         if self.user:
             self.username = f"{self.user.first_name} {self.user.middle_name}"

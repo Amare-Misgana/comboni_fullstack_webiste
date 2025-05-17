@@ -38,7 +38,7 @@ def students_mang(request):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def delete_student(request, student_username):
-    Student = get_user_model()
+    Student = get_user_model() 
     if request.method == "POST":
         try:
             student = Student.objects.get(username=student_username)

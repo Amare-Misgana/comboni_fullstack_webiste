@@ -1,0 +1,9 @@
+.no-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1em;
+    border-radius: 8px;
+    font-size: 4em;
+}

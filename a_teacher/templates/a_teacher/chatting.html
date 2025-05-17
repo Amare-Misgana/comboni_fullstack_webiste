@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block page_title %}
-  <h1 class="username">Messages</h1>
+
 {% endblock %}
 
 {% block content %}
@@ -103,34 +103,32 @@
 
       {% if teachers %}
         {% for teacher in teachers %}
-          <a href="{% url 'chatting_url' username=teacher.user.username %}">
-            <div class="user {{ teacher.username }} teacher">
-              <div class="profile-info">
-                <div class="avatar">
-                  <div class="online"></div>
-                  {% if teacher.user_pic %}
-                    <img src="{{ teacher.user_pic.url }}" width="150" />
-                  {% else %}
-                    <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
-                  {% endif %}
-                </div>
-                <div class="avatar-disc">
-                  <h3>{{ teacher.username }}</h3>
-                  {% for latest_message in latest_messages %}
-                    {% if teacher == latest_message.sender or teacher == latest_message.receiver %}
-                      <h4>{{ latest_message.message }}</h4>
-                    {% else %}
-                      <h4>No message</h4>
-                    {% endif %}
-                  {% endfor %}
-                </div>
+          <div class="user {{ teacher.username }} teacher">
+            <div class="profile-info">
+              <div class="avatar">
+                <div class="online"></div>
+                {% if teacher.user_pic %}
+                  <img src="{{ teacher.user_pic.url }}" width="150" />
+                {% else %}
+                  <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
+                {% endif %}
               </div>
-              <div class="extra-info">
-                <p>{{ teacher.data.last_seen }}</p>
-                <i class="fas fa-thumbtack"></i>
+              <div class="avatar-disc">
+                <h3>{{ teacher.username }}</h3>
+                {% for latest_message in latest_messages %}
+                  {% if teacher == latest_message.sender or teacher == latest_message.receiver %}
+                    <h4>{{ latest_message.message }}</h4>
+                  {% else %}
+                    <h4>No message</h4>
+                  {% endif %}
+                {% endfor %}
               </div>
             </div>
-          </a>
+            <div class="extra-info">
+              <p>{{ teacher.data.last_seen }}</p>
+              <i class="fas fa-thumbtack"></i>
+            </div>
+          </div>
         {% endfor %}
       {% endif %}
       <!-- If there is not user => message -->
@@ -139,8 +137,39 @@
 
     <!-- MESSAGE HERE -->
     <div class="message-content">
-      <div class="sender">
-        <p class="click-for-message">Click a user to start message</p>
+        <div class="message-data">
+            <div class="sender">
+                <p>Demo Message</p>
+                <p class="data">Demo date</p>
+            </div>
+            {% if chat_messages %}
+                {% for chat_message in chat_messages %}
+                    {% if chat_message.sender.user == request.user %}
+                        <div class="sender">
+                            {% else %}
+                        <div class="receiver">
+                    {% endif %}
+                    <p>{{chat_message.message}}</p>
+                    <p class="data">{{chat_message.timestamp}}</p>
+                            </div>
+                {% endfor %}
+            {% else %}
+                <div>
+                    <p class="no-message">No Message Yet.</p>
+                </div>
+            {% endif %}
+      </div>
+      <div class="message-form">
+        <form action="">
+          <i class="fa-sharp fa-solid fa-paperclip"></i>
+
+          <input type="text" placeholder="Write a message..." class="message-input" id="message-input" />
+
+          <div class="right-icons">
+            <i class="far fa-smile emoji-btn"></i>
+            <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

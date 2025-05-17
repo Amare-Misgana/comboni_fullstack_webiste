@@ -3,7 +3,7 @@ from . import views
 from a_school_admin.views_f import view_class
 from a_school_admin.views_f import view_student
 from a_school_admin.views_f import view_teacher
-
+ 
 
 urlpatterns = [
 

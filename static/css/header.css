@@ -235,10 +235,15 @@ body.small-header .sub_header {
   padding: 0.75em 1.5em;
   font-size: 1rem;
   border: none;
+  min-width: 8em;
   border-radius: 0.25em;
   background: var(--primary);
   color: var(--background);
   cursor: pointer;
+}
+
+.hero_container .cta a button:hover {
+  background-color: var(--lprimary);
 }
 
 .hero_container .cta a .optional_cta {
@@ -294,4 +299,28 @@ body.small-header .sub_header {
   .hero_container .hero {
     padding: 4rem 2rem;
   }
+}
+
+
+
+
+/* SCROLL BAR */
+
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--primaryD);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--tint);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primaryL);
+  cursor: s-resize;
 }

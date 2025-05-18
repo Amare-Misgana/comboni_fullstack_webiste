@@ -327,3 +327,41 @@ h1 {
     padding: 20px;
     grid-column: 1 / -1;
 }
+
+
+/* subjects box  */
+
+.subject-manage-box {
+    background-color: var(--light-background);
+    padding: 1.5em;
+    border-radius: 0.3em;
+    width: 90%;
+    margin: 2em auto;
+    text-align: center;
+    color: var(--primary-text);
+}
+
+.subject-manage-box h3 {
+    margin-bottom: 0.5em;
+    color: var(--primary);
+}
+
+.subject-manage-box p {
+    color: var(--secondary-text);
+    margin-bottom: 1.2em;
+}
+
+.manage-subject-btn {
+    display: inline-block;
+    background-color: var(--edit-btn);
+    color: white;
+    padding: 0.6em 1.5em;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.manage-subject-btn:hover {
+    background-color: var(--edit-btn-hover);
+}

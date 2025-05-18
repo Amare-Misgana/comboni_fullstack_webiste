@@ -429,7 +429,7 @@ body.slide .checkbox:checked~.slider::before {
     position: fixed;
     width: 100vw;
     height: 100vh;
-    z-index: 10;
+    z-index: 99;
     inset: 0;
     background-color: #29292936;
     cursor: pointer;
@@ -969,4 +969,201 @@ table.classTable tbody tr:hover {
     font-size: 0.8rem;
     padding: 0.4em 0.8em;
   }
+}
+
+
+
+.nav .actions .settings-div {
+  padding: 0 0 0 1em;
+  gap: 1.8em !important;
+}
+
+body.slide .nav .actions .settings-div {
+  padding: 0;
+}
+
+
+.nav .actions .action-child .settings {
+  transition: transform 0.6s ease;
+  font-size: 1.6em;
+  color: var(--primary-text);
+  transform: rotate(0deg);
+}
+
+.nav .actions .action-child .settings:hover {
+  transform: rotate(100deg);
+  cursor: pointer;
+}
+
+
+.content .sub-layer {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 999;
+  cursor: pointer;
+  background-color: #c0c0c069;
+}
+
+body.dark-mode .content .sub-layer {
+  background-color: #00000096;
+}
+
+.profile-settings {
+  position: fixed;
+  background-color: var(--secondary-text);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  display: none;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 0.3em;
+  border: 1px solid var(--last-text);
+  z-index: 1000;
+  width: 50%;
+}
+
+.profile-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1em 1.5em;
+  background-color: var(--tint);
+}
+
+.profile-settings .profile-top h3 {
+  color: var(--primary-text);
+}
+
+.profile-settings .profile-top .actions {
+  display: flex;
+  gap: 1em;
+}
+
+.profile-settings .profile-top .actions i {
+  padding: 0.6em;
+  color: var(--secondary-text);
+  width: 2em;
+  height: 2em;
+}
+
+.profile-settings .profile-top .actions i:hover {
+  cursor: pointer;
+  background-color: var(--tint);
+  border-radius: 50%;
+}
+
+.profile-settings .profile-info {
+  padding: 0 1.5em 1em 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 1em;
+  background-color: var(--tint);
+}
+
+.profile-settings .profile-info .img-holder {
+  width: 6em;
+  height: 6em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.profile-settings .profile-info .img-holder img {
+  width: 7.2em;
+  height: 7.2em;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-settings .profile-info h1 {
+  font-size: clamp(0.7em, 1.4em, 1.9em);
+  color: var(--primary-text);
+}
+
+.profile-settings hr {
+  width: 100%;
+}
+
+.profile-settings .user-info {
+  margin-top: 0.4em;
+  padding: 1em 1.5em;
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  gap: 4em;
+  background-color: var(--tint);
+}
+
+.profile-settings .user-info .fa-info-circle {
+  color: var(--primaryL);
+  font-size: 2em;
+}
+
+.profile-settings .user-info .info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.profile-settings .user-info .info .data {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  margin: 0 0 0.6em 0;
+}
+
+.profile-settings .user-info .info .data h3 {
+  color: var(--primary-text);
+  font-size: 1em;
+}
+
+.profile-settings .user-info .info .data h4 {
+  color: var(--secondary-text);
+  font-size: 0.9em;
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.6em;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-btn {
+  font-size: 1em;
+  padding: 0.4em 0.8em;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.action-btn.edit {
+  color: var(--edit-btn);
+}
+
+.action-btn.detail {
+  color: var(--detail-btn);
+}
+
+.action-btn i {
+  font-size: 1em;
 }

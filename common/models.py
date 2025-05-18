@@ -117,7 +117,8 @@ class UserProfile(models.Model):
 
 
 class Subject(models.Model):
-    subject_name = models.CharField(max_length=50)
+    subject_name = models.CharField(max_length=50, unique=True)
+    is_graded = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.subject_name}" 
@@ -150,7 +151,7 @@ class ClassRoom(models.Model):
     room_teacher = models.OneToOneField(CustomUser, on_delete=models.PROTECT, null=True, limit_choices_to={'role': 'teacher'})
     students = models.ManyToManyField(CustomUser, related_name='classroom_students', limit_choices_to={'role': 'student'})
     def __str__(self):
-        return f"{self.class_name}--{self.room_teacher}"
+        return f"{self.class_name} home room of ({self.room_teacher})"
 
 
 class Activity(models.Model):

@@ -303,16 +303,11 @@ def add_student(request):
                 )
                 student_profile.save()
 
-            # Log admin action
+            # Log admin action 
             admin_action = AdminAction(
                 admin=request.user,
                 action=f"Added User ({student.first_name})"
             )
-            #Failed to add student: "<ClassRoom: 9A--None>" needs to have a value for field "id" before this many-to-many relationship can be used.
-            #Failed to add student: Direct assignment to the forward side of a many-to-many set is prohibited. Use students.set() instead.
-            #Failed to add student: ClassRoom() got unexpected keyword arguments: 'studen
-#Failed to add student: Cannot assign "'11C'": "ClassRoom.class_name" must be a "Class" instance.
-#Failed to add student: Cannot assign "<QuerySet [<Class: 9A>]>": "ClassRoom.class_name" must be a "Class" instance.
             admin_action.save()
 
             messages.success(request, 'Student added successfully.')

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'a_teacher/css/chat.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/chat.css' %}" />
 {% endblock %}
 
 {% block page_title %}
@@ -24,10 +24,6 @@
         <i class="fas fa-chalkboard-teacher"></i>
         <p>Teacher</p>
       </a>
-      <a id="student-btn" class="chat-user-btn">
-        <i class="fas fa-user-graduate"></i>
-        <p>Student</p>
-      </a>
     </div>
 
     {% include 'fragments/user-list-admin.html' %}
@@ -42,7 +38,8 @@
 {% endblock %}
 
 {% block script %}
-  <script src="{% static 'a_teacher/js/chat.js' %}"></script>
+  <script src="{% static 'js/chat.js' %}"></script>
+  <script src="{% static 'js/online-status.js' %}"></script>
   <script src="{% static 'js/vanillaEmojiPicker.js' %}"></script>
   <script></script>
 {% endblock %}

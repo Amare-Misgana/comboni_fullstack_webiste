@@ -51,6 +51,14 @@
     {% include 'fragments/no_data_box.html' with empty_title='No Classes Found' empty_message='Please add some classes to the system' %}
   {% endif %}
 
+  <!-- Subjects -->
+
+  <div class="subject-manage-box">
+    <h3>Subject Management</h3>
+    <p>Easily manage all your subjects – add, edit, or delete them as needed.</p>
+    <a href="{% url 'add_subjects_url' %}" class="manage-subject-btn">Go to Subjects</a>
+  </div>
+
   <!-- Classes performance Graph -->
 
   {% if class_performance %}

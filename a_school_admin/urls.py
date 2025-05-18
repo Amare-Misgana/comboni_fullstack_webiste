@@ -39,7 +39,11 @@ urlpatterns = [
 
 
     path("class-mang/", view_class.class_mang, name="class_mang_url"),
-    path("class-mang/class-detial/<str:class_name>/", view_class.class_detial, name="class_detail_url"),
+    path("class-mang/assign-student/<int:classroom_id>/", view_class.assign_subject_view, name="assign_subject_url"),
+    path("class-mang/create-subjects/", view_class.create_subjects, name="add_subjects_url"),
+    path("class-mang/subject/edit/<str:subject_name>/", view_class.edit_subject, name="edit_subject_url"),
+    path("class-mang/subject/delete/<str:subject_name>/", view_class.delete_subject, name="delete_subject_url"),
+    path("class-mang/class-detial/<str:class_name>/", view_class.class_detail, name="class_detail_url"),
     path("class-mang/edit-class/<str:class_name>", view_class.edit_class, name="edit_class_url" ),
     path("class-mang/create-classes", view_class.create_classes, name="create_classes_url"),
     path("class-mang/add-studens/<str:defined_class_room>/", view_class.defined_class, name="add_defined_student_url"),

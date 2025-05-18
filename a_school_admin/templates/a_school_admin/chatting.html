@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'a_school_admin/css/chat.css' %}" />
-  <link rel="stylesheet" href="{% static 'a_school_admin/css/chatting.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/chat.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/chatting.css' %}" />
   {{ request.user.username|json_script:'me-username' }}
   {{ receiver.user.username|json_script:'other-user' }}
   {{ room_name|json_script:'room-name' }}
@@ -28,10 +28,6 @@
         <i class="fas fa-chalkboard-teacher"></i>
         <p>Teacher</p>
       </a>
-      <a id="student-btn" class="chat-user-btn">
-        <i class="fas fa-user-graduate"></i>
-        <p>Student</p>
-      </a>
     </div>
 
     {% include 'fragments/user-list-admin.html' %}
@@ -43,7 +39,13 @@
               
               
               
+              
+              
+              
               sender
+
+
+
 
 
 
@@ -51,7 +53,13 @@
               
               
               
+              
+              
+              
               receiver
+
+
+
 
 
 
@@ -84,8 +92,9 @@
 {% endblock %}
 
 {% block script %}
-  <script src="{% static 'a_school_admin/js/chat.js' %}"></script>
-  <script src="{% static 'a_school_admin/js/chatting.js' %}"></script>
+  <script src="{% static 'js/chat.js' %}"></script>
+  <script src="{% static 'js/chatting.js' %}"></script>
+  <script src="{% static 'js/online-status.js' %}"></script>
   <script src="{% static 'js/vanillaEmojiPicker.js' %}"></script>
   <script></script>
 {% endblock %}

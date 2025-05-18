@@ -12,8 +12,9 @@
         <div class="user {{ student.username }} student">
           <div class="profile-info">
             <div class="avatar">
-              {% if student.online %}
-                <div class="online"></div>
+              {% if student.user.online %}
+                <div id="online-status" class="online"></div>
+
               {% endif %}
               {% if student.user_pic %}
                 <img src="{{ student.user_pic.url }}" width="150" />
@@ -48,8 +49,9 @@
         <div class="user {{ teacher.username }} teacher">
           <div class="profile-info">
             <div class="avatar">
-              {% if teacher.online %}
-                <div class="online"></div>
+              {% if teacher.user.online %}
+                <div id="online-status" class="online"></div>
+
               {% endif %}
               {% if teacher.user_pic %}
                 <img src="{{ teacher.user_pic.url }}" width="150" />

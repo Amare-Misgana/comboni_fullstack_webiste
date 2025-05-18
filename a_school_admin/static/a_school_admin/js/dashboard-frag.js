@@ -162,27 +162,53 @@ document.querySelector(".content").addEventListener("click", () => {
   closeLogoutPopup()
 })
 
+let currentFormId = null;
 
-// Confirm a Delete request 
-function showDeletePopup() {
+function showDeletePopup(formId) {
+  currentFormId = formId;
   document.getElementById("delete-popup").style.display = "flex";
 }
 
 function hideDeletePopup() {
   document.getElementById("delete-popup").style.display = "none";
+  currentFormId = null;
 }
 
-function confirmDelete(formId) {
-  hideDeletePopup();
-  document.getElementById(formId).submit();
+function confirmDelete() {
+  if (currentFormId) {
+    document.getElementById(currentFormId).submit();
+    hideDeletePopup();
+  }
 }
 
-// Optional: hide popup when clicking outside the box
 document.getElementById("delete-popup").addEventListener("click", function (e) {
   if (e.target === this) {
     hideDeletePopup();
   }
 });
+
+
+
+const profile_info = document.querySelector(".profile-settings")
+const settings_btn = document.getElementById("settings")
+const layer_sub = document.querySelector(".sub-layer")
+const close_profile = document.getElementById("close-profile")
+
+
+settings_btn.addEventListener("click", () => {
+  profile_info.style.display = profile_info.style.display == "flex" ? "none" : "flex"
+  layer_sub.style.display = "block"
+})
+
+layer_sub.addEventListener("click", () => {
+  profile_info.style.display = "none"
+  layer_sub.style.display = "none"
+})
+
+close_profile.addEventListener("click", () => {
+  profile_info.style.display = "none"
+  layer_sub.style.display = "none"
+})
 
 
 

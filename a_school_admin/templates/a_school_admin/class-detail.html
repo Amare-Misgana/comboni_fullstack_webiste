@@ -17,9 +17,68 @@
 {% endblock %}
 
 {% block content %}
+  <div class="class-info-card">
+    <h2>{{ class_object.class_name.class_name }}</h2>
+    <p>
+      <strong>Homeroom Teacher:</strong> {{ class_object.home_room_teacher }}
+    </p>
+
+    <div class="subjects-box">
+      <h3>Subjects & Assigned Teachers</h3>
+      <ul>
+        {% for subject in class_subjects %}
+          <li>
+            <strong>{{ subject.subject_name }}</strong> - {{ subject.teacher }}
+          </li>
+        {% empty %}
+          <li>No subjects assigned.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Assign Class -->
+  <div class="assign-box">
+    <h3>Assign Subject to Class</h3>
+    <form method="post" action="{% url 'assign_subject_url' class_object.id %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="subject">Subject:</label>
+        <select name="subject" id="subject" required>
+          <option value="">-- Select Subject --</option>
+          {% for subject in subjects %}
+            <option value="{{ subject.id }}">
+              {{ subject.subject_name }}
+              <span>
+                {% if student.is_graded %}
+                  (Graded)
+                {% else %}
+                  (graded)
+                {% endif %}
+              </span>
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="teacher">Teacher:</label>
+        <select name="teacher" id="teacher" required>
+          <option value="">-- Select Teacher --</option>
+          {% for teacher in teachers %}
+            <option value="{{ teacher.id }}">{{ teacher.first_name }} {{ teacher.middle_name }} {{ teacher.last_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="assign-btn">Assign</button>
+    </form>
+  </div>
+
+  <!-- Student Table -->
   <div class="table-container">
     <div class="table-header">
-      <h2>Class Detail</h2>
+      <h2>Students</h2>
       <a href="{% url 'add_defined_student_url' defined_class_room='hi' %}"><button class="add-student-btn">Add Student</button></a>
     </div>
     <table id="detailTable" class="classTable">
@@ -29,6 +88,7 @@
           <th>Second Name</th>
           <th>Age</th>
           <th>Avarage</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -38,6 +98,10 @@
             <td>{{ student.middle_name }}</td>
             <td>{{ student.age }}</td>
             <td>86%</td>
+            <td class="table-actions">
+              <a href="{% url 'edit_student_url' student.username %}" class="action-btn edit"><i class="fa fa-pen"></i></a>
+              <a href="{% url 'student_detail_url' student.username %}" class="action-btn detail"><i class="fa fa-file-lines"></i></a>
+            </td>
           </tr>
         {% endfor %}
       </tbody>

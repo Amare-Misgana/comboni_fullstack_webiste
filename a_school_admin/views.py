@@ -13,6 +13,9 @@ import json
 
 # ==================  HOME ==================
 
+
+
+
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def school_admin_dashboard(request):
     user_profile = UserProfile.objects.get(user=request.user)
@@ -47,6 +50,18 @@ def school_admin_dashboard(request):
         if profile:
             action_profiles.append((action, profile))
 
+
+    data = [
+            {
+                "data": request.user.phone_number,
+                "name": "Phone Number"
+            },
+            {
+                "data": request.user.email,
+                "name": "Email"
+            }
+        ]
+
     context = {
         "user_profile": user_profile,
         "students_amount": students.count(),
@@ -56,7 +71,8 @@ def school_admin_dashboard(request):
         "classes": sorted({classroom.class_name.class_name[:-1] for classroom in classrooms}),  # Extract grade levels
         'action_profiles': action_profiles,  # Implement your action profiles logic
         "gender_json": json.dumps(grades),
-        "class_json": json.dumps(classes_json)
+        "class_json": json.dumps(classes_json),
+        "datas": data,
     }
     
     return render(request, "a_school_admin/dashboard.html", context)

@@ -34,7 +34,7 @@
       </a>
     </div>
 
-    {% include 'fragments/user-list-teacher.html' %}
+    {% include 'fragments/user-list-student.html' %}
 
     <!-- MESSAGE HERE -->
     <div class="messages-holder">
@@ -96,8 +96,8 @@
 {% endblock %}
 
 {% block script %}
-  <script src="{% static 'a_teacher/js/chat.js' %}"></script>
-  <script src="{% static 'a_teacher/js/chatting.js' %}"></script>
+  <script src="{% static 'a_student/js/chat.js' %}"></script>
+  <script src="{% static 'a_student/js/chatting.js' %}"></script>
   <script src="{% static 'js/vanillaEmojiPicker.js' %}"></script>
   <script></script>
 {% endblock %}

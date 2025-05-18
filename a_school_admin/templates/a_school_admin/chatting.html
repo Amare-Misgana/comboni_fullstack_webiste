@@ -1,4 +1,4 @@
-{% extends 'a_teacher/dashboard-frag.html' %}
+{% extends 'a_school_admin/dashboard-frag.html' %}
 {% load static %}
 
 {% block title %}
@@ -6,10 +6,10 @@
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'a_teacher/css/chat.css' %}" />
-  <link rel="stylesheet" href="{% static 'a_teacher/css/chatting.css' %}" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/chat.css' %}" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/chatting.css' %}" />
   {{ request.user.username|json_script:'me-username' }}
-  {{ receiver.username|json_script:'other-user' }}
+  {{ receiver.user.username|json_script:'other-user' }}
   {{ room_name|json_script:'room-name' }}
 {% endblock %}
 
@@ -34,49 +34,37 @@
       </a>
     </div>
 
-    {% include 'fragments/user-list-teacher.html' %}
-
+    {% include 'fragments/user-list-admin.html' %}
     <!-- MESSAGE HERE -->
     <div class="messages-holder">
-      <div class="message-content">
-        <div class="message-data" id="chat-log">
-          {% for chat_message in chat_messages %}
-            <div class="{% if chat_message.sender.user == request.user %}
-                
-                
-                
-                
+      <div class="message-data" id="chat-log">
+        {% for chat_message in chat_messages %}
+          <div class="{% if chat_message.sender.user == request.user %}
+              
+              
+              
               sender
 
 
 
-
-
-
-
-              {% else %}
-                
-                
-                
-                
-                
-                
-                
+            {% else %}
+              
+              
+              
               receiver
 
 
 
-
-
-
-
-              {% endif %}">
-              <p>{{ chat_message.message }}</p>
-              <p class="data">{{ chat_message.timestamp }}</p>
-            </div>
-          {% empty %}
-            <p class="no-message">No Message Yet.</p>
-          {% endfor %}
+            {% endif %}">
+            <p>{{ chat_message.message }}</p>
+            <p class="data">{{ chat_message.timestamp }}</p>
+          </div>
+        {% empty %}
+          <p class="no-message">No Message Yet.</p>
+        {% endfor %}
+        <div class="sender">
+          <p>HI</p>
+          <p class="data">6:49 PM</p>
         </div>
       </div>
       <div class="message-form">
@@ -96,8 +84,8 @@
 {% endblock %}
 
 {% block script %}
-  <script src="{% static 'a_teacher/js/chat.js' %}"></script>
-  <script src="{% static 'a_teacher/js/chatting.js' %}"></script>
+  <script src="{% static 'a_school_admin/js/chat.js' %}"></script>
+  <script src="{% static 'a_school_admin/js/chatting.js' %}"></script>
   <script src="{% static 'js/vanillaEmojiPicker.js' %}"></script>
   <script></script>
 {% endblock %}

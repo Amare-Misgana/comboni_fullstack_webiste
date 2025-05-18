@@ -7523,7 +7523,8 @@ const EmojiPicker = function (options) {
                     .fg-emoji-container {
                         position: fixed;
                         top: 0;
-                        left: 0;
+                        right: 0;
+                        left: auto;
                         width: ${pickerWidth}px;
                         height: ${pickerHeight}px;
                         border-radius: 5px;
@@ -7752,7 +7753,7 @@ const EmojiPicker = function (options) {
 
 
             const picker = `
-                <div class="fg-emoji-container" style="left: ${position.left}px; top: ${position.top}px;">
+                <div class="fg-emoji-container" style="top: 20px;">
                     <nav class="fg-emoji-nav">
                         <ul>
                             ${categoriesHTML}
@@ -7786,7 +7787,14 @@ const EmojiPicker = function (options) {
 
             document.body.insertAdjacentHTML('beforeend', picker);
 
-            functions.rePositioning(document.querySelector('.fg-emoji-container'));
+            functions.rePositioning = (picker) => {
+                const viewportHeight = window.innerHeight;
+                const pickerBottom = picker.getBoundingClientRect().bottom;
+
+                if (pickerBottom > viewportHeight) {
+                    picker.style.top = `${viewportHeight - pickerHeight - 20}px`; // 20px margin from bottom
+                }
+            };
 
             setTimeout(() => {
                 document.querySelector('.fg-emoji-picker-search input').focus();

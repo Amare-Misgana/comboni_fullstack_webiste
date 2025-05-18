@@ -108,8 +108,7 @@ class UserProfile(models.Model):
     password = models.CharField(max_length=150, blank=True, null=True)
     online_status = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
-        if self.user:
-            self.username = f"{self.user.first_name} {self.user.middle_name}"
+        self.username = f"{self.user.first_name} {self.user.middle_name}"
         super().save(*args, **kwargs)
 
     def __str__(self):

@@ -211,7 +211,7 @@ def add_student(request):
             phone_number = request.POST.get("phone_number", "").strip()
             age = request.POST.get("age", "").strip()
             gender = request.POST.get("gender", "").strip()
-            password = request.POST.get('password', "").strip()
+            password = request.POST.get('password', "").strip() 
             email = request.POST.get('email', "").strip()
             profile_pic = request.FILES.get("profile_pic")
             class_name = request.POST.get("class_name")
@@ -283,13 +283,16 @@ def add_student(request):
             student.set_password(password)
             student.save()
 
-            class_instance = Class.objects.get(class_name=class_name)
+            try:
+                class_instance = Class.objects.get(class_name=class_name)
 
-            class_room = ClassRoom(
-                class_name=class_instance,
-            )
-            class_room.save()
-            class_room.students.add(student)
+                class_room = ClassRoom(
+                    class_name=class_instance,
+                )
+                class_room.save()
+                class_room.students.add(student)
+            except Exception as e:
+                messages.error(request, f"Faild to save in a class room: {e}")
 
             # Save profile picture if provided
             if profile_pic:

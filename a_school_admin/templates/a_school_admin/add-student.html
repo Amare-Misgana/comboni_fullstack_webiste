@@ -24,7 +24,7 @@
       {% csrf_token %}
       <div class="profile-wrapper">
         <label for="profile_image" class="profile-label">
-          <img src="https://picsum.photos/120" id="profilePreview" alt="Profile Preview" />
+          <img src="{% static 'avatars/default-avatar.png' %}" id="profilePreview" alt="Profile Preview" />
           <input type="file" id="profile_image" accept="image/*" hidden name="profile_pic" required />
         </label>
       </div>

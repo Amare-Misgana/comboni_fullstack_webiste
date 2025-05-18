@@ -77,14 +77,16 @@ def chatting(request, username):
     ).order_by('timestamp')
 
     try:
-        receiver = UserProfile.objects.get(user__username=username)
-    except UserProfile.DoesNotExist:
+        receiver = CustomUser.objects.get(username=username)
+    except CustomUser.DoesNotExist:
         raise Http404("User does not exist")
-    room_name = get_room_name(request.user.username, username)
+    
+    room_name = get_room_name(request.user.username, receiver.username)
+
 
     chat_messages = Message.objects.filter(
-        Q(sender__user=request.user, receiver=receiver) |
-        Q(sender=receiver, receiver__user=request.user)
+        Q(sender__user=request.user, receiver__user=receiver) |
+        Q(sender__user=receiver, receiver__user=request.user)
     ).order_by('timestamp').distinct()
 
     return render(request, 'a_teacher/chatting.html', {
@@ -96,6 +98,6 @@ def chatting(request, username):
         'room_name': room_name,
         'receiver': receiver,
         'current_user': request.user,  # For template context
-        'other_user': receiver.user,
+        'other_user': receiver,
         'chat_messages': chat_messages,
     })

@@ -1,0 +1,117 @@
+{% load static %}
+<div class="user-list">
+  <div class="search-bar">
+    <input type="text" placeholder="Search" name="search" id="user-search" />
+  </div>
+
+  <!-- Students User -->
+
+  {% if students %}
+    {% for student in students %}
+      <a href="{% url 'teachers_chatting_url' username=student.user.username %}">
+        <div class="user {{ student.username }} student">
+          <div class="profile-info">
+            <div class="avatar">
+              {% if student.online %}
+                <div class="online"></div>
+              {% endif %}
+              {% if student.user_pic %}
+                <img src="{{ student.user_pic.url }}" width="150" />
+              {% else %}
+                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
+              {% endif %}
+            </div>
+            <div class="avatar-disc">
+              <h3>{{ student.user.first_name }} {{ student.user.middle_name }}</h3>
+              {% for latest_message in latest_messages %}
+                {% if student == latest_message.sender or student == latest_message.receiver %}
+                  <h4>{{ latest_message.message }}</h4>
+                {% else %}
+                  <h4>No message</h4>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="extra-info">
+            <p>{{ student.data.last_seen }}</p>
+            <i class="fas fa-thumbtack"></i>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  {% endif %}
+  <!-- admins User -->
+
+  {% if admins %}
+    {% for admin in admins %}
+      <a href="{% url 'teachers_chatting_url' username=admin.user.username %}">
+        <div class="user {{ admin.username }} admin">
+          <div class="profile-info">
+            <div class="avatar">
+              {% if admin.online %}
+                <div class="online"></div>
+              {% endif %}
+              {% if admin.user_pic %}
+                <img src="{{ admin.user_pic.url }}" width="150" />
+              {% else %}
+                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
+              {% endif %}
+            </div>
+            <div class="avatar-disc">
+              <h3>{{ admin.user.first_name }}{{ admin.user.middle_name }}</h3>
+              {% for latest_message in latest_messages %}
+                {% if admin == latest_message.sender or admin == latest_message.receiver %}
+                  <h4>{{ latest_message.message }}</h4>
+                {% else %}
+                  <h4>No message</h4>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="extra-info">
+            <p>{{ admin.data.last_seen }}</p>
+            <i class="fas fa-thumbtack"></i>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  {% endif %}
+  <!-- teachers User -->
+
+  {% if teachers %}
+    {% for teacher in teachers %}
+      <a href="{% url 'teachers_chatting_url' username=teacher.user.username %}">
+        <div class="user {{ teacher.username }} teacher">
+          <div class="profile-info">
+            <div class="avatar">
+              {% if teacher.online %}
+                <div class="online"></div>
+              {% endif %}
+              {% if teacher.user_pic %}
+                <img src="{{ teacher.user_pic.url }}" width="150" />
+              {% else %}
+                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
+              {% endif %}
+            </div>
+            <div class="avatar-disc">
+              <h3>{{ teacher.user.first_name }}{{ teacher.user.middle_name }}</h3>
+              {% for latest_message in latest_messages %}
+                {% if teacher == latest_message.sender or teacher == latest_message.receiver %}
+                  <h4>{{ latest_message.message }}</h4>
+                {% else %}
+                  <h4>No message</h4>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="extra-info">
+            <p>{{ teacher.data.last_seen }}</p>
+            <i class="fas fa-thumbtack"></i>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  {% endif %}
+  <!-- If there is not user => message -->
+  <p id="no-users" style="display:none">No users in this category.</p>
+</div>

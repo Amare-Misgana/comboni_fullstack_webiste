@@ -1,62 +1,77 @@
 // Get elements from DOM
 const chatLog = document.getElementById('chat-log');
-const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 
 // Get username from template (Django context)
 const currentUser = JSON.parse(document.getElementById('me-username').textContent);
 const otherUser = JSON.parse(document.getElementById('other-user').textContent);
 
+console.log("hi this is the receiver: ", otherUser)
+
+const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+console.log(currentUser)
+console.log("Testing the best chat app")
+console.log(otherUser)
+
 // Establish WebSocket connection
 const chatSocket = new WebSocket(
-    `ws://${window.location.host}/ws/chat/${otherUser}/`
+    `ws://${window.location.host}/ws/chat/${roomName}/`
 );
 
 // Handle message reception
 chatSocket.onmessage = function (e) {
-    const data = JSON.parse(e.data);
-    const isCurrentUser = data.sender === currentUser;
 
-    // Create message element
+    const data = JSON.parse(e.data);
+
+    if (data.type === "status") {
+        if (data.user === targetUsername) {
+            const statusCircle = document.getElementById("online-status");
+            if (data.status === "online") {
+                statusCircle.style.display = "inline-block";
+            } else {
+                statusCircle.style.display = "none";
+            }
+        }
+    }
+    const message = data.message
+    const sender = data.sender
+    let isCurrentUser = sender == currentUser
+
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isCurrentUser ? 'sender' : 'receiver'}`;
+    messageDiv.className = `${isCurrentUser ? 'sender' : 'receiver'}`;
 
     // Format timestamp
     const timestamp = new Date(data.timestamp).toLocaleTimeString();
 
     messageDiv.innerHTML = `
-        <div class="message-header">
             <p>${data.message}</p>
             <p class="data">${timestamp}</p>
-        </div>
     `;
 
     chatLog.appendChild(messageDiv);
 };
 
-// Handle message sending
+const messageInput = document.getElementById('message-input');
 function sendMessage() {
-    console.log("I am clicked and sent message")
     const message = messageInput.value.trim();
-    if (message) {
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
-        messageInput.value = '';
-    }
+    chatSocket.send(JSON.stringify({
+        "message": message,
+        "sender": currentUser,
+        "receiver": otherUser,
+    }))
+    messageInput.value = '';
 }
 
-
-
-// Event listeners
 sendButton.addEventListener('click', sendMessage);
+
+
 messageInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         sendMessage();
     }
 });
 
-// Handle connection close
 chatSocket.onclose = function (e) {
     console.error('Chat socket closed unexpectedly');
 };

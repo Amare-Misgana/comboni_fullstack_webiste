@@ -3,6 +3,7 @@ from . import views
 from a_school_admin.views_f import view_class
 from a_school_admin.views_f import view_student
 from a_school_admin.views_f import view_teacher
+
  
 
 urlpatterns = [
@@ -10,6 +11,8 @@ urlpatterns = [
     # Dashboard Url
 
     path("", views.school_admin_dashboard, name="admin_dashboard_url"),
+    path("chat/", views.chat, name="admin_chat_url"),
+    path("chat/<str:username>/", views.chatting, name="admins_chatting_url"),
 
     # Student Urls
 

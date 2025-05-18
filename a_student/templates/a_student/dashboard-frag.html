@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'css/variables.css' %}" />
-    <link rel="stylesheet" href="{% static 'a_school_admin/css/dashboard-frag.css' %}" />
+    <link rel="stylesheet" href="{% static 'a_student/css/dashboard-frag.css' %}" />
     <link rel="stylesheet" href="{% static 'css/no_data_box.css' %}" />
     <link rel="stylesheet" href="{% static 'css/checkbox.css' %}" />
     <link rel="icon" href="{% static 'images/1x/Asset 7.png' %}" />
@@ -37,7 +37,7 @@
           <div class="links">
             <ul>
               <li>
-                <a href="{% url 'admin_dashboard_url' %}">
+                <a href="{% url 'student_dashboard_url' %}">
                   <div class="icon-holder">
                     <i class="fas fa-tachometer-alt"></i>
                   </div>
@@ -45,35 +45,27 @@
                 </a>
               </li>
               <li>
-                <a href="{% url 'students_mang_url' %}">
+                <a href="{% url 'student_material' %}">
                   <div class="icon-holder">
-                    <i class="fas fa-user-graduate"></i>
+                    <i class="fas fa-door-open"></i>
                   </div>
-                  <p>Students</p>
+                  <p>Materials</p>
                 </a>
               </li>
               <li>
-                <a href="{% url 'teachers_mang_url' %}">
-                  <div class="icon-holder">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                  </div>
-                  <p>Teachers</p>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'class_mang_url' %}">
-                  <div class="icon-holder">
-                    <i class="fas fa-school"></i>
-                  </div>
-                  <p>Class</p>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'admin_chat_url' %}">
+                <a href="{% url 'student_chat_url' %}">
                   <div class="icon-holder">
                     <i class="fas fa-envelope"></i>
                   </div>
                   <p>Chat</p>
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon-holder">
+                    <i class="fas fa-school"></i>
+                  </div>
+                  <p>Class</p>
                 </a>
               </li>
             </ul>
@@ -83,6 +75,10 @@
             <center>
               <div class="hr"></div>
             </center>
+            <div class="action-child settings-div">
+              <h4>Settings</h4>
+              <i class="fas fa-cog settings" id="settings"></i>
+            </div>
             <div class="theme action-child">
               <h4>Theme</h4>
               <!-- From Uiverse.io by Madflows -->

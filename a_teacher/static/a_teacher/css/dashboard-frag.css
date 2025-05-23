@@ -366,7 +366,16 @@ body.slide .checkbox:checked~.slider::before {
 
 .top .greeting {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.top .greeting .page_title {
+  display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .top .greeting .user-info {
@@ -1141,4 +1150,112 @@ body.dark-mode .content .sub-layer {
 .profile-settings .user-info .info .data h4 {
   color: var(--secondary-text);
   font-size: 0.9em;
+}
+
+@media (max-width: 800px) {
+  body.slide .header {
+    transform: translateX(-100%);
+    width: 7em !important;
+  }
+
+  .dashboard-content {
+    align-items: flex-end;
+  }
+
+  .header {
+    width: 12em !important;
+  }
+
+  .content>div {
+    padding: 0;
+    width: 100vw;
+  }
+
+  .nav .links ul li {
+    gap: 0.2em;
+    padding: 0.3em 1em 0.3em 0.8em;
+  }
+
+
+  .nav .links ul li .icon-holder {
+    width: 1.4em;
+    height: 1em;
+    padding: 0 0.6em 0 0;
+  }
+
+
+  .nav .links ul li a {
+    font-size: 1.2em;
+    gap: 0.6em;
+  }
+
+  /* HEADER LINKS END!!!!!!!!!!!!!!! */
+
+  .nav .actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-size: 1.3em;
+    font-weight: 100;
+  }
+
+
+  .nav .actions .action-child .settings {
+    font-size: 1.2em;
+  }
+
+
+  .nav .actions .hr {
+    width: 90%;
+  }
+
+  .nav .actions .settings-div {
+    padding: 0 0 0 1em;
+    gap: 1.8em !important;
+  }
+
+  body.slide .nav .actions .settings-div {
+    padding: 0;
+  }
+
+  .nav .actions .theme {
+    padding: 0 0 0 0.7em;
+    gap: 0;
+  }
+
+  body.slide .nav .actions .theme {
+    padding: 0;
+  }
+
+  body.slide .nav .actions h4 {
+    display: none;
+  }
+
+  .menu-icon {
+    width: 1.4em;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    display: none;
+  }
+
+  body.slide .menu-icon {
+    display: flex !important;
+  }
+
+  .menu-icon:hover {
+    cursor: pointer;
+  }
+
+  .bar {
+    height: 0.2em;
+    background: var(--secondary-text);
+    border-radius: 0.2em;
+    width: 100%;
+  }
+
+  .bar.short {
+    width: 60%;
+  }
 }

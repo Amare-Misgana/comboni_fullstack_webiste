@@ -13,6 +13,11 @@ urlpatterns = [
     path("", views.school_admin_dashboard, name="admin_dashboard_url"),
     path("chat/", views.chat, name="admin_chat_url"),
     path("chat/<str:username>/", views.chatting, name="admins_chatting_url"),
+    path("news/", views.all_news_view, name="all_news_url"),
+    path("news/view-news/<int:id>/", views.view_news, name="view_news_url"),
+    path("news/add-news/", views.add_news, name="add_news_url"),
+    path("news/edit-news/<int:id>/", views.edit_news, name="edit_news_url"),
+    path("news/delete-news/<int:id>/", views.delete_news, name="delete_news_url"),
 
     # Student Urls
 
@@ -33,6 +38,7 @@ urlpatterns = [
     path("teachers-mang/teacher-detail/<str:teacher_username>/", view_teacher.teacher_detail, name="teacher_detail_url"),
     path("teachers-mang/add-teacher/", view_teacher.add_teacher, name="add_teacher_url"),
     path("teachers-mang/add-teachers/", view_teacher.add_teachers, name="add_teachers_url"),
+    path("teachers-mang/delete-teacher/<str:teacher_username>/", view_teacher.delete_teacher, name="delete_teacher_url"),
     path("teachers-mang/download-teachers-excel-template", view_teacher.download_teacher_excel_template, name="download_teachers_excel_template_url"),
 
     # Class Urls

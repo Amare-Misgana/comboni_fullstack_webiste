@@ -1,0 +1,56 @@
+.delete-confirm-section {
+    max-width: 600px;
+    margin: 4em auto;
+    padding: 2em;
+    background: var(--light-background);
+    border-radius: 0.3em;
+    border: 1px solid var(--low-light);
+    color: var(--primary);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+}
+
+.delete-confirm-section h2 {
+    font-size: 1.4em;
+    margin-bottom: 1em;
+}
+
+.delete-confirm-section p {
+    font-size: 1.1em;
+    margin-bottom: 2em;
+    color: var(--secondary-text);
+}
+
+.delete-confirm-section strong {
+    color: var(--primaryD);
+}
+
+.delete-confirm-section form {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.6em 1.2em;
+    border: none;
+    border-radius: 0.3em;
+    font-size: 1em;
+    text-decoration: none;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    min-width: 7em;
+}
+
+.btn-delete {
+    background: var(--delete-btn);
+}
+
+.btn-cancel {
+    background: var(--edit-btn);
+    display: inline-block;
+}

@@ -7,13 +7,18 @@ from django.contrib import messages
 from django.http import Http404
 from a_message.models import Message
 from django.db.models import Q
-from .models import AdminAction
+from .models import AdminAction, News
 from common.models import UserProfile, CustomUser, ClassRoom, Class
 import json
 
 # ==================  HOME ==================
 
 
+identify = {
+    "is_admin": True,
+    "is_teacher": False,
+    "is_student": False,
+}
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -29,8 +34,8 @@ def school_admin_dashboard(request):
     for classroom in classrooms:
         class_students = classroom.students.all()
         grades[classroom.class_name.class_name] = {
-            "male": class_students.filter(gender="male").count(),
-            "female": class_students.filter(gender="female").count()
+            "male": class_students.filter(user__gender="male").count(),
+            "female": class_students.filter(user__gender="female").count()
         }
     
     classes_json = {
@@ -74,6 +79,7 @@ def school_admin_dashboard(request):
         "class_json": json.dumps(classes_json),
         "datas": data,
     }
+    context.update(identify)
     
     return render(request, "a_school_admin/dashboard.html", context)
 
@@ -88,31 +94,31 @@ def materials(request):
 
 # =================== Chat View =================
 
+
+
 @user_passes_test(lambda user: user.is_authenticated and user.role=="admin")
 def chat(request):
     me = UserProfile.objects.get(user=request.user)
-    students = UserProfile.objects.filter(user__role='student')
+
     teachers = UserProfile.objects.filter(user__role='teacher')
-    admins   = UserProfile.objects.filter(user__role='admin').exclude(id=me.id)
+    admins   = UserProfile.objects.filter(user__role='admin').exclude(pk=me.pk)
 
-    msgs = Message.objects.filter(
-        Q(sender=me) | Q(receiver=me)
-    ).order_by('-timestamp')
+    def attach_last_msg(qs):
+        for peer in qs:
+            peer.last_message = (
+                Message.objects
+                       .filter(Q(sender=me, receiver=peer) | Q(sender=peer, receiver=me))
+                       .order_by('-timestamp')
+                       .first()
+            )
+        return qs
 
-    seen = set()
-    latest_messages = []
-    for m in msgs:
-        other = m.receiver if m.sender == me else m.sender
-        if other.id not in seen:
-            seen.add(other.id)
-            latest_messages.append(m)
-
-    return render(request, 'a_school_admin/chat.html', {
-        'students': students,
-        'teachers': teachers,
-        'admins': admins,
-        'latest_messages': latest_messages,
-    })
+    context = {
+        'teachers': attach_last_msg(teachers),
+        'admins':   attach_last_msg(admins),
+    }
+    context.update(identify)
+    return render(request, 'fragments/chat.html', context)
 
 def get_room_name(user1, user2):
     users = sorted([str(user1).lower(), str(user2).lower()])
@@ -151,16 +157,13 @@ def chatting(request, username):
         raise Http404("User does not exist")
     
     room_name = get_room_name(request.user.username, receiver.username)
-    print("\n\n\n\n\n")
-    print(room_name)
-    print("\n\n\n\n\n")
 
     chat_messages = Message.objects.filter(
         Q(sender__user=request.user, receiver__user=receiver) |
         Q(sender__user=receiver, receiver__user=request.user)
     ).order_by('timestamp').distinct()
 
-    return render(request, 'a_school_admin/chatting.html', {
+    context = {
         'students': students,
         'teachers': teachers,
         'admins': admins,
@@ -168,10 +171,100 @@ def chatting(request, username):
         'chats': chats,
         'room_name': room_name,
         'receiver': receiver,
-        'current_user': request.user,  # For template context
+        'current_user': request.user, 
         'other_user': receiver,
         'chat_messages': chat_messages,
-    })
+    }
+    context.update(identify)
+    return render(request, 'fragments/chatting.html', context)
+
+@user_passes_test(lambda user: user.is_authenticated and user.role=="admin")
+def add_news(request):
+    if request.method == 'POST':
+        photo       = request.FILES.get('photo')
+        header      = request.POST.get('header', '').strip()
+        description = request.POST.get('description', '').strip()
+
+        if not (photo and header and description):
+            messages.error(request, "All fields are required.")
+            return render(request, 'add_news.html')
+
+        n = News(photo=photo, header=header, description=description)
+        n.save()
+        AdminAction.objects.create(
+            admin=request.user,
+            action=f"Added News ({n.header})"
+        )
+        messages.success(request, "News item added!")
+
+    return render(request, 'a_school_admin/add-news.html', identify)
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+def all_news_view(request):
+    news_qs = News.objects.all()
+    news_list = []
+
+    for item in news_qs:
+        news_list.append({
+            'id': item.id,
+            'title': item.header,
+            'description': item.description,
+            'image_src': item.photo.url,
+            'date': item.created_at.strftime('%B %d, %Y'),
+            'url': f'/news/{item.id}/'  # or use `reverse('view_news', args=[item.id])`
+        })
+
+    context = {
+        'news_list': news_list,
+        'is_admin': True  # or check dynamically if needed
+    }
+    return render(request, 'a_school_admin/admin-news.html', context)
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+def edit_news(request, id):
+    try:
+        news = News.objects.get(id=id)
+    except News.DoesNotExist:
+        messages.error(request, f"Can't find the news.")
+        return redirect('all_news_url')
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        image = request.FILES.get('photo')
+        if title and description:
+            news.title = title
+            news.description = description
+            if image:
+                news.image_src = image
+            news.save()
+            return redirect('all_news_url')
+    context = {'news': news}
+    context.update(identify)
+    return render(request, 'a_school_admin/edit-news.html', context)
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+def delete_news(request, id):
+    news = get_object_or_404(News, pk=id)
+    if request.method == 'POST':
+        news.delete()
+        return redirect('all_news')
+    context = {'news': news}
+    context.update(identify)
+    return render(request, 'a_school_admin/delete-news.html', context)
+
+
+def view_news(request, id):
+    news = get_object_or_404(News, pk=id)
+    context = {'news': news}
+    context.update(identify)
+    return render(request, 'a_school_admin/view-news.html', context)
+
+
+
+
 
 
 

@@ -47,12 +47,13 @@
   {% include "fragments/messages.html" %}
   {% include "fragments/header.html" with slogn="" main_header="News" sub_header="" %}
   {% include "fragments/sub_title.html" with title_sub="Latest News" %}
-  {% if news_latest_items %}
-    <section class="news-section-latest">
-      {% for item in news_latest_items %}
+  {% if recent_news %}
+  <section class="news-section-latest">
+    {% for item in recent_news %}
+
         <article class="news-card">
           <div class="news-image">
-            <img src="{% static item.image_src %}" alt="{{ item.title }}">
+            <img src="{{ item.image_src }}" alt="{{ item.title }}">
           </div>
           <div class="news-content">
             <h3>{{ item.title }}</h3>
@@ -78,7 +79,7 @@
     {% for item in news_other_items %}
       <article class="news-card">
         <div class="news-image">
-          <img src="{% static item.image_src %}" alt="{{ item.title }}">
+          <img src="{{ item.image_src }}" alt="{{ item.title }}">
         </div>
         <div class="news-content">
           <h3>{{ item.title }}</h3>

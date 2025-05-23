@@ -1,4 +1,4 @@
-{% extends 'a_school_admin/dashboard-frag.html' %}
+{% extends 'fragments/dashboard-frag.html' %}
 {% load static %}
 
 {% block title %}
@@ -91,11 +91,20 @@
             <tr>
               <td>{{ class_room.class_name }}</td>
               <td>{{ class_room.students.count }}</td>
-              {% for user in users %}
-                {% if user.user.username == class_room.room_teacher.username %}
-                  <td>{{ user.username|capfirst }}</td>
+              {% with found=False %}
+                {% for user in users %}
+                  {% if user.user.username == class_room.room_teacher.username %}
+                    <td>{{ user.username|capfirst }}</td>
+                    {% with found=True %}
+
+                    {% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {% if not found %}
+                  <td>Empty</td>
                 {% endif %}
-              {% endfor %}
+              {% endwith %}
+
               <td class="crud">
                 <a href="{% url 'class_detail_url' class_name=class_room.class_name %}" class="detail-btn right-btn">Detail</a>
                 <a href="{% url 'edit_class_url' class_name=class_room.class_name %}" class="edit-btn left-btn">Edit</a>

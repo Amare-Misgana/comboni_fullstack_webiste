@@ -4,32 +4,30 @@
     <input type="text" placeholder="Search" name="search" id="user-search" />
   </div>
 
-  <!-- Students User -->
-
+  {# Students #}
   {% if students %}
     {% for student in students %}
       <a href="{% url 'teachers_chatting_url' username=student.user.username %}">
-        <div class="user {{ student.username }} student">
+        <div class="user {{ student.user.username }} student">
           <div class="profile-info">
             <div class="avatar">
-              {% if student.user.online %}
-                <div id="online-status" class="online"></div>
-              {% endif %}
-              {% if student.user_pic %}
+              {% if student.online %}
+                {% if student.user_pic %}
+
+                {% endif %}
+                <div class="online" style="display: none;"></div>
                 <img src="{{ student.user_pic.url }}" width="150" />
               {% else %}
-                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
+                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="150" class="default" />
               {% endif %}
             </div>
             <div class="avatar-disc">
               <h3>{{ student.user.first_name }} {{ student.user.middle_name }}</h3>
-              {% for latest_message in latest_messages %}
-                {% if student == latest_message.sender or student == latest_message.receiver %}
-                  <h4>{{ latest_message.message }}</h4>
-                {% else %}
-                  <h4>No message</h4>
-                {% endif %}
-              {% endfor %}
+              {% if student.last_message %}
+                <h4>{{ student.last_message.message }}</h4>
+              {% else %}
+                <h4>No message</h4>
+              {% endif %}
             </div>
           </div>
           <div class="extra-info">
@@ -39,33 +37,34 @@
         </div>
       </a>
     {% endfor %}
+  {% else %}
+    <p>No students available.</p>
   {% endif %}
-  <!-- admins User -->
 
+  {# Admins #}
   {% if admins %}
     {% for admin in admins %}
       <a href="{% url 'teachers_chatting_url' username=admin.user.username %}">
-        <div class="user {{ admin.username }} admin">
+        <div class="user {{ admin.user.username }} admin">
           <div class="profile-info">
             <div class="avatar">
-              {% if admin.user.online %}
-                <div id="online-status" class="online"></div>
-              {% endif %}
-              {% if admin.user_pic %}
+              {% if admin.online %}
+                {% if admin.user_pic %}
+
+                {% endif %}
+                <div class="online" style="display: none;"></div>
                 <img src="{{ admin.user_pic.url }}" width="150" />
               {% else %}
-                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
+                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="150" class="default" />
               {% endif %}
             </div>
             <div class="avatar-disc">
-              <h3>{{ admin.user.first_name }}{{ admin.user.middle_name }}</h3>
-              {% for latest_message in latest_messages %}
-                {% if admin == latest_message.sender or admin == latest_message.receiver %}
-                  <h4>{{ latest_message.message }}</h4>
-                {% else %}
-                  <h4>No message</h4>
-                {% endif %}
-              {% endfor %}
+              <h3>{{ admin.user.first_name }} {{ admin.user.middle_name }}</h3>
+              {% if admin.last_message %}
+                <h4>{{ admin.last_message.message }}</h4>
+              {% else %}
+                <h4>No message</h4>
+              {% endif %}
             </div>
           </div>
           <div class="extra-info">
@@ -75,33 +74,35 @@
         </div>
       </a>
     {% endfor %}
+  {% else %}
+    <p>No admins available.</p>
   {% endif %}
-  <!-- teachers User -->
 
+  {# Teachers #}
   {% if teachers %}
     {% for teacher in teachers %}
       <a href="{% url 'teachers_chatting_url' username=teacher.user.username %}">
-        <div class="user {{ teacher.username }} teacher">
+        <div class="user {{ teacher.user.username }} teacher">
           <div class="profile-info">
             <div class="avatar">
-              {% if teacher.user.online %}
-                <div id="online-status" class="online"></div>
+              {% if teacher.online %}
+                <div class="online"></div>
+              {% else %}
+                <div class="online" style="display: none;"></div>
               {% endif %}
               {% if teacher.user_pic %}
                 <img src="{{ teacher.user_pic.url }}" width="150" />
               {% else %}
-                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="250" class="default" />
+                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="150" class="default" />
               {% endif %}
             </div>
             <div class="avatar-disc">
-              <h3>{{ teacher.user.first_name }}{{ teacher.user.middle_name }}</h3>
-              {% for latest_message in latest_messages %}
-                {% if teacher == latest_message.sender or teacher == latest_message.receiver %}
-                  <h4>{{ latest_message.message }}</h4>
-                {% else %}
-                  <h4>No message</h4>
-                {% endif %}
-              {% endfor %}
+              <h3>{{ teacher.user.first_name }} {{ teacher.user.middle_name }}</h3>
+              {% if teacher.last_message %}
+                <h4>{{ teacher.last_message.message }}</h4>
+              {% else %}
+                <h4>No message</h4>
+              {% endif %}
             </div>
           </div>
           <div class="extra-info">
@@ -111,7 +112,7 @@
         </div>
       </a>
     {% endfor %}
+  {% else %}
+    <p>No teachers available.</p>
   {% endif %}
-  <!-- If there is not user => message -->
-  <p id="no-users" style="display:none">No users in this category.</p>
 </div>

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  News Detail | CSSS
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/variables.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/header.css' %}" />
+  <link rel="stylesheet" href="{% static 'a_visitor/css/news_detail.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/footer.css' %}" />
+  <link rel="icon" href="{% static 'images/1x/Asset 7.png' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+     .hero_container::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: url("{% static 'a_visitor/images/graduation.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+    }
+    .hero_container {
+      min-height: 1vh !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include 'fragments/messages.html' %}
+  {% include 'fragments/header.html' with slogn='' main_header='News Detail' sub_header='' %}
+  <div class="news-detail-wrapper">
+    <div class="news-detail-card">
+      <img src="{{ image_src }}" alt="News Image" class="news-image" />
+      <div class="news-detail-content">
+        <h1 class="news-title">{{ title }}</h1>
+        <p class="news-date">{{ date }}</p>
+        <p class="news-description">{{ description }}</p>
+      </div>
+    </div>
+    <a href="{% url 'news_url' %}" class="back-button"><i class="fas fa-arrow-left"></i> Back to News</a>
+  </div>
+  {% include 'fragments/footer.html' %}
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

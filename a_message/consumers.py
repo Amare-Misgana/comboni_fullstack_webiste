@@ -92,7 +92,7 @@ class OnlineStatus(AsyncWebsocketConsumer):
             {
                 'type': 'user_status',
                 'user': self.user.username,
-                'status': 'online'
+                'status': True
             }
         )
 
@@ -104,7 +104,7 @@ class OnlineStatus(AsyncWebsocketConsumer):
             {
                 'type': 'user_status',
                 'user': self.user.username,
-                'status': 'offline'
+                'status': False
             }
         )
 

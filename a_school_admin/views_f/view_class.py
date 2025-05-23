@@ -5,7 +5,11 @@ from common.models import UserProfile, ClassRoom, Class, Subject, ClassSubject, 
 from django.db.models.functions import Length
 import re
 
-
+identify = {
+    "is_admin": True,
+    "is_teacher": False,
+    "is_student": False,
+}
 
 
 
@@ -20,7 +24,7 @@ def class_mang(request):
         "class_rooms": ClassRoom.objects.all().order_by(Length('class_name__class_name'), 'class_name__class_name'),
         "users": UserProfile.objects.all(),
     }
-    # waiting classes and class_performance
+    context.update(identify)
     return render(request, "a_school_admin/class-mang.html", context)
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -28,7 +32,7 @@ def edit_class(request, class_name):
     context = {
 
     }
-    # waiting class_info
+    context.update(identify)
     return render(request, "a_school_admin/edit-class.html", context)
 
 
@@ -71,12 +75,16 @@ def create_classes(request):
             messages.warning(request, f"{len(duplicates)} classes already exist: {', '.join(duplicates)}")
 
         return render(request, 'a_school_admin/create-classes.html', {
-            'classes': Class.objects.all()
+            'classes': Class.objects.all(),
+            "is_admin": True,
+            "is_teacher": False,
+            "is_student": False,
         })
-
-    return render(request, 'a_school_admin/create-classes.html', {
+    context = {
         'classes': Class.objects.all().order_by(Length('class_name'), 'class_name')
-    })
+    }
+    context.update(identify)
+    return render(request, 'a_school_admin/create-classes.html', context)
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
@@ -107,6 +115,7 @@ def class_detail(request, class_name):
         "class_object": class_object,
         "students": class_object.students.all(),
     }
+    context.update(identify)
     return render(request, 'a_school_admin/class-detail.html', context)
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
@@ -138,11 +147,18 @@ def create_subjects(request):
             messages.warning(request, f"{len(duplicates)} subjects already exist: {', '.join(duplicates)}")
 
         return render(request, 'a_school_admin/create-subjects.html', {
-            'subjects': Subject.objects.all()
+            'subjects': Subject.objects.all(),
+            "is_admin": True,
+            "is_teacher": False,
+            "is_student": False,
+
         })
 
     return render(request, 'a_school_admin/create-subjects.html', {
-        'subjects': Subject.objects.all().order_by('subject_name')
+        'subjects': Subject.objects.all().order_by('subject_name'),
+        "is_admin": True,
+        "is_teacher": False,
+        "is_student": False,
     })
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -162,7 +178,9 @@ def edit_subject(request, subject_name):
         else:
             messages.error(request, "Subject name cannot be empty.")
 
-    return render(request, 'a_school_admin/edit-subject.html', {'subject': subject})
+    context = {'subject': subject}
+    context.update(identify)
+    return render(request, 'a_school_admin/edit-subject.html', context)
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -183,7 +201,7 @@ def assign_subject_view(request, classroom_id):
         else:
             for sid in selected:
                 student = get_object_or_404(CustomUser, id=sid, role='student')
-                classroom.students.add(student)
+                classroom.students.add(UserProfile.objects.get(user=student))
             messages.success(request, f"Assigned {len(selected)} student(s).")
         return redirect('classroom_detail', class_name=classroom.class_name.class_name)
 

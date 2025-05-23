@@ -1,4 +1,4 @@
-{% extends 'a_school_admin/dashboard-frag.html' %}
+{% extends 'fragments/dashboard-frag.html' %}
 {% load static %}
 
 {% block title %}
@@ -16,7 +16,7 @@
     {% if user_profile.user_pic %}
       <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
     {% else %}
-      <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" />
+      <img src="{% static 'avatars/default-avatar.png' %}" alt="{{ user_profile.username }}'s profile picture" />
     {% endif %}
     <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
   </div>
@@ -25,7 +25,6 @@
 {% block content %}
   <div class="overview">
     <div class="info-card" id="total-students">
-      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-user-graduate"></i>
       <div class="info">
         <h1>{{ students_amount }}</h1>
@@ -33,7 +32,6 @@
       </div>
     </div>
     <div class="info-card" id="total-teachers">
-      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-chalkboard-teacher"></i>
       <div class="info">
         <h1>{{ teachers_amount }}</h1>
@@ -41,7 +39,6 @@
       </div>
     </div>
     <div class="info-card" id="total-classes">
-      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-school"></i>
       <div class="info">
         <h1>{{ classes_amount }}</h1>
@@ -49,7 +46,6 @@
       </div>
     </div>
     <div class="info-card" id="total-sections">
-      <a href="#"><i class="fa-solid fa-ellipsis"></i></a>
       <i class="fas fa-layer-group"></i>
       <div class="info">
         <h1>{{ sections_amount }}</h1>

@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.hashers import check_password
+from django.urls import reverse
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db import transaction
@@ -17,6 +19,14 @@ from a_school_admin.helper_func import validate_email, generate_password
 # ===========================   Teachers View =====================
 
 
+default_avatar_path = 'avatars/default-avatar.png'
+
+identify = {
+    "is_admin": True,
+    "is_teacher": False,
+    "is_student": False,
+}
+
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def teachers_mang(request):
@@ -29,6 +39,7 @@ def teachers_mang(request):
     context = {
         "teachers": teachers, 
     }
+    context.update(identify)
     # waiting subjects and teachers
     return render(request, "a_school_admin/teachers-mang.html", context)
 
@@ -39,7 +50,7 @@ def edit_teacher(request, teacher_username):
     teacher = get_object_or_404(Teacher, username=teacher_username)
     teacher_profile = get_object_or_404(UserProfile, user=teacher)
     available_class_rooms = Class.objects.exclude(class_name__in=ClassRoom.objects.values("class_name"))
-    room_class = ClassRoom.objects.get(room_teacher__username=teacher_username)
+    room_class = ClassRoom.objects.get(room_teacher__user__username=teacher_username)
 
     context = {
         "teacher_profile": teacher_profile,
@@ -47,6 +58,7 @@ def edit_teacher(request, teacher_username):
         "room_class": room_class,
         "home_room_class": ClassRoom.objects.filter(room_teacher=teacher).first().class_name if ClassRoom.objects.filter(room_teacher=teacher).exists() else "",
     }
+    context.update(identify)
 
     if request.method == 'POST':
         try:
@@ -67,7 +79,7 @@ def edit_teacher(request, teacher_username):
                 messages.error(request, f"'{home_room_class}' doesn't exist.")
                 return render(request, "a_school_admin/edit-teachers.html", context)
 
-            current_classroom = ClassRoom.objects.filter(room_teacher=teacher).first()
+            current_classroom = ClassRoom.objects.filter(room_teacher__user=teacher).first()
             new_class = Class.objects.get(class_name=home_room_class)
 
             if not current_classroom or current_classroom.class_name != new_class:
@@ -142,7 +154,7 @@ def edit_teacher(request, teacher_username):
                 teacher_profile.save()
                 AdminAction.objects.create(
                     admin=request.user,
-                    action=f"Edited User ({teacher.username}): Updated {', '.join(changes)}"
+                    action=f"Edited Teacher ({teacher.username}): Updated {', '.join(changes)}"
                 )
                 messages.success(request, 'Teacher updated successfully.')
             else:
@@ -166,22 +178,32 @@ def teacher_detail(request, teacher_username):
 
     context = {
         "teacher": teacher,
-        "home_room": ClassRoom.objects.get(room_teacher=teacher.user).class_name,
+        "home_room": ClassRoom.objects.get(room_teacher=teacher).class_name,
     }
+    context.update(identify)
     return render(request, "a_school_admin/teacher-detail.html", context)
+
+def delete_teacher(request, teacher_username):
+    if request.method == "POST":
+        teacher = CustomUser.objects.get(username=teacher_username)
+        AdminAction.objects.create(
+            admin=request.user,
+            action=f"Deleted Teacher ({teacher.username})"
+        )
+        teacher.delete()
+        messages.success(request, "Teacher Deleted Successfully.")
+        return redirect("teachers_mang_url")
+    messages.warning(request, "Faild to delete the teacher model.")
+    return redirect(reverse("teacher_detail_url", kwargs={"teacher_username": teacher_username}))
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def add_teacher(request):
-    teachers_not_in_classroom = UserProfile.objects.filter(
-        user__role='teacher'
-    ).exclude(
-        user__id__in=ClassRoom.objects.values_list("room_teacher", flat=True)
-    )
     available_class_rooms = Class.objects.exclude(class_name__in=ClassRoom.objects.values("class_name"))
     context = {
         "class_list": Class.objects.values_list("class_name", flat=True).order_by(Length('class_name'), 'class_name'),
         "available_class_rooms": available_class_rooms,
     }
+    context.update(identify)
 
     if request.method == 'POST':
         try:
@@ -196,6 +218,7 @@ def add_teacher(request):
             home_room_class = request.POST.get('home_room_class')
             password = request.POST.get('password', "").strip()
             conf_password = request.POST.get('confirm_password', "").strip()
+            # Failed to add teacher: Cannot assign "<CustomUser: misganameknonnenwelde>": "ClassRoom.room_teacher" must be a "UserProfile" instance.
 
             # Check if class exists and no home room teacher is already assigned
             if ClassRoom.objects.filter(class_name__class_name=home_room_class).exists():
@@ -277,43 +300,45 @@ def add_teacher(request):
             teacher.set_password(password)
             teacher.save()
 
-            # Create ClassRoom object
+            #Failed to add teacher: Cannot assign "<CustomUser: misganameknonnenwelde>": "ClassRoom.room_teacher" must be a "UserProfile" instance.
+
+            try:
+                teacher_profile = UserProfile.objects.create(
+                    user=teacher,
+                    user_pic=profile_pic,
+                    password=password    
+                )
+            except Exception as e:
+                messages.error("Fail to add the user model.")
+                return redirect("teachers_mang_url")
+
             try:
                 class_obj = Class.objects.get(class_name=home_room_class)
-                classroom = ClassRoom(
-                    class_name=class_obj,
-                    room_teacher=teacher,
-                )
-                classroom.save()
-
-                # Save profile picture if provided
-
-                if profile_pic:
-                    teacher_profile = UserProfile(
-                        user=teacher,
-                        user_pic=profile_pic,
-                    )
-                    teacher_profile.save()
-                else:
-                    messages.error("Profile picture faile to load.")
-                    return redirect('teachers_mang_url')
+                classroom, created = ClassRoom.objects.get_or_create(class_name=class_obj)
+                if created:
+                    classroom.room_teacher = teacher_profile
+                    classroom.save()
+            except Exception as e:
+                teacher_profile.delete()
+                teacher.delete()
+                #Can't create or get the class model: NOT NULL constraint failed: common_classroom.class_name_id
+                messages.error(request, f"Can't create or get the class model: {e}")
+                return redirect('teachers_mang_url')
                 
 
-                # Log admin action
-                admin_action = AdminAction(
-                    admin=request.user,
-                    action=f"Added User ({teacher.first_name})"
-                )
-                admin_action.save()
+            # Log admin action
+            admin_action = AdminAction(
+                admin=request.user,
+                action=f"Added Teacher ({teacher.first_name})"
+            )
+            admin_action.save()
 
-                messages.success(request, 'Teacher added successfully.')
-                return redirect('teachers_mang_url')  # Ensure this URL exists in your urls.py
+            messages.success(request, 'Teacher added successfully.')
+            return redirect('teachers_mang_url')
 
-            except Class.DoesNotExist:
-                messages.error(request, f"Class {home_room_class} does not exist.")
-                return render(request, "a_school_admin/add-teacher.html", context)
 
         except Exception as e:
+            #Failed to add teacher: cannot access local variable 'room_teacher' where it is not associated with a value
             messages.error(request, f"Failed to add teacher: {str(e)}")
             return render(request, "a_school_admin/add-teacher.html", context)
 
@@ -374,14 +399,16 @@ def add_teachers(request):
 
             # Validate class format and existence
             home_class = row_data['home room class'].upper()
-            if not re.match(CLASS_REGEX, home_class):
+            if taken_home_rooms.contains(home_class):
+                row_errors.append(f"Line {line}: Home room class already taken.")
+            elif home_class == None:
+                pass
+            elif not re.match(CLASS_REGEX, home_class):
                 row_errors.append(f"Line {line}: Invalid class format '{home_class}'")
             elif home_class not in existing_classes:
                 context['recommendations'] = sorted(existing_classes)
                 row_errors.append(f"Line {line}: Class '{home_class}' not found")
                 taken_home_rooms.add(Class.objects.get(class_name=home_class))
-            elif home_class in taken_home_rooms:
-                pass
 
             # Validate age (18-65 for teachers)
             try:
@@ -442,19 +469,34 @@ def add_teachers(request):
                     )
                     user.set_password(pwd)
                     user.save()
+                    
 
                     # Get or create the class object
                     class_obj = Class.objects.get(class_name=home_class)
 
                     # Check if a ClassRoom already exists for the class and assign the teacher to it
                     class_room, created = ClassRoom.objects.get_or_create(class_name=class_obj)
+
+                    if created:
+                        messages.error(request, "System has been infultrated!!!")
+                        logout(request)
+                        return redirect("home_url")
+
+                    try:
+                        user = UserProfile.objects.create(
+                            user=user,
+                            user_pic=default_avatar_path,
+                            password=pwd
+                        )
+                    except Exception as e:
+                        messages.error(request, f"Faild to create the user: {e}")
+                        return render(request, "a_school_admin/upload.html", context)
                     
                       # If a new ClassRoom was created, assign the room teacher
                     class_room.room_teacher = user
                     class_room.save()
 
                     # Assign the user to the user profile
-                    UserProfile.objects.create(user=user, password=pwd)
                     
                     new_users.append(user)
 
@@ -494,8 +536,8 @@ def download_teacher_excel(request):
     teachers = CustomUser.objects.filter(role="teacher")
     teacher_data = []
     for teacher in teachers:
-        if ClassRoom.objects.filter(room_teacher=teacher).exists():
-            room_class = ClassRoom.objects.get(room_teacher=teacher).class_name
+        if ClassRoom.objects.filter(room_teacher__user=teacher).exists():
+            room_class = ClassRoom.objects.get(room_teacher__user=teacher).class_name
         else:
             room_class = "Not Set"
         try:
@@ -507,6 +549,7 @@ def download_teacher_excel(request):
                 'age': teacher.age,
                 'room class': room_class,
                 'email': teacher.email,
+                'password': UserProfile.objects.get(user=teacher).password
             })
         except:
             continue  # skip if class info is missing

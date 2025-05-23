@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
-from common.models import UserProfile, CustomUser
+from common.models import UserProfile, CustomUser, ClassRoom
 from a_message.models import Message
 from django.db.models import Q
 
@@ -14,29 +14,41 @@ def student_dashboard(request):
     return render(request, "a_student/dashboard.html", context)
 
 
+# Global Variables for chat and chatting views 
+is_student = True
+is_teacher = False
+is_admin = False
+
+
+
 @user_passes_test(lambda user: user.is_authenticated and user.role=="student")
 def chat(request):
     me = UserProfile.objects.get(user=request.user)
-    students = UserProfile.objects.filter(user__role='student').exclude(id=me.id)
-    teachers = UserProfile.objects.filter(user__role='teacher')
+ 
+    student_user = UserProfile.objects.get(pk=me.pk)
+    classroom = ClassRoom.objects.get(students=student_user)
+    students_in_same_class = classroom.students.exclude(pk=me.pk)
+    teachers = CustomUser.objects.filter(teaching_subjects__class_room=classroom).distinct()
 
-    msgs = Message.objects.filter(
-        Q(sender=me) | Q(receiver=me)
-    ).order_by('-timestamp')
+    def attach_last_msg(users):
+        for user in users:
+            user.last_message = (
+                Message.objects
+                .filter(Q(sender=me, receiver=user) | Q(sender=user, receiver=me))
+                .order_by('-timestamp')
+                .first()
+            )
+        return users
 
-    seen = set()
-    latest_messages = []
-    for m in msgs:
-        other = m.receiver if m.sender == me else m.sender
-        if other.id not in seen:
-            seen.add(other.id)
-            latest_messages.append(m)
 
-    return render(request, 'a_student/chat.html', {
-        'students': students,
-        'teachers': teachers,
-        'latest_messages': latest_messages,
-    })
+    context = {
+        'students': attach_last_msg(students_in_same_class),
+        'teachers': attach_last_msg(teachers),
+        'is_student': is_student,
+        'is_teacher': is_teacher,
+        'is_admin': is_admin,
+    }
+    return render(request, 'fragments/chat.html', context)
 
 def get_room_name(user1, user2):
     users = sorted([str(user1).lower(), str(user2).lower()])
@@ -48,6 +60,7 @@ def chatting(request, username):
     me = UserProfile.objects.get(user=request.user) 
     students = UserProfile.objects.filter(user__role='student').exclude(id=me.id)
     teachers = UserProfile.objects.filter(user__role='teacher')
+
 
     msgs = Message.objects.filter(
         Q(sender=me) | Q(receiver=me)
@@ -82,7 +95,7 @@ def chatting(request, username):
         Q(sender__user=receiver, receiver__user=request.user)
     ).order_by('timestamp').distinct()
 
-    return render(request, 'a_student/chatting.html', {
+    return render(request, 'fragments/chatting.html', {
         'students': students,
         'teachers': teachers,
         'latest_messages': latest_messages,
@@ -92,6 +105,9 @@ def chatting(request, username):
         'current_user': request.user,
         'other_user': receiver,
         'chat_messages': chat_messages,
+        'is_student': is_student,
+        'is_teacher': is_teacher,
+        'is_admin': is_admin,
     })
 @user_passes_test(lambda user: user.is_authenticated and user.role=="student")
 def material(request):

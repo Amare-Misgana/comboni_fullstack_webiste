@@ -52,7 +52,7 @@ const noneMsg = document.getElementById('no-users');
 function applyFilter(role) {
     let any = false;
     users_card.forEach(u => {
-        if (u.classList.contains(role)) {
+        if (role === "all" || u.classList.contains(role)) {
             u.style.display = '';
             any = true;
         } else {
@@ -61,6 +61,7 @@ function applyFilter(role) {
     });
     noneMsg.style.display = any ? 'none' : '';
 }
+
 
 btns.forEach(btn =>
     btn.addEventListener('click', () => {

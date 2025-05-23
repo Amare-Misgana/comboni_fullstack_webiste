@@ -1,23 +1,31 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
-from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db import transaction
 from a_school_admin.models import AdminAction
 import pandas as pd
 from common.models import UserProfile, CustomUser, ClassRoom, Class
-import openpyxl
 from django.db.models.functions import Length
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 from io import BytesIO
 import re
 
 
 #    helper function
 from a_school_admin.helper_func import generate_password, validate_email
+
+
+default_avatar_path = 'avatars/default-avatar.png'
+
+identify = {
+    "is_admin": True,
+    "is_teacher": False,
+    "is_student": False,
+}
 
 #    Global Variables
 student_excel = {}
@@ -33,7 +41,9 @@ def students_mang(request):
 
     context = {
         'classrooms': classrooms,
+        "students_": CustomUser.objects.filter(role="student")
     }
+    context.update(identify)
     return render(request, "a_school_admin/students-mang.html", context)
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -42,6 +52,11 @@ def delete_student(request, student_username):
     if request.method == "POST":
         try:
             student = Student.objects.get(username=student_username)
+            student_profile = UserProfile.objects.get(user=student)
+            AdminAction.objects.create(
+                admin=request.user,
+                action=f"Deleted Teacher ({student_profile.username})"
+            )
             student.delete()
             messages.success(request, "Student deleted successfully.")
         except Student.DoesNotExist:
@@ -54,10 +69,16 @@ def delete_student(request, student_username):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def edit_student(request, student_username):
-    Student = get_user_model()
-    student = Student.objects.get(username=student_username)
-    student_profile = get_object_or_404(UserProfile, user=student)
-    context = {"student_profile": student_profile}
+    try:
+        student = CustomUser.objects.get(username=student_username)
+        student_profile = UserProfile.objects.get(user=student)
+    except UserProfile.DoesNotExist:
+        messages.error(request, "Student Doesn't Exist.")
+        return redirect("student_mang_url")
+    context = {
+        "student_profile": student_profile
+        }
+    context.update(identify)
 
     if request.method == 'POST':
         try:
@@ -151,7 +172,7 @@ def edit_student(request, student_username):
                 student_profile.save()
                 AdminAction.objects.create(
                     admin=request.user,
-                    action=f"Edited User ({student.first_name}): Updated {', '.join(changes)}"
+                    action=f"Edited Student ({student.first_name}): Updated {', '.join(changes)}"
                 )
                 messages.success(request, 'Student updated successfully.')
             else:
@@ -173,20 +194,18 @@ def edit_student(request, student_username):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def student_detail(request, student_username):
-    Student = get_user_model()
-
     try:
-        student = Student.objects.get(username=student_username)
-        student_class = student.classroom_students.first()
+        student = CustomUser.objects.get(username=student_username)
         try:
             student_profile = UserProfile.objects.get(user=student)
+            student_class = student_profile.classroom_students.all().first()
             if not student_profile.user_pic:
                 messages.warning(request, "Student Profile is incomplete. Add profile picture")
         except UserProfile.DoesNotExist:
             messages.warning(request, "Student Profile is incomplete. Compelete Profile")
             return redirect(reverse("edit_student_url", kwargs={"student_username":student_username}))
 
-    except Student.DoesNotExist:
+    except CustomUser.DoesNotExist:
         messages.error(request, "Student can't be found!")
         return redirect("students_mang_url")
     context = {
@@ -194,6 +213,7 @@ def student_detail(request, student_username):
         "student_profile": student_profile,
         "student_class": student_class,
     }
+    context.update(identify)
     return render(request, "a_school_admin/student-detail.html", context)
 
 
@@ -202,6 +222,7 @@ def add_student(request):
     context = {
         "class_list": Class.objects.values_list("class_name", flat=True).order_by(Length('class_name'), 'class_name')
     }
+    context.update(identify)
 
     if request.method == 'POST':
         try:
@@ -283,32 +304,47 @@ def add_student(request):
             student.set_password(password)
             student.save()
 
+            if profile_pic and profile_pic.size > settings.MAX_UPLOAD_SIZE:
+                messages.error(request, "Profile picture must be less than 2MB.")
+                return render(request, "a_school_admin/add-student.html", context)
+
+
             try:
                 class_instance = Class.objects.get(class_name=class_name)
+            except Class.DoesNotExist:
+                messages.error(request, "Class Doesn't Exists.")
+                return redirect("student_mang_url") 
 
-                class_room = ClassRoom(
-                    class_name=class_instance,
-                )
-                class_room.save()
-                class_room.students.add(student)
-            except Exception as e:
-                messages.error(request, f"Faild to save in a class room: {e}")
-
-            # Save profile picture if provided
-            if profile_pic:
-                student_profile = UserProfile(
+            try: 
+                student_profile = UserProfile.objects.create(
                     user=student,
                     user_pic=profile_pic,
-                    password=password,
+                    password=password
                 )
-                student_profile.save()
-
+            except Exception as e:
+                student.delete()
+                messages.error(request, f"Failed to create student profile: {e}")
+                return redirect('students_mang_url')   
+            
+            try:
+                class_room, created = ClassRoom.objects.get_or_create(class_name=class_instance)
+                if created:
+                    class_room = ClassRoom.objects.create(class_name=class_instance) 
+                class_room.students.add(student_profile)
+            except Exception as e:
+                messages.error(request, f"Can't create the class: {e}")
+                return redirect("students_mang_url")
             # Log admin action 
-            admin_action = AdminAction(
-                admin=request.user,
-                action=f"Added User ({student.first_name})"
-            )
-            admin_action.save()
+            try:
+                admin_action = AdminAction(
+                    admin=request.user,
+                    action=f"Added Student ({student_profile.user.first_name})"
+                )
+                admin_action.save()
+            except Exception as e:
+                messages.error(request, f"Error on create teh admin action.: {e}")
+                return render(request, "a_school_admin/add-student.html", context)
+
 
             messages.success(request, 'Student added successfully.')
             return redirect('students_mang_url')
@@ -323,7 +359,6 @@ def add_student(request):
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
-
 def add_students(request):
     REQUIRED_COLUMNS = [
         'first name', 'middle name', 'last name',
@@ -333,6 +368,7 @@ def add_students(request):
         'required_columns': REQUIRED_COLUMNS,
         'errors': []
     }
+    context.update(identify)
 
     if request.method == "POST":
         uploaded_file = request.FILES.get('file')
@@ -430,8 +466,23 @@ def add_students(request):
                         phone_number=field('phone number'),
                         role='student'
                     )
-                    user.set_password(generate_password())
+                    password = generate_password(include_special_chars=False)
+                    user.set_password(password)
                     user.save()
+
+                    try:
+                        user_profile = UserProfile.objects.create(
+                            user=user,
+                            user_pic=default_avatar_path,
+                            password=password,
+                        )
+                    except Exception as e:
+                        user.delete()
+                        #Faild to create the profile: cannot access local variable 'user_profile' where it is not associated with a value
+                        messages.error(request, f"Faild to create the profile: {e}")
+                        return render(request, "a_school_admin/upload.html", context)
+
+                    
 
                     # Get or create classroom
                     class_name = field('class').upper()
@@ -439,12 +490,7 @@ def add_students(request):
                     class_room, _ = ClassRoom.objects.get_or_create(class_name=cls)
 
                     # Assign student to classroom
-                    class_room.students.add(user)
-
-                    # Get or create profile
-                    profile, created_profile = UserProfile.objects.get_or_create(user=user)
-                    if created_profile:
-                        profile.save()
+                    class_room.students.add(user_profile)
 
                     created += 1
 
@@ -480,14 +526,18 @@ def download_students_excel(request):
     students = CustomUser.objects.filter(role="student")
     student_data = []
     for student in students:
+        try: 
+            student_profile = UserProfile.objects.get(user=student)
+        except UserProfile.DoesNotExist:
+            continue
         student_data.append({
             'first_name': student.first_name,
             'middle_name': student.middle_name,
             'last_name': student.last_name,
             'gender': student.gender,
             'age': student.age,
-            # 'class': ClassRoom.objects.get(student=student).class_name,
             'email': student.email,
+            'password': UserProfile.objects.get(user=student).password
         })
     
     # Create DataFrame and save as Excel

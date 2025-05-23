@@ -1,0 +1,115 @@
+.news-section-all {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2em;
+    padding: 2em;
+}
+
+.news-header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+}
+
+.section-title {
+    font-size: 1.6em;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.news-card {
+    background: var(--light-background);
+    border-radius: 0.3em;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 35em;
+}
+
+.news-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.news-content {
+    padding: 1.5em;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.news-content h3 {
+    font-size: 1.2em;
+    color: var(--primary);
+    margin-bottom: 0.5em;
+}
+
+.news-content .description {
+    font-size: 0.95em;
+    color: var(--secondary-text);
+    margin-bottom: 1.2em;
+    line-height: 1.5;
+}
+
+.news-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9em;
+    color: var(--last-text);
+    margin-top: auto;
+}
+
+.read-more {
+    color: var(--primaryD);
+    text-decoration: underline;
+}
+
+.admin-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5em;
+    padding: 1em;
+    background: var(--dark-background);
+    border-top: 1px solid var(--low-light);
+}
+
+.admin-controls .btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.5em 0.8em;
+    border-radius: 0.3em;
+    color: white;
+    text-decoration: none;
+    min-width: 5em;
+    font-size: 0.9em;
+}
+
+.btn-add {
+    background: var(--primary);
+}
+
+.btn-edit {
+    background: var(--edit-btn);
+}
+
+.btn-view {
+    background: var(--detail-btn);
+}
+
+.btn-delete {
+    background: var(--delete-btn);
+}
+
+.empty-box {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4em 2em;
+    background: var(--light-background);
+    color: var(--secondary-text);
+}

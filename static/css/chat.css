@@ -1,3 +1,9 @@
+body {
+    font-size: 13px !important;
+    overflow: hidden;
+    height: 100vh;
+}
+
 .content {
     display: flex;
     justify-content: flex-start;
@@ -37,10 +43,10 @@ i.fa-brands {
 
 
 .message {
-    height: 85.4vh;
     display: flex;
-    width: 100%;
     align-items: flex-start;
+    height: 100%;
+    width: 100%;
 }
 
 .message .chat-user {
@@ -87,15 +93,21 @@ i.fa-brands {
 .user-list {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    justify-content: flex-start;
     height: 100%;
     overflow-y: auto;
-    scrollbar-width: thin;
+    /* scrollbar-width: thin;
     scrollbar-color: transparent transparent;
     scrollbar-gutter: stable;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; */
     background-color: var(--light-background);
     scrollbar-color: var(--primary) #f0f0f0;
+    gap: 0.1em;
+}
+
+.user-list>p {
+    color: var(--secondary-text);
+    text-align: center;
 }
 
 
@@ -103,12 +115,19 @@ i.fa-brands {
 .user-list .search-bar {
     width: 100%;
     display: flex;
+    align-items: center;
     justify-content: center;
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: var(--primary);
     padding: 2em;
+    gap: 0.3em;
+}
+
+.user-list .search-bar .fa-search {
+    font-size: 1.4em;
+    color: white;
 }
 
 .user-list .search-bar input {
@@ -236,12 +255,21 @@ i.fa-brands {
     flex-direction: column;
     height: 100%;
     width: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 
 .user-list a {
     text-decoration: none !important;
+}
+
+.content,
+.message,
+.message-holder,
+.message-data {
+    flex: 1;
+    overflow-y: auto;
 }
 
 .message-data {
@@ -253,7 +281,7 @@ i.fa-brands {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 1em;
-    overflow-y: auto;
+    overflow-y: auto !important;
     scrollbar-width: thin;
     scrollbar-color: transparent transparent;
     scrollbar-gutter: stable;
@@ -269,7 +297,8 @@ i.fa-brands {
     align-items: flex-start;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
+    /* overflow: hidden; */
 }
 
 .message-content .click-for-message {
@@ -352,6 +381,10 @@ i.fa-brands {
     color: white;
 }
 
+.message-input::placeholder {
+    color: white;
+}
+
 .send-btn {
     background-color: transparent;
     border: none;
@@ -361,12 +394,11 @@ i.fa-brands {
 @media (max-width: 1000px) {
     body {
         padding: 0 0 0 0.1em;
-        overflow: hidden !important;
         width: 100vw !important;
+        height: 100vh;
     }
 
     .content {
-        overflow-x: hidden;
         width: 93vw !important;
     }
 
@@ -384,6 +416,18 @@ i.fa-brands {
 
     }
 
+    .chat-user a i {
+        font-size: 1em !important;
+    }
+
+    .chat-user a {
+        padding: 0 !important;
+    }
+
+    .chat-user ul {
+        text-decoration: none !important;
+    }
+
     .avatar .online {
         outline-width: 2.5px !important;
         width: 0.6em !important;
@@ -393,6 +437,10 @@ i.fa-brands {
     .message {
         align-items: flex-start;
         justify-content: flex-start;
+    }
+
+    .message-content {
+        display: none;
     }
 }
 
@@ -444,4 +492,58 @@ i.fa-brands {
     color: #dc3545;
     padding: 10px;
     text-align: center;
+}
+
+
+@media (max-width: 800px) {
+    .dashboard-content {
+        height: 100%;
+    }
+
+    .dashboard {
+        height: 100%;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+    .message {
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0;
+        width: 100%;
+        flex: 1;
+    }
+
+    .message .chat-user {
+        width: 100%;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 0;
+        margin: 0;
+        height: 5em !important;
+    }
+
+    .message .chat-user ul {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: row !important;
+        width: 100%;
+        gap: 3em;
+    }
+
+    .message .chat-user a {
+        padding: 0.3em;
+        width: 5em;
+        height: 5em;
+        border-radius: 50%;
+        border: 1px solid var(--tint);
+
+    }
+
+    .message .user-list {
+        width: 100%;
+    }
 }

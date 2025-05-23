@@ -174,3 +174,6 @@ CHANNEL_LAYERS = {
             "hosts": [('127.0.0.1', 6379)], 
         },
 }
+
+MAX_UPLOAD_SIZE = 2 * 1024 * 1024 
+

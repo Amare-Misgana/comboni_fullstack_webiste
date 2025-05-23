@@ -263,6 +263,8 @@ body.slide .menu-icon {
   width: 60%;
 }
 
+
+
 /* Theme Toggle*/
 
 /* From Uiverse.io by Madflows */
@@ -1141,4 +1143,25 @@ body.dark-mode .content .sub-layer {
 .profile-settings .user-info .info .data h4 {
   color: var(--secondary-text);
   font-size: 0.9em;
+}
+
+
+
+@media (max-width: 800px) {
+  .header.slider {
+    display: none !important;
+  }
+
+  .content {
+    margin: 0 !important;
+    background-color: red !important;
+  }
+
+  .content .message {
+    flex-direction: column;
+  }
+
+  .top {
+    padding: 0 !important;
+  }
 }

@@ -1,46 +1,16 @@
-.no-message {
-    text-align: center;
-    color: #666;
-    font-style: italic;
-    margin: 2em 0;
-    padding: 1em;
-    border-radius: 8px;
-    font-size: 4em !important;
-}
-
-#no-users {
-    color: var(--last-text) !important;
-    font-size: clamp(0.8em, 1.2em, 1.4em);
-    align-self: center;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-
 @media (max-width: 800px) {
-    h1.username {
-        font-size: 1em;
+    .message .chat-user {
+        display: none;
     }
 
 
-    .message {
-        flex-direction: column;
+    .message .user-list {
+        display: none;
     }
+}
 
-    .message-form .message-input {
-        width: 70%;
-        font-size: 0.9em;
+@media (max-width: 1000px) {
+    .message-content {
+        display: flex;
     }
-
-    .user-list {
-        display: none !important;
-    }
-
-    .chat-user {
-        display: none !important;
-    }
-
 }

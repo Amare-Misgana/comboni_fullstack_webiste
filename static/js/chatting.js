@@ -1,3 +1,8 @@
+window.addEventListener('load', () => {
+    chatLog.scrollTop = chatLog.scrollHeight;
+});
+
+
 // Get elements from DOM
 const chatLog = document.getElementById('chat-log');
 const sendButton = document.getElementById('send-button');
@@ -6,15 +11,11 @@ const sendButton = document.getElementById('send-button');
 const currentUser = JSON.parse(document.getElementById('me-username').textContent);
 const otherUser = JSON.parse(document.getElementById('other-user').textContent);
 
-console.log("hi this is the receiver: ", otherUser)
 
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
-console.log(currentUser)
-console.log("Testing the best chat app")
-console.log(otherUser)
 
-// Establish WebSocket connection
+// Establish WebSocket connection 
 const chatSocket = new WebSocket(
     `ws://${window.location.host}/ws/chat/${roomName}/`
 );
@@ -22,21 +23,20 @@ const chatSocket = new WebSocket(
 // Handle message reception
 chatSocket.onmessage = function (e) {
 
+    if (document.querySelector(".no-message")) {
+        document.querySelector(".no-message").style.display = "none"
+    }
+
+
     const data = JSON.parse(e.data);
 
-    if (data.type === "status") {
-        if (data.user === targetUsername) {
-            const statusCircle = document.getElementById("online-status");
-            if (data.status === "online") {
-                statusCircle.style.display = "inline-block";
-            } else {
-                statusCircle.style.display = "none";
-            }
-        }
-    }
     const message = data.message
     const sender = data.sender
     let isCurrentUser = sender == currentUser
+
+    // document.querySelector(`.{data.receiver}`).style.order = -1
+
+    console.log(data.receiver)
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `${isCurrentUser ? 'sender' : 'receiver'}`;
@@ -50,6 +50,8 @@ chatSocket.onmessage = function (e) {
     `;
 
     chatLog.appendChild(messageDiv);
+    chatLog.scrollTop = chatLog.scrollHeight;
+
 };
 
 const messageInput = document.getElementById('message-input');

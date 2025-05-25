@@ -53,3 +53,18 @@
 .news-date {
   font-style: italic;
 }
+
+.go-back-btn {
+  display: block;
+  text-decoration: none;
+}
+
+.go-back-btn button {
+  padding: 0.4em 1em;
+  background-color: var(--primary);
+  color: white;
+  margin-top: 0.5em;
+  border: none;
+  border-radius: 0.3em;
+  cursor: pointer;
+}

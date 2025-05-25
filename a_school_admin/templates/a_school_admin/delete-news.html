@@ -15,9 +15,9 @@
     <p>
       <strong>{{ news.title }}</strong>
     </p>
-    <form method="post">
+    <form method="post" class="load">
       {% csrf_token %}
-      <button type="submit" class="btn deletebtn-">Yes, Delete</button>
+      <button type="submit" class="btn btn-delete">Yes, Delete</button>
       <a href="{% url 'all_news_url' %}" class="btn btn-cancel">Cancel</a>
     </form>
   </section>

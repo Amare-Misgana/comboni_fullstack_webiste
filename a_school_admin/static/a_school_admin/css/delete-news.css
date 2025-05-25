@@ -47,7 +47,7 @@
 }
 
 .btn-delete {
-    background: var(--delete-btn);
+    background-color: var(--delete-btn);
 }
 
 .btn-cancel {

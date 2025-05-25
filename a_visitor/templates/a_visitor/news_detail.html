@@ -9,18 +9,18 @@
   <link rel="stylesheet" href="{% static 'css/variables.css' %}" />
   <link rel="stylesheet" href="{% static 'css/header.css' %}" />
   <link rel="stylesheet" href="{% static 'a_visitor/css/news_detail.css' %}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link rel="stylesheet" href="{% static 'css/footer.css' %}" />
   <link rel="icon" href="{% static 'images/1x/Asset 7.png' %}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
-     .hero_container::after {
-      content: "";
+    .hero_container::after {
+      content: '';
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: url("{% static 'a_visitor/images/graduation.jpg' %}");
+      background: url('/static/a_visitor/images/hero_background.jpg') center/cover no-repeat;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;

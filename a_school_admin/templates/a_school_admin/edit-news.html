@@ -6,22 +6,63 @@
 {% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'a_school_admin/css/admin-news.css' %}" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/edit-news.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Edit News</h1>
+  </div>
 {% endblock %}
 
 {% block content %}
   <section class="news-form-section">
-    <form method="post" enctype="multipart/form-data" class="news-form">
+    <h2 class="card-title">📰 Edit News</h2>
+    <form method="post" enctype="multipart/form-data" class="news-form load">
       {% csrf_token %}
-      <input type="text" name="title" value="{{ news.title }}" required />
-      <textarea name="description" required>{{ news.description }}</textarea>
-      <input type="file" name="photo" accept="image/*" />
+
+      <div class="field">
+        <input type="file" name="photo" id="editPhoto" accept="image/*" />
+        <label for="editPhoto">Update Photo</label>
+        <div class="preview" id="editPreview">
+          {% if news.photo %}
+            <img src="{{ news.photo.url }}" alt="Current news image" />
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="field">
+        <input type="text" name="title" id="editTitle" value="{{ news.header }}" required />
+        <label for="editTitle">Main Header</label>
+      </div>
+
+      <div class="field">
+        <textarea name="description" id="editDescription" rows="4" required>{{ news.description }}</textarea>
+        <label for="editDescription">Description</label>
+      </div>
+
       <button type="submit" class="btn btn-edit">Save Changes</button>
     </form>
   </section>
 {% endblock %}
 
 {% block script %}
-
+  <script>
+    const editPhotoInput = document.getElementById('editPhoto')
+    const editPreviewDiv = document.getElementById('editPreview')
+    editPhotoInput.addEventListener('change', function () {
+      editPreviewDiv.innerHTML = ''
+      const file = this.files[0]
+      if (file) {
+        const img = document.createElement('img')
+        img.src = URL.createObjectURL(file)
+        editPreviewDiv.appendChild(img)
+      }
+    })
+    
+    const existingImage = editPreviewDiv.querySelector('img')
+    if (existingImage) {
+      editPhotoInput.required = false
+    }
+  </script>
 {% endblock %}
-  

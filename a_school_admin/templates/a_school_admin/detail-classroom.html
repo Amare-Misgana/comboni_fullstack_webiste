@@ -17,7 +17,7 @@
   <div class="classroom-details">
     <div class="classroom-header card">
       <div class="header-actions">
-        <form method="post" action="{% url 'delete_teacher' classroom.id %}">
+        <form method="post" action="{% url 'delete_teacher' classroom.id %}" class="load">
           {% csrf_token %}
           <button type="submit" class="delete-btn">Remove Home Teacher</button>
         </form>

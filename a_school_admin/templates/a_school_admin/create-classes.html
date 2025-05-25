@@ -12,7 +12,7 @@
 {% block content %}
   <div class="class-creation-container">
     <h2>Create Multiple Classes</h2>
-    <form method="post" class="class-creation-form">
+    <form method="post" class="class-creation-form load">
       {% csrf_token %}
       <div class="input-group">
         <label for="class-input">Enter class names (separated by commas):</label>

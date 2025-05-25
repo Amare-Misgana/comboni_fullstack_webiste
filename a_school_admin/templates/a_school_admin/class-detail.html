@@ -36,7 +36,7 @@
   <!-- Assign Class -->
   <div class="assign-box">
     <h3>Assign Subject to Class</h3>
-    <form method="post" action="{% url 'assign_subject_url' class_object.id %}" id="assigned-subjects">
+    <form method="post" action="{% url 'assign_subject_url' class_object.id %}" class="load" id="assigned-subjects">
       {% csrf_token %}
       <div class="form-group">
         <label for="subject">Subject:</label>
@@ -91,7 +91,7 @@
               <td>{{ assigned_subject.teacher }}</td>
               <td>{{ assigned_subject.subject }}</td>
               <td class="table-actions">
-                <form method="POST" id="form_class" action="{% url 'delete_subject_url' subject=assigned_subject.subject classroom_id=assigned_subject.class_room.id %}">
+                <form method="POST" class="load" id="form_class" action="{% url 'delete_subject_url' subject=assigned_subject.subject classroom_id=assigned_subject.class_room.id %}">
                   {% csrf_token %}
                   <button type="submit" class="action-btn delete btn-delete" onclick="showDeletePopup('form_class')"><i class="fa fa-trash"></i></button>
                 </form>
@@ -102,15 +102,15 @@
       </table>
     </div>
   {% else %}
-    {% include 'fragments/no_data_box.html' with empty_title='No Assigned Subjects Found' empty_message="There are currently no subjects in this class. We can't show students tabel." %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Assigned Subjects Found' empty_message="There are currently no subjects in this class. We can't show students table." %}
   {% endif %}
   <!-- Student Table -->
   <div class="table-container">
     <div class="table-header">
       <h2>Assigned Students</h2>
-      <a href="{% url 'add_defined_student_url' defined_class_room='hi' %}"><button class="add-student-btn">Add Student</button></a>
+      <a href="{% url 'add_student_url' %}?defined_class={{ class_object.class_name.class_name }}"><button class="add-student-btn">Add Student</button></a>
     </div>
-    <table id="detailTable" class="classTable">
+    <table id="detailTable2" class="classTable">
       <thead>
         <tr>
           <th>First Name</th>
@@ -143,6 +143,45 @@
   <script>
     $(function () {
       $('#detailTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+    $(function () {
+      $('#detailTable2').DataTable({
         responsive: true,
         initComplete: function () {
           $('.dataTables_length label')

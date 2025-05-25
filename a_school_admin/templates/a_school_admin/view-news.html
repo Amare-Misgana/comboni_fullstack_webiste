@@ -26,6 +26,7 @@
         <p class="description">{{ news.description }}</p>
         <div class="news-footer">
           <time datetime="{{ news.created_at|date:'Y-m-d' }}" class="news-date">{{ news.created_at|date:'F j, Y' }}</time>
+          <a href="{% url 'all_news_url' %}" class="go-back-btn"><button>Go back</button></a>
         </div>
       </div>
     </article>

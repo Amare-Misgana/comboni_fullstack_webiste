@@ -26,17 +26,23 @@ form input[type="file"] {
     width: 100%;
     padding: 0.9em 1em;
     border: 2px solid var(--tint);
-    border-radius: var(--card-radius);
+    border-radius: 0.3em;
     background: var(--background);
     font-size: 1em;
     color: var(--primary-text);
+    transition: var(--transition);
 }
+
+form input:focus {
+    outline: 1px solid var(--primary);
+}
+
 
 form label {
     position: absolute;
     top: -0.8em;
     left: 1em;
-    background: var(--background);
+    background: var(--light-background);
     padding: 0 0.4em;
     font-size: 0.9em;
     color: var(--secondary-text);
@@ -47,7 +53,7 @@ form label {
     margin-top: 1em;
     width: 100%;
     height: 220px;
-    border-radius: var(--card-radius);
+    border-radius: 0.3em;
     border: 2px dashed var(--low-light);
     background: var(--dark-background);
     display: flex;
@@ -67,13 +73,21 @@ button[type="submit"] {
     background: var(--edit-btn);
     color: white;
     padding: 0.9em;
-    font-size: 1em;
+    font-size: 1.3em;
     border: none;
-    border-radius: var(--card-radius);
+    border-radius: 0.3em;
     cursor: pointer;
     transition: var(--transition);
 }
 
 button[type="submit"]:hover {
     background: var(--edit-btn-hover);
+}
+
+#description {
+    resize: vertical;
+}
+
+#description:focus {
+    outline: 1px solid var(--primary);
 }

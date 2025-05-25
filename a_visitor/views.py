@@ -94,6 +94,9 @@ def news_detail(request, pk):
         "description": item.description,
         "date": item.created_at.strftime("%B %d, %Y"),
         "image_src": item.photo.url,
+        "email": "example@gmail.com",
+        "phone_number": "+251 911 963 441",
+        "address": "Comboni School Hawassa",
     }
     return render(request, "a_visitor/news_detail.html", context)
 

@@ -9,10 +9,16 @@
   <link rel="stylesheet" href="{% static 'a_school_admin/css/add-news.css' %}" />
 {% endblock %}
 
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Add News</h1>
+  </div>
+{% endblock %}
+
 {% block content %}
   <div class="news-card">
     <h2 class="card-title">📰 Add News</h2>
-    <form id="newsForm" method="post" enctype="multipart/form-data">
+    <form id="newsForm" class="load" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="field">
         <input type="file" name="photo" id="photo" accept="image/*" required />

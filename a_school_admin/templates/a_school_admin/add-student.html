@@ -20,7 +20,7 @@
   <div class="add-student-form">
     <h2>Add Student</h2>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="load">
       {% csrf_token %}
       <div class="profile-wrapper">
         <label for="profile_image" class="profile-label">
@@ -71,15 +71,20 @@
             <option>Female</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="class_name">Class</label>
-          <select id="class_name" name="class_name" required>
-            <option value="" disabled activated>Select Class</option>
-            {% for class in class_list %}
-              <option>{{ class }}</option>
-            {% endfor %}
-          </select>
-        </div>
+
+        {% if request.GET.defined_class %}
+          <input type="hidden" name="class_name" value="{{ request.GET.defined_class }}" />
+        {% else %}
+          <div class="form-group">
+            <label for="class_name">Class</label>
+            <select id="class_name" name="class_name" required>
+              <option value="" disabled activated>Select Class</option>
+              {% for class in class_list %}
+                <option>{{ class }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
       </div>
 
       <div class="crud">

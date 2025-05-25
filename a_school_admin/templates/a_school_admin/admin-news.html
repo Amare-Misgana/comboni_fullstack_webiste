@@ -10,6 +10,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 {% endblock %}
 
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">News</h1>
+  </div>
+{% endblock %}
+
 {% block content %}
   <section class="news-section-all">
     {% if is_admin %}
@@ -37,9 +43,9 @@
 
           {% if is_admin %}
             <div class="admin-controls">
-              <a href="{% url 'edit_news_url' item.id %}" class="btn btn-edit"><i class="fa fa-edit"></i> Edit</a>
-              <a href="{% url 'view_news_url' item.id %}" class="btn btn-view"><i class="fa fa-eye"></i> View</a>
-              <a href="{% url 'delete_news_url' item.id %}" class="btn btn-delete"><i class="fa fa-trash"></i> Delete</a>
+              <a href="{% url 'edit_news_url' item.id %}" class="btn btn-edit absolute"><i class="fa fa-edit"></i></a>
+              <a href="{% url 'view_news_url' item.id %}" class="btn btn-view absolute"><i class="fa fa-eye"></i></a>
+              <a href="{% url 'delete_news_url' item.id %}" class="btn btn-delete"><i class="fa fa-trash"></i></a>
             </div>
           {% endif %}
         </article>
@@ -47,7 +53,7 @@
     {% else %}
       <div class="empty-box">
         <h2>No News Available</h2>
-        <p>Please check back later.</p>
+        <p>To share information for all school memeber, add news</p>
       </div>
     {% endif %}
   </section>

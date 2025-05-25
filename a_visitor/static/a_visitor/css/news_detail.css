@@ -3,10 +3,14 @@
   margin: 2em auto;
   padding: 1.5em;
   font-family: 'Merriweather', serif;
-  background-color: var(--bg-secondary);
+  /* background-color: var(--bg-secondary); */
   color: var(--text-color);
   border-radius: 1em;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+footer * {
+  color: var(--background) !important;
 }
 
 .news-detail-card {

@@ -12,7 +12,7 @@
 {% block content %}
   <div class="class-creation-container">
     <h2>Create Multiple Subjects</h2>
-    <form method="post" class="class-creation-form">
+    <form method="post" class="class-creation-form load">
       {% csrf_token %}
       <div class="input-group">
         <label for="subject-input">Enter subject names (separated by commas):</label>
@@ -47,7 +47,7 @@
                 <button type="button" class="action-btn delete" onclick="showDeletePopup('deleteForm{{ subject.id }}')"><i class="fa fa-trash"></i></button>
               </div>
 
-              <form id="deleteForm{{ subject.id }}" method="post" action="{% url 'delete_subject_url' subject.subject_name %}" style="display:none;">
+              <form id="deleteForm{{ subject.id }}" class="load" method="post" action="{% url 'delete_subject_url' subject.subject_name %}" style="display:none;">
                 {% csrf_token %}
               </form>
             </li>

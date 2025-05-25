@@ -1,0 +1,38 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Add Homeroom Teacher
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/add-homeroom.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h2><i class="fa fa-chalkboard-teacher"></i> Add Homeroom Teacher</h2>
+  <div class="user-info">
+    <h1 class="username">{{ class_room.class_name.class_name }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form class="add-homeroom-form" method="post">
+    {% csrf_token %}
+    <section class="section teachers">
+      <h3 class="title">Select a Teacher</h3>
+      <div class="radios">
+        {% for teacher in available_teachers %}
+          {% include 'fragments/radio.html' with group_name='teacher' value=teacher.user.username label=teacher.username %}
+        {% empty %}
+          <p class="empty">All teachers are already assigned.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <div class="form-actions">
+      <a href="{% url 'class_detail_url' class_name=class_room.class_name.class_name %}" class="btn cancel-btn">Cancel</a>
+      <button type="submit" class="btn assign-btn">Assign</button>
+    </div>
+  </form>
+{% endblock %}

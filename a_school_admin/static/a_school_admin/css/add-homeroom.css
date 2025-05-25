@@ -1,0 +1,77 @@
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-homeroom-form {
+    width: 35em;
+    margin: 2em auto;
+    background: var(--light-background);
+    border-radius: 0.3em;
+    padding: 2em;
+    border: 1px solid var(--tint);
+}
+
+.section h3 {
+    margin-bottom: 1em;
+    padding-left: 0.6em;
+    color: var(--primaryL);
+    font-size: 2em;
+    text-align: center;
+}
+
+.radios {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.radio-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 1em;
+}
+
+.radios span {
+    color: var(--secondary-text);
+    font-size: 1.3em;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2em;
+}
+
+.btn {
+    padding: 0.5em 1.2em;
+    font-size: 1em;
+    border-radius: 6px;
+    border: none;
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cancel-btn {
+    background: var(--delete-btn);
+}
+
+.cancel-btn:hover {
+    background: #c0392b;
+}
+
+.assign-btn {
+    background: var(--primary);
+}
+
+.assign-btn:hover {
+    background: var(--primaryD);
+}
+
+.empty {
+    color: var(--secondary-text);
+    font-style: italic;
+}

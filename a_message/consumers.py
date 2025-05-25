@@ -3,7 +3,7 @@ import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from common.models import UserProfile
-from .models import Message
+from .models import Message, OnlineStatus
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             message=content["message"]
         )
 
-class OnlineStatus(AsyncWebsocketConsumer):
+class OnlineStatusSocket(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope["user"]
 
@@ -78,7 +78,7 @@ class OnlineStatus(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        self.room_name = "online_status"  # static group for all users
+        self.room_name = "online_status_group"  # static group for all users
         await self.channel_layer.group_add(
             self.room_name,
             self.channel_name
@@ -119,5 +119,10 @@ class OnlineStatus(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def set_online(self, status):
-        self.user.online = status
-        self.user.save()
+        online_status, created = OnlineStatus.objects.get_or_create(
+            user=self.user,
+            defaults={"online_status": status}    
+        )
+        logger.error("Error Here\n\n\n\n")
+        if not created:
+            online_status.save()

@@ -5,20 +5,21 @@ from common.models import UserProfile, CustomUser
 from a_message.models import Message
 from django.db.models import Q
 
-
-@user_passes_test(lambda user: user.is_authenticated and user.role=="teacher")
-def teacher_dashboard(request):
-    context = {
-        "user_profile": UserProfile.objects.get(user=request.user),
-    }
-    return render(request, "a_teacher/dashboard.html", context)
-
 # Global Variables for chat and chatting views 
 identify = {
     'is_student': False,
     'is_teacher': True,
     'is_admin': False,
 }
+
+@user_passes_test(lambda user: user.is_authenticated and user.role=="teacher")
+def teacher_dashboard(request):
+    context = {
+        "user_profile": UserProfile.objects.get(user=request.user),
+    }
+    context.update(identify)
+    return render(request, "a_teacher/dashboard.html", context)
+
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
@@ -101,6 +102,7 @@ def chatting(request, username):
         'chats': chats,
         'room_name': room_name,
         'receiver': receiver,
+        'receiver_profile': UserProfile.objects.get(user=receiver),
         'current_user': request.user,
         'other_user': receiver,
         'chat_messages': chat_messages,
@@ -108,4 +110,4 @@ def chatting(request, username):
     }
     context.update(identify)
 
-    return render(request, 'fragments/chatting.html')
+    return render(request, 'fragments/chatting.html', context)

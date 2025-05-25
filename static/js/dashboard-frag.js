@@ -218,3 +218,17 @@ close_profile.addEventListener("click", () => {
 
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  const loader = document.getElementById('global-loader');
+
+  document.querySelectorAll('form.with-loader').forEach(form => {
+    form.addEventListener('submit', () => {
+      loader.style.display = 'flex';
+      form.querySelectorAll('[type="submit"]').forEach(btn => {
+        btn.disabled = true;
+        btn.dataset.origText = btn.innerHTML;
+        btn.innerHTML = '⏳ Sending…';
+      });
+    });
+  });
+});

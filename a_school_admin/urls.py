@@ -50,7 +50,12 @@ urlpatterns = [
     path("class-mang/subject/edit/<str:subject_name>/", view_class.edit_subject, name="edit_subject_url"),
     path("class-mang/subject/delete/<str:subject_name>/", view_class.delete_subject, name="delete_subject_url"),
     path("class-mang/class-detial/<str:class_name>/", view_class.class_detail, name="class_detail_url"),
+    path("class-mang/delete-subject/<str:subject>/<int:classroom_id>/", view_class.delete_assigned_subjects, name="delete_subject_url"),
     path("class-mang/edit-class/<str:class_name>", view_class.edit_class, name="edit_class_url" ),
     path("class-mang/create-classes", view_class.create_classes, name="create_classes_url"),
     path("class-mang/add-studens/<str:defined_class_room>/", view_class.defined_class, name="add_defined_student_url"),
+    path("class-mang/classroom/add/", view_class.classroom_add, name="classroom_add_url"),
+    path("class-mang/classroom/<str:pk>/", view_class.class_detail, name="classroom_detail_url"),
+    path("class-mang/add-homeroom-teacher/<str:class_name>/", view_class.add_homeroom_teacher, name="add_homeroom_url"),
+    path("class-mang/remove-homeroom-teacher/<str:teacher>/<str:class_name>/", view_class.remove_homeroom_teacher, name="remove_homeroom_url"),
 ]

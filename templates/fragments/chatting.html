@@ -15,16 +15,8 @@
 
 {% block page_title %}
   <div class="user-info">
-    {% for receiver_profile in userprofile %}
-      {% if receiver.username == receiver_profile.user.username %}
-        {% if receiver_profile.user_pic %}
-          <img src="{{ receiver_profile.user_pic.url }}" alt="{{ receiver_profile.username }}'s profile picture" />
-        {% else %}
-          <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" />
-        {% endif %}
-        <h1 class="username">{{ receiver_profile.username }}</h1>
-      {% endif %}
-    {% endfor %}
+    <img src="{{ receiver_profile.user_pic.url }}" alt="{{ receiver_profile.username }}'s profile picture" />
+    <h1 class="username">{{ receiver_profile.username }}</h1>
   </div>
 {% endblock %}
 
@@ -54,11 +46,23 @@
           {% for chat_message in chat_messages %}
             <div class="{% if chat_message.sender.user == request.user %}
                 
+                
+                
+                
                 sender
+
+
+
 
               {% else %}
                 
+                
+                
+                
                  receiver
+
+
+
 
               {% endif %}">
               <p>{{ chat_message.message }}</p>

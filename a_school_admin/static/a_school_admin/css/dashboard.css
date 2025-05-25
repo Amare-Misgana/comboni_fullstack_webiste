@@ -115,6 +115,16 @@
   }
 }
 
+@media (max-width: 600px) {
+  .content .overview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 1em;
+  }
+}
+
 
 /* OVERVIEW CARDS END!!!!!!!!!!!!!!!!! */
 

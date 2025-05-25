@@ -53,7 +53,12 @@
         <div class="form-group">
           <label for="home_room_class">Home Room Class</label>
           <select name="home_room_class" id="home_room_class">
-            <option value="{{ room_class.class_name }}" selected>{{ room_class.class_name }}</option>
+            {% if not home_room_class %}
+              <option value="" selected>None</option>
+            {% else %}
+              <option value="{{ home_room_class.class_name.class_name }}" selected>{{ home_room_class.class_name.class_name }}</option>
+              <option value="">None</option>
+            {% endif %}
             {% for room in available_class_rooms %}
               <option value="{{ room }}">{{ room }}</option>
             {% endfor %}

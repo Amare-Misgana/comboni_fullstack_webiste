@@ -328,10 +328,9 @@ def add_student(request):
             
             try:
                 class_room, created = ClassRoom.objects.get_or_create(class_name=class_instance)
-                if created:
-                    class_room = ClassRoom.objects.create(class_name=class_instance) 
                 class_room.students.add(student_profile)
             except Exception as e:
+                #Can't create the class: UNIQUE constraint failed: common_classroom.class_name_id
                 messages.error(request, f"Can't create the class: {e}")
                 return redirect("students_mang_url")
             # Log admin action 

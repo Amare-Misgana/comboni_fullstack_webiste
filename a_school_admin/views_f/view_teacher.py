@@ -50,13 +50,13 @@ def edit_teacher(request, teacher_username):
     teacher = get_object_or_404(Teacher, username=teacher_username)
     teacher_profile = get_object_or_404(UserProfile, user=teacher)
     available_class_rooms = Class.objects.exclude(class_name__in=ClassRoom.objects.values("class_name"))
-    room_class = ClassRoom.objects.get(room_teacher__user__username=teacher_username)
+    room_class = ClassRoom.objects.get(room_teacher__user__username=teacher_username) if ClassRoom.objects.filter(room_teacher__user__username=teacher_username).exists() else None
 
     context = {
         "teacher_profile": teacher_profile,
         "available_class_rooms": available_class_rooms,
         "room_class": room_class,
-        "home_room_class": ClassRoom.objects.filter(room_teacher=teacher).first().class_name if ClassRoom.objects.filter(room_teacher=teacher).exists() else "",
+        "home_room_class": ClassRoom.objects.get(room_teacher=teacher_profile) if ClassRoom.objects.filter(room_teacher=teacher_profile).exists() else "",
     }
     context.update(identify)
 
@@ -75,22 +75,36 @@ def edit_teacher(request, teacher_username):
             has_changes = False
             changes = []
 
-            if not Class.objects.filter(class_name=home_room_class).exists():
+            if not home_room_class:
+                pass
+
+            elif not Class.objects.filter(class_name=home_room_class).exists():
                 messages.error(request, f"'{home_room_class}' doesn't exist.")
                 return render(request, "a_school_admin/edit-teachers.html", context)
 
-            current_classroom = ClassRoom.objects.filter(room_teacher__user=teacher).first()
-            new_class = Class.objects.get(class_name=home_room_class)
+            if home_room_class:
+                current_classroom = ClassRoom.objects.filter(room_teacher__user=teacher).first()
+                new_class = Class.objects.get(class_name=home_room_class)
 
-            if not current_classroom or current_classroom.class_name != new_class:
-                if ClassRoom.objects.filter(class_name=new_class).exists():
-                    messages.error(request, f"There is already a home room teacher for '{home_room_class}'.")
+                if not current_classroom or current_classroom.class_name != new_class:
+                    if ClassRoom.objects.filter(class_name=new_class).exists():
+                        messages.error(request, f"There is already a home room teacher for '{home_room_class}'.")
+                        return render(request, "a_school_admin/edit-teachers.html", context)
+                    if current_classroom:
+                        current_classroom.delete()
+                    ClassRoom.objects.create(class_name=new_class, room_teacher=teacher_profile)
+                    changes.append("home room class")
+                    has_changes = True
+            else:
+                try:
+                    current_classroom = ClassRoom.objects.filter(room_teacher__user=teacher).first()
+                except ClassRoom.DoesNotExist:
+                    messages.error(request, "ClassRoom doesn't exists.")
                     return render(request, "a_school_admin/edit-teachers.html", context)
-                if current_classroom:
-                    current_classroom.delete()
-                ClassRoom.objects.create(class_name=new_class, room_teacher=teacher)
-                changes.append("home room class")
+                current_classroom.class_name = None
+                current_classroom.save()
                 has_changes = True
+                changes.append("home room class")
 
             if email and email != teacher.email:
                 if not validate_email(email):
@@ -163,6 +177,7 @@ def edit_teacher(request, teacher_username):
             return redirect('teachers_mang_url')
 
         except Exception as e:
+            # Update failed: Cannot assign "<CustomUser: fitsumaldjkalsdjk>": "ClassRoom.room_teacher" must be a "UserProfile" instance.
             messages.error(request, f"Update failed: {str(e)}")
 
     return render(request, "a_school_admin/edit-teachers.html", context)
@@ -175,10 +190,9 @@ def teacher_detail(request, teacher_username):
     except UserProfile.DoesNotExist:
         messages.error(request, "UserProfile not found for the given username.")
         return redirect("teachers_mang_url")
-
     context = {
         "teacher": teacher,
-        "home_room": ClassRoom.objects.get(room_teacher=teacher).class_name,
+        "home_room": ClassRoom.objects.get(room_teacher=teacher).class_name if ClassRoom.objects.filter(room_teacher=teacher).exists() else None
     }
     context.update(identify)
     return render(request, "a_school_admin/teacher-detail.html", context)
@@ -222,8 +236,12 @@ def add_teacher(request):
 
             # Check if class exists and no home room teacher is already assigned
             if ClassRoom.objects.filter(class_name__class_name=home_room_class).exists():
-                messages.warning(request, f"There is already a home room teacher for {home_room_class}.")
+                messages.error(request, f"There is already a home room teacher for {home_room_class}.")
                 return render(request, "a_school_admin/add-teacher.html", context)
+            elif not home_room_class:
+                messages.warning(request, f"This teacher doesn't have a homeroom class.")
+
+
             elif not Class.objects.filter(class_name=home_room_class).exists():
                 messages.error(request, f"'{home_room_class}' Doesn't exist.")
                 return render(request, "a_school_admin/add-teacher.html", context)
@@ -313,11 +331,12 @@ def add_teacher(request):
                 return redirect("teachers_mang_url")
 
             try:
-                class_obj = Class.objects.get(class_name=home_room_class)
-                classroom, created = ClassRoom.objects.get_or_create(class_name=class_obj)
-                if created:
-                    classroom.room_teacher = teacher_profile
-                    classroom.save()
+                if home_room_class:
+                    class_obj = Class.objects.get(class_name=home_room_class)
+                    classroom, created = ClassRoom.objects.get_or_create(class_name=class_obj)
+                    if created:
+                        classroom.room_teacher = teacher_profile
+                        classroom.save()
             except Exception as e:
                 teacher_profile.delete()
                 teacher.delete()
@@ -325,6 +344,7 @@ def add_teacher(request):
                 messages.error(request, f"Can't create or get the class model: {e}")
                 return redirect('teachers_mang_url')
                 
+                #Can't create or get the class model: Class matching query does not exist.
 
             # Log admin action
             admin_action = AdminAction(
@@ -399,16 +419,15 @@ def add_teachers(request):
 
             # Validate class format and existence
             home_class = row_data['home room class'].upper()
-            if taken_home_rooms.contains(home_class):
-                row_errors.append(f"Line {line}: Home room class already taken.")
-            elif home_class == None:
-                pass
-            elif not re.match(CLASS_REGEX, home_class):
-                row_errors.append(f"Line {line}: Invalid class format '{home_class}'")
-            elif home_class not in existing_classes:
-                context['recommendations'] = sorted(existing_classes)
-                row_errors.append(f"Line {line}: Class '{home_class}' not found")
-                taken_home_rooms.add(Class.objects.get(class_name=home_class))
+            if home_class:
+                if home_class in taken_home_rooms:
+                    row_errors.append(f"Line {line}: Home room class already taken.")
+                elif not re.match(CLASS_REGEX, home_class):
+                    row_errors.append(f"Line {line}: Invalid class format '{home_class}'")
+                elif home_class not in existing_classes:
+                    context['recommendations'] = sorted(existing_classes)
+                    row_errors.append(f"Line {line}: Class '{home_class}' not found")
+                    taken_home_rooms.add(Class.objects.get(class_name=home_class))
 
             # Validate age (18-65 for teachers)
             try:
@@ -472,15 +491,19 @@ def add_teachers(request):
                     
 
                     # Get or create the class object
-                    class_obj = Class.objects.get(class_name=home_class)
 
                     # Check if a ClassRoom already exists for the class and assign the teacher to it
-                    class_room, created = ClassRoom.objects.get_or_create(class_name=class_obj)
+                    if home_class:
+                        class_obj = Class.objects.get(class_name=home_class)
+                        class_room, created = ClassRoom.objects.get_or_create(class_name=class_obj)
+                        class_room.room_teacher = user
+                        class_room.save()
 
-                    if created:
-                        messages.error(request, "System has been infultrated!!!")
-                        logout(request)
-                        return redirect("home_url")
+                        if created:
+                            messages.error(request, "System has been infultrated!!!")
+                            logout(request)
+                            return redirect("home_url")
+                        
 
                     try:
                         user = UserProfile.objects.create(
@@ -493,8 +516,6 @@ def add_teachers(request):
                         return render(request, "a_school_admin/upload.html", context)
                     
                       # If a new ClassRoom was created, assign the room teacher
-                    class_room.room_teacher = user
-                    class_room.save()
 
                     # Assign the user to the user profile
                     
@@ -512,7 +533,7 @@ def add_teachers(request):
         except Exception as e:
             context['errors'].append(f"System error: {str(e)}")
             return render(request, "a_school_admin/upload.html", context)
-
+    context.update(identify)
     return render(request, "a_school_admin/upload.html", context)
 
 

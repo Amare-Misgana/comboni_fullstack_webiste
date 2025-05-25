@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.hashers import make_password
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from django.http import Http404
 from a_message.models import Message
 from django.db.models import Q
@@ -28,24 +28,31 @@ def school_admin_dashboard(request):
     students = CustomUser.objects.filter(role="student")
     teachers = CustomUser.objects.filter(role="teacher")
     classes = sorted(set(int(item[:-1]) for item in Class.objects.values_list("class_name", flat=True)))
+    
     classrooms = ClassRoom.objects.select_related('class_name', 'room_teacher').prefetch_related('students')
     
     grades = {}
     for classroom in classrooms:
+        if not classroom.class_name:
+            continue
         class_students = classroom.students.all()
-        grades[classroom.class_name.class_name] = {
+        grades[str(classroom.class_name)] = {
             "male": class_students.filter(user__gender="male").count(),
             "female": class_students.filter(user__gender="female").count()
         }
-    
+
     classes_json = {
-        "classes": [str(classroom.class_name) for classroom in classrooms],
-        "data": [{
-            "class": str(classroom.class_name),
-            "male": grades[str(classroom.class_name)]["male"],
-            "female": grades[str(classroom.class_name)]["female"]
-        } for classroom in classrooms]
+        "classes": [str(c.class_name) for c in classrooms if c.class_name],
+        "data": [
+            {
+                "class": str(c.class_name),
+                "male": grades.get(str(c.class_name), {}).get("male", 0),
+                "female": grades.get(str(c.class_name), {}).get("female", 0)
+            }
+            for c in classrooms if c.class_name
+        ]
     }
+
     admin_actions = AdminAction.objects.select_related('admin').all().order_by('-timestamp')
     admin_profiles = UserProfile.objects.select_related('user').all()
 
@@ -55,32 +62,25 @@ def school_admin_dashboard(request):
         if profile:
             action_profiles.append((action, profile))
 
-
     data = [
-            {
-                "data": request.user.phone_number,
-                "name": "Phone Number"
-            },
-            {
-                "data": request.user.email,
-                "name": "Email"
-            }
-        ]
+        {"data": request.user.phone_number, "name": "Phone Number"},
+        {"data": request.user.email, "name": "Email"}
+    ]
 
     context = {
         "user_profile": user_profile,
         "students_amount": students.count(),
         "teachers_amount": teachers.count(),
         "classes_amount": len(classes),
-        "sections_amount": classrooms.count(),  # Since ClassRoom is the section
-        "classes": sorted({classroom.class_name.class_name[:-1] for classroom in classrooms}),  # Extract grade levels
-        'action_profiles': action_profiles,  # Implement your action profiles logic
+        "sections_amount": classrooms.count(),
+        "class": sorted({c.class_name.class_name[:-1] for c in classrooms if c.class_name}),
+        "action_profiles": action_profiles,
         "gender_json": json.dumps(grades),
         "class_json": json.dumps(classes_json),
         "datas": data,
     }
-    context.update(identify)
     
+    context.update(identify)
     return render(request, "a_school_admin/dashboard.html", context)
 
 # =================== Material View =================
@@ -99,7 +99,6 @@ def materials(request):
 @user_passes_test(lambda user: user.is_authenticated and user.role=="admin")
 def chat(request):
     me = UserProfile.objects.get(user=request.user)
-
     teachers = UserProfile.objects.filter(user__role='teacher')
     admins   = UserProfile.objects.filter(user__role='admin').exclude(pk=me.pk)
 
@@ -171,6 +170,7 @@ def chatting(request, username):
         'chats': chats,
         'room_name': room_name,
         'receiver': receiver,
+        'receiver_profile': UserProfile.objects.get(user=receiver),
         'current_user': request.user, 
         'other_user': receiver,
         'chat_messages': chat_messages,
@@ -189,13 +189,109 @@ def add_news(request):
             messages.error(request, "All fields are required.")
             return render(request, 'add_news.html')
 
-        n = News(photo=photo, header=header, description=description)
-        n.save()
+        news = News(photo=photo, header=header, description=description)
+        news.save()
+        student_emails = CustomUser.objects.filter(role="student") \
+                                           .values_list("email", flat=True)
+
+        subject = f"📢 New News: {news.header}"
+        plain_message = news.description
+        html_message = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body {{
+              margin:0;
+              padding:20px 0;
+              background-color: var(--primary);
+              font-family: Arial, Helvetica, sans-serif;
+              color: var(--primary-text);
+            }}
+            .container {{
+              max-width:600px;
+              margin:0 auto;
+              background: var(--background);
+              border-radius: var(--card-radius);
+              box-shadow: 0 2px 4px var(--box-shadow);
+              overflow: hidden;
+            }}
+            .header {{
+              background: var(--primaryD);
+              padding: 20px;
+              text-align: center;
+            }}
+            .header h1 {{
+              margin:0;
+              color:#fff;
+              font-size:32px;
+            }}
+            .content {{
+              padding: 30px;
+              color: var(--secondary-text);
+              line-height:1.5;
+            }}
+            .button {{
+              display:inline-block;
+              margin:20px 0;
+              padding:12px 24px;
+              background: var(--primary);
+              color:#fff !important;
+              text-decoration:none;
+              border-radius:4px;
+              transition: var(--transition);
+            }}
+            .button:hover {{
+              background: var(--primaryL);
+            }}
+            .footer {{
+              font-size:12px;
+              color: var(--last-text);
+              text-align:center;
+              padding: 10px;
+            }}
+          </style>
+          <title>{news.header}</title>
+        </head>
+        <body>
+          <center>
+            <div class="container">
+              <div class="header">
+                <h1>📢 {news.header}</h1>
+              </div>
+              <div class="content">
+                <p>{news.description}</p>
+                <p style="text-align:center;">
+                  <a href="{reverse("view_news_url", args=[news.id])}" class="button">
+                    Read the full article
+                  </a>
+                </p>
+              </div>
+              <div class="footer">
+                Posted on {news.created_at.strftime('%B %d, %Y')}
+              </div>
+            </div>
+          </center>
+        </body>
+        </html>
+        """
+
+        send_mail(
+            subject=subject,
+            message=plain_message,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=list(student_emails),
+            html_message=html_message,
+            fail_silently=False,
+        )
         AdminAction.objects.create(
             admin=request.user,
-            action=f"Added News ({n.header})"
+            action=f"Added News ({news.header})"
         )
         messages.success(request, "News item added!")
+
+
 
     return render(request, 'a_school_admin/add-news.html', identify)
 

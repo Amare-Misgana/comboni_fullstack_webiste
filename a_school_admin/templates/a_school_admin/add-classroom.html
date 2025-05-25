@@ -1,0 +1,56 @@
+<!-- templates/add_classroom.html -->
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Create Classroom
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'your_app/css/classroom_styles.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h2>Class Management</h2>
+  <div class="user-info">
+    <h1 class="username">Create New Classroom</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="classroom-form card">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Class Name</label>
+        <select name="class_name" required>
+          {% for cls in available_classes %}
+            <option value="{{ cls.class_name }}">{{ cls.class_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Home Teacher</label>
+        <select name="room_teacher" required>
+          {% for teacher in available_teachers %}
+            <option value="{{ teacher.id }}">{{ teacher.user.get_full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Students</label>
+        <select name="students" multiple class="multi-select">
+          {% for student in available_students %}
+            <option value="{{ student.id }}">{{ student.user.get_full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="primary-btn">Create Classroom</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

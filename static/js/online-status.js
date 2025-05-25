@@ -1,5 +1,3 @@
-// static/js/online-status.js
-
 const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
 const socketUrl = `${scheme}://${window.location.host}/ws/online/`;
 
@@ -13,11 +11,8 @@ onlineStatus.onmessage = (e) => {
     console.log(dot)
     if (dot) dot.style.display = status ? 'block' : 'none';
 
-    // 2) show/hide the entire user‐card
     const card = document.querySelector(`.user.${CSS.escape(user)}`);
     if (card) {
-        // status=true → make sure it’s visible
-        // status=false → hide it entirely
         card.style.display = status ? '' : 'none';
     }
 };

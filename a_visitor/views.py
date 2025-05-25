@@ -183,7 +183,7 @@ def contact(request):
             from_email=email,
             recipient_list=[settings.EMAIL_HOST_USER],
             fail_silently=False,
-            html_message=html_message
+            html_message=html_message 
         )
         messages.success(request, "Your message has been sent successfully!")
         return redirect("contact_url")

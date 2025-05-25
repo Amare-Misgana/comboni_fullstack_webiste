@@ -11,15 +11,14 @@
         <div class="user {{ student.user.username }} student">
           <div class="profile-info">
             <div class="avatar">
-              {% if student.online %}
-                {% if student.user_pic %}
-
+              {% for online_status in online_statuses %}
+                {% if online_status.user == student and online_status.online_status %}
+                  <div class="online"></div>
+                {% else %}
+                  <div class="online" style="display: none;"></div>
                 {% endif %}
-                <div class="online" style="display: none;"></div>
-                <img src="{{ student.user_pic.url }}" width="150" />
-              {% else %}
-                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="150" class="default" />
-              {% endif %}
+              {% endfor %}
+              <img src="{{ student.user_pic.url }}" width="150" />
             </div>
             <div class="avatar-disc">
               <h3>{{ student.user.first_name }} {{ student.user.middle_name }}</h3>
@@ -38,7 +37,7 @@
       </a>
     {% endfor %}
   {% else %}
-    <p>No students available.</p>
+    <p class="student user">No students available.</p>
   {% endif %}
 
   {# Admins #}
@@ -48,15 +47,14 @@
         <div class="user {{ admin.user.username }} admin">
           <div class="profile-info">
             <div class="avatar">
-              {% if admin.online %}
-                {% if admin.user_pic %}
-
+              {% for online_status in online_statuses %}
+                {% if online_status.user == admin and online_status.online_status %}
+                  <div class="online"></div>
+                {% else %}
+                  <div class="online" style="display: none;"></div>
                 {% endif %}
-                <div class="online" style="display: none;"></div>
-                <img src="{{ admin.user_pic.url }}" width="150" />
-              {% else %}
-                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="150" class="default" />
-              {% endif %}
+              {% endfor %}
+              <img src="{{ admin.user_pic.url }}" width="150" />
             </div>
             <div class="avatar-disc">
               <h3>{{ admin.user.first_name }} {{ admin.user.middle_name }}</h3>
@@ -85,16 +83,14 @@
         <div class="user {{ teacher.user.username }} teacher">
           <div class="profile-info">
             <div class="avatar">
-              {% if teacher.online %}
-                <div class="online"></div>
-              {% else %}
-                <div class="online" style="display: none;"></div>
-              {% endif %}
-              {% if teacher.user_pic %}
-                <img src="{{ teacher.user_pic.url }}" width="150" />
-              {% else %}
-                <img src="{% static 'avatars/default-avatar.png' %}" alt="default-avatar" width="150" class="default" />
-              {% endif %}
+              {% for online_status in online_statuses %}
+                {% if online_status.user == teacher and online_status.online_status %}
+                  <div class="online"></div>
+                {% else %}
+                  <div class="online" style="display: none;"></div>
+                {% endif %}
+              {% endfor %}
+              <img src="{{ teacher.user_pic.url }}" width="150" />
             </div>
             <div class="avatar-disc">
               <h3>{{ teacher.user.first_name }} {{ teacher.user.middle_name }}</h3>

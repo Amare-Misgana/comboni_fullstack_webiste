@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'css/variables.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/loading.css' %}" />
     <link rel="stylesheet" href="{% static 'css/dashboard-frag.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/radio.css' %}" />
     <link rel="stylesheet" href="{% static 'css/no_data_box.css' %}" />
     <link rel="stylesheet" href="{% static 'css/checkbox.css' %}" />
     <link rel="icon" href="{% static 'images/1x/Asset 7.png' %}" />
@@ -23,6 +25,7 @@
   <body>
     {% include 'fragments/profile_detail.html' %}
     {% include 'fragments/messages.html' %}
+    {% include 'fragments/loading.html' %}
     <div class="dashboard">
       <header class="header" id="slide-bar">
         <div class="nav-head">
@@ -39,7 +42,7 @@
             {% include 'fragments/admin-nav.html' %}
           {% elif is_teacher %}
             {% include 'fragments/teacher-nav.html' %}
-          {% else %}
+          {% elif is_student %}
             {% include 'fragments/student-nav.html' %}
           {% endif %}
           <div class="actions">
@@ -100,6 +103,7 @@
     <div class="layer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/dashboard-frag.js' %}"></script>
+    <script src="{% static 'js/loading.js' %}"></script>
     {% block script %}
 
     {% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  {{ classroom.class_name }} Details
+{% endblock %}
+
+{% block page_title %}
+  <h2>Class Management</h2>
+  <div class="user-info">
+    <h1 class="username">{{ classroom.class_name }}</h1>
+    <span class="class-teacher">{{ classroom.room_teacher.user.get_full_name }}</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="classroom-details">
+    <div class="classroom-header card">
+      <div class="header-actions">
+        <form method="post" action="{% url 'delete_teacher' classroom.id %}">
+          {% csrf_token %}
+          <button type="submit" class="delete-btn">Remove Home Teacher</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="student-list card">
+      <h3>Students</h3>
+      <div class="student-grid">
+        {% for student in classroom.students.all %}
+          <div class="student-item">
+            <span>{{ student.user.get_full_name }}</span>
+            <form method="post" action="{% url 'delete_student' classroom.id student.id %}">
+              {% csrf_token %}
+              <button type="submit" class="icon-btn delete-btn"><img src="{% static 'icons/delete.svg' %}" alt="Remove" /></button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="subject-list card">
+      <h3>Subjects & Teachers</h3>
+      <div class="subject-grid">
+        {% for class_subject in classroom.class_subjects.all %}
+          <div class="subject-card">
+            <div class="subject-info">
+              <h4>{{ class_subject.subject.subject_name }}</h4>
+              <p>Taught by {{ class_subject.teacher.get_full_name }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

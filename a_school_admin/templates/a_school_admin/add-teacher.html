@@ -74,6 +74,7 @@
           <label for="home_room_class">home_room_class</label>
           <select name="home_room_class" id="home_room_class">
             <option value="" disabled activated>Select Home Room Class</option>
+            <option value="">None</option>
             {% for home_room_class in available_class_rooms %}
               <option value="{{ home_room_class }}">{{ home_room_class }}</option>
             {% endfor %}

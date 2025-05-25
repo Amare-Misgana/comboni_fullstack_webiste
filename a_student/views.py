@@ -5,20 +5,20 @@ from common.models import UserProfile, CustomUser, ClassRoom
 from a_message.models import Message
 from django.db.models import Q
 
+# Global Variables for chat and chatting views 
+identify = {
+    'is_student': True,
+    'is_teacher': False,
+    'is_admin': False,
+}
 
 @user_passes_test(lambda user: user.is_authenticated and user.role=="student")
 def student_dashboard(request):
     context = {
         "user_profile": UserProfile.objects.get(user=request.user),
     }
+    context.update(identify)
     return render(request, "a_student/dashboard.html", context)
-
-
-# Global Variables for chat and chatting views 
-is_student = True
-is_teacher = False
-is_admin = False
-
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role=="student")
@@ -44,10 +44,8 @@ def chat(request):
     context = {
         'students': attach_last_msg(students_in_same_class),
         'teachers': attach_last_msg(teachers),
-        'is_student': is_student,
-        'is_teacher': is_teacher,
-        'is_admin': is_admin,
     }
+    context.update(identify)
     return render(request, 'fragments/chat.html', context)
 
 def get_room_name(user1, user2):
@@ -94,21 +92,20 @@ def chatting(request, username):
         Q(sender__user=request.user, receiver__user=receiver) |
         Q(sender__user=receiver, receiver__user=request.user)
     ).order_by('timestamp').distinct()
-
-    return render(request, 'fragments/chatting.html', {
+    context = {
         'students': students,
         'teachers': teachers,
         'latest_messages': latest_messages,
         'chats': chats,
         'room_name': room_name,
         'receiver': receiver,
+        'receiver_profile': UserProfile.objects.get(user=receiver),
         'current_user': request.user,
         'other_user': receiver,
-        'chat_messages': chat_messages,
-        'is_student': is_student,
-        'is_teacher': is_teacher,
-        'is_admin': is_admin,
-    })
+        'chat_messages': chat_messages
+    }
+    context.update(identify)
+    return render(request, 'fragments/chatting.html', context)
 @user_passes_test(lambda user: user.is_authenticated and user.role=="student")
 def material(request):
     pass

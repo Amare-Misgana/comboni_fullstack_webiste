@@ -101,6 +101,25 @@
     transition: 0.2s ease-in-out;
 }
 
+.homeroom_holder {
+    display: flex;
+    justify-content: space-between;
+    align-items: c;
+}
+
+.btn-delete {
+    color: var(--delete-btn) !important;
+}
+
 .assign-btn:hover {
-    background-color: var(--primary-dark);
+    background-color: var(--primaryD);
+}
+
+.delete-btn {
+    background-color: var(--delete-btn);
+    font-size: 1.2em;
+}
+
+.delete-btn:hover {
+    background-color: var(--delete-btn-hover);
 }

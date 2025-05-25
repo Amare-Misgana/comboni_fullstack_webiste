@@ -87,7 +87,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     phone_number = models.CharField(max_length=15)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
-    online_status = models.BooleanField(default=False)
+    
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -157,9 +157,9 @@ class ClassSubject(models.Model):
 
 
 class ClassRoom(models.Model):
-    class_name = models.OneToOneField(Class, on_delete=models.CASCADE, related_name="classroom_set")
-    room_teacher = models.OneToOneField(UserProfile, on_delete=models.CASCADE, null=True, limit_choices_to={'role': 'teacher'})
-    students = models.ManyToManyField(UserProfile, related_name='classroom_students', limit_choices_to={'role': 'student'})
+    class_name = models.OneToOneField(Class, on_delete=models.CASCADE, related_name="classroom_set", null=True, blank=True)
+    room_teacher = models.OneToOneField(UserProfile, on_delete=models.CASCADE, null=True, blank=True, limit_choices_to={'role': 'teacher'})
+    students = models.ManyToManyField(UserProfile, related_name='classroom_students', null=True, blank=True, limit_choices_to={'role': 'student'})
     def __str__(self):
         return f"{self.class_name} home room of ({self.room_teacher})"
 

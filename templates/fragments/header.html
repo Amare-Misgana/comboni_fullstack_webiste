@@ -3,13 +3,13 @@
   <div class="menu_overlay"></div>
 
   <nav>
-    <button class="menu-toggle">&#9776;</button>
     <a href="{% url 'home_url' %}" class="logo_link">
       <div class="logo">
         <img src="{% static 'images/logo-light.png' %}" alt="School Logo" />
         <h1>CSSS</h1>
       </div>
     </a>
+    <button class="menu-toggle">&#9776;</button>
 
     <div class="nav_links">
       <i class="fas fa-times close-btn"></i>
@@ -22,25 +22,32 @@
       {% else %}
         <a href="{% url 'login_choice_url' %}" class="nav_link_login">
       {% endif %}
-        <button>Login</button></a>
+        <button>Login</button>
+      </a>
     </div>
   </nav>
   <div class="hero">
     <div class="slogn">
-      <i><p>{{slogn}}</p></i>
+      <i><p class="slide-in-appear">{{slogn}}</p></i>
     </div>
     <div class="main_header">
       <h1 class="slide-in-appear">{{main_header}}</h1>
     </div>
     <div class="sub_header">
-      <h3>{{sub_header}}</h3>
+      <h3 class="slide-in-appear">{{sub_header}}</h3>
     </div>
     {% if is_cta %}
     <div class="cta">
-      <a href="{% url 'login_choice_url' %}"><button>Login</button></a>
-      <a href="{% url 'contact_url' %}"
-        ><button class="optional_cta">Contact Us</button></a
-      >
+      {% if user.is_authenticated %}
+        <a href="{% url user.role|add:'_dashboard_url' %}" class="nav_link_login">
+      {% else %}
+        <a href="{% url 'login_choice_url' %}" class="nav_link_login">
+      {% endif %}
+          <button>Login</button>
+        </a>
+      <a href="{% url 'contact_url' %}">
+        <button class="optional_cta">Contact Us</button>
+      </a>
     </div>
     {% endif %}
   </div>

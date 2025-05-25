@@ -1,0 +1,63 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Teacher Dashboard
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_student/css/dashboard.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h2>Welcome back,</h2>
+  <div class="user-info">
+    {% if user_profile.user_pic %}
+      <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
+    {% else %}
+      <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" />
+    {% endif %}
+    <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="overview">
+    <div class="info-card" id="total-students">
+      <i class="fas fa-user-graduate"></i>
+      <div class="info">
+        <h1>{{ students_amount }}</h1>
+        <p>Total Students</p>
+      </div>
+    </div>
+    <div class="info-card" id="total-teachers">
+      <i class="fas fa-chalkboard-teacher"></i>
+      <div class="info">
+        <h1>{{ teachers_amount }}</h1>
+        <p>Total Teachers</p>
+      </div>
+    </div>
+    <div class="info-card" id="total-classes">
+      <i class="fas fa-school"></i>
+      <div class="info">
+        <h1>{{ classes_amount }}</h1>
+        <p>Total Classes</p>
+      </div>
+    </div>
+    <div class="info-card" id="total-sections">
+      <i class="fas fa-layer-group"></i>
+      <div class="info">
+        <h1>{{ sections_amount }}</h1>
+        <p>Total Sections</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Detail Template -->
+  {% include 'fragments/profile_detail.html' %}
+  <div class="sub-layer"></div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_student/js/dashboard.js' %}"></script>
+{% endblock %}

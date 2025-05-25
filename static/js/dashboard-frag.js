@@ -121,7 +121,7 @@ let slide = new SlideBar(false);
 
 slide.initialSetUp();
 
-document.querySelector(".menu-icon").addEventListener("click", function () {
+$(".menu-icon").click(function () {
   slide.changeSlide();
 });
 document.querySelector(".layer").addEventListener("click", function () {
@@ -134,3 +134,101 @@ document
   });
 
 // EXCUTETION END
+
+
+
+// Logout Confirmation
+function showLogoutConfirm() {
+  document.getElementById('logoutPopup').style.display = 'flex';
+}
+
+function closeLogoutPopup() {
+  document.getElementById('logoutPopup').style.display = 'none';
+}
+
+function confirmLogout() {
+  document.getElementById('logoutForm').submit();
+}
+
+document.getElementById("logoutPopup").addEventListener("click", () => {
+  closeLogoutPopup()
+})
+
+document.querySelector(".header").addEventListener("click", () => {
+  closeLogoutPopup()
+})
+
+document.querySelector(".content").addEventListener("click", () => {
+  closeLogoutPopup()
+})
+
+let currentFormId = null;
+
+
+function showDeletePopup(formId) {
+  currentFormId = formId;
+  document.getElementById("delete-popup").style.display = "flex";
+  if (formId) {
+    document.getElementById(formId).addEventListener('submit', (e) => {
+      e.preventDefault()
+    })
+  }
+}
+
+function hideDeletePopup() {
+  document.getElementById("delete-popup").style.display = "none";
+  currentFormId = null;
+}
+
+function confirmDelete() {
+  if (currentFormId) {
+    document.getElementById(currentFormId).submit();
+    hideDeletePopup();
+  }
+}
+
+document.getElementById("delete-popup").addEventListener("click", function (e) {
+  if (e.target === this) {
+    hideDeletePopup();
+  }
+});
+
+
+
+const profile_info = document.querySelector(".profile-settings")
+const settings_btn = document.getElementById("settings")
+const layer_sub = document.querySelector(".layer")
+const close_profile = document.getElementById("close-profile")
+
+
+settings_btn.addEventListener("click", () => {
+  profile_info.style.display = profile_info.style.display == "flex" ? "none" : "flex"
+  layer_sub.style.display = "block"
+})
+
+layer_sub.addEventListener("click", () => {
+  profile_info.style.display = "none"
+  layer_sub.style.display = "none"
+})
+
+close_profile.addEventListener("click", () => {
+  profile_info.style.display = "none"
+  layer_sub.style.display = "none"
+})
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const loader = document.getElementById('global-loader');
+
+  document.querySelectorAll('form.with-loader').forEach(form => {
+    form.addEventListener('submit', () => {
+      loader.style.display = 'flex';
+      form.querySelectorAll('[type="submit"]').forEach(btn => {
+        btn.disabled = true;
+        btn.dataset.origText = btn.innerHTML;
+        btn.innerHTML = '⏳ Sending…';
+      });
+    });
+  });
+});

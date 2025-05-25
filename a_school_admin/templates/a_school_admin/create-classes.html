@@ -1,0 +1,45 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Add Classes
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/create-classes.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="class-creation-container">
+    <h2>Create Multiple Classes</h2>
+    <form method="post" class="class-creation-form load">
+      {% csrf_token %}
+      <div class="input-group">
+        <label for="class-input">Enter class names (separated by commas):</label>
+        <textarea id="class-input" name="class_names" placeholder="e.g. 11A, 12B, 9C, 10D" required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">Create Classes</button>
+      </div>
+    </form>
+
+    <div class="existing-classes">
+      {% if classes %}
+        <ul>
+          {% for class in classes %}
+            <li>
+              <span>{{ forloop.counter }}.&nbsp&nbsp&nbsp&nbsp</span>{{ class }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No classes assigned yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_school_admin/js/create-classes.js' %}"></script>
+{% endblock %}

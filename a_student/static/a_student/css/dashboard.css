@@ -1,0 +1,132 @@
+.content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    padding: 1em 0 0 0;
+}
+
+
+
+
+
+
+
+/* .overview code  */
+
+.content .overview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 91%;
+}
+
+.content .overview .info-card {
+    width: 23%;
+    padding: 1em 2em;
+    border-radius: 0.2em;
+    background-color: var(--light-background);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 6em;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.content .overview .info-card .fas {
+    color: var(--primary);
+    font-size: 2em;
+    z-index: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content .overview .info-card .fas::after {
+    content: "";
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    z-index: -1;
+    border-radius: 50%;
+    border: 1px solid rgba(2, 158, 2, 0.76);
+    background-color: #fcfcfc;
+}
+
+.content .overview .info-card:hover .fas::after {
+    border: 1px solid rgba(2, 158, 2, 0.918);
+    background-color: #f7f7f7;
+}
+
+.content .overview .info-card a {
+    background-color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2em;
+    height: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 50%;
+    margin: 0.3em;
+    border: 1px solid var(--primaryL);
+}
+
+.content .overview .info-card .fa-ellipsis {
+    color: var(--last-text);
+}
+
+.content .overview .info-card .fa-ellipsis:hover {
+    color: var(--second-text);
+    cursor: pointer;
+}
+
+
+
+.content .overview .info-card .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transform: translateX(10%);
+}
+
+.content .overview .info-card .info h1 {
+    color: var(--primary-text);
+}
+
+.content .overview .info-card .info p {
+    color: var(--last-text);
+}
+
+@media (max-width: 1280px) {
+    .content .overview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 1em;
+        place-items: center;
+
+    }
+
+    .content .overview .info-card {
+        width: 98%;
+    }
+}
+
+@media (max-width: 600px) {
+    .content .overview {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 0 1em;
+    }
+}
+
+/* OVERVIEW CARDS END!!!!!!!!!!!!!!!!! */

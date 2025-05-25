@@ -1,0 +1,38 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  View News
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/view-news.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">View Detail</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="news-detail-section">
+    <article class="news-card">
+      <div class="news-image">
+        <img src="{{ news.photo.url }}" alt="{{ news.title|escape }}" loading="lazy" />
+      </div>
+      <div class="news-content">
+        <h1>{{ news.header }}</h1>
+        <p class="description">{{ news.description }}</p>
+        <div class="news-footer">
+          <time datetime="{{ news.created_at|date:'Y-m-d' }}" class="news-date">{{ news.created_at|date:'F j, Y' }}</time>
+          <a href="{% url 'all_news_url' %}" class="go-back-btn"><button>Go back</button></a>
+        </div>
+      </div>
+    </article>
+  </section>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

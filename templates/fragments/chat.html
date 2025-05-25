@@ -1,0 +1,51 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Chat
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/chat.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Chat</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="message"> 
+    <div class="chat-user">
+      {% if is_teacher %} 
+        {% include 'fragments/teacher-links.html' %}
+      {% elif is_admin %}
+        {% include 'fragments/admin-links.html' %}
+      {% else %}
+        {% include 'fragments/student-links.html' %}
+      {% endif %}
+    </div>
+    {% if is_teacher %}
+      {% include 'fragments/user-list-teacher.html' %}
+    {% elif is_admin %}
+      {% include 'fragments/user-list-admin.html' %}
+    {% else %}
+      {% include 'fragments/user-list-student.html' %}
+    {% endif %}
+
+    <!-- MESSAGE HERE -->
+    <div class="message-content">
+      <div class="sender">
+        <p class="click-for-message">Click a user to start messaging</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/vanillaEmojiPicker.js' %}"></script>
+  <script src="{% static 'js/chat.js' %}"></script>
+  <script src="{% static 'js/online-status.js' %}"></script>
+  <script></script>
+{% endblock %}

@@ -1,0 +1,43 @@
+.no-data-box {
+    background-color: var(--light-background);
+    color: var(--secondary-text);
+    border: 1px dashed var(--primary);
+    padding: 2em;
+    text-align: center;
+    border-radius: 0.3em;
+    box-shadow: 0 0 10px var(--box-shadow);
+    width: 90%;
+    margin: 3em auto;
+}
+
+.no-data-icon {
+    font-size: 3em;
+    margin-bottom: 0.5em;
+    color: var(--primary);
+}
+
+.no-data-box h2 {
+    font-weight: normal;
+    margin-bottom: 0.5em;
+    color: var(--primary-text);
+}
+
+.no-data-box p {
+    color: var(--last-text);
+    font-size: 0.9em;
+}
+
+.no-data-add-btn {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding: 0.6em 1.2em;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.3em;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.no-data-add-btn:hover {
+    background-color: var(--primaryD);
+}

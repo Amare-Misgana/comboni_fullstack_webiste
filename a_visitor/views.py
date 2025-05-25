@@ -1,11 +1,14 @@
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, logout,  login, get_user_model
+from django.contrib.auth import logout,  login, get_user_model
 from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
+from a_school_admin.models import News
 
 def home(request):
     testimonial = [
@@ -59,35 +62,44 @@ def about(request):
     })
 
 def news(request):
-    context = context = {
-        "news_other_items": [
-            {
-                "title": "New Campus Opening",
-                "description": "We are excited to announce the grand opening of our new campus in the northern region of the city. The facility is equipped with modern classrooms and sports areas...",
-                "date": "April 20, 2025",
-                "image_src": "images/news_campus.jpg",
-                "url": "/news/new-campus-opening/"
-            },
-            {
-                "title": "Tech Workshop 2025",
-                "description": "Our annual tech workshop is back! Join industry leaders and learn about the latest advancements in AI, robotics, and more.",
-                "date": "March 15, 2025",
-                "image_src": "images/news_tech_workshop.jpg",
-                "url": "/news/tech-workshop-2025/"
-            },
-            {
-                "title": "Student Achievements",
-                "description": "We are proud of our students who participated in the national science fair and brought home multiple awards across various categories...",
-                "date": "February 10, 2025",
-                "image_src": "images/news_student_awards.jpg",
-                "url": "/news/student-achievements/"
-            }
-        ],
+    cutoff = timezone.now() - timedelta(days=7)
+
+    # querysets
+    recent_qs = News.objects.filter(created_at__gte=cutoff).order_by('-created_at')
+    older_qs  = News.objects.filter(created_at__lt=cutoff).order_by('-created_at')
+
+    # helper to map model → dict
+    def to_dict(n):
+        return {
+            "title":       n.header,
+            "description": n.description,
+            "date":        n.created_at.strftime("%B %d, %Y"),
+            "image_src":   n.photo.url,
+            "url":         reverse('news_detail', args=[n.pk]),
+        }
+
+    context = {
+        "recent_news":      [to_dict(n) for n in recent_qs],
+        "news_other_items": [to_dict(n) for n in older_qs],
+        "email":            "example@gmail.com",
+        "phone_number":     "+251 911 963 441",
+        "address":          "Comboni School Hawassa",
+    }
+    return render(request, "a_visitor/news.html", context)
+
+def news_detail(request, pk):
+    item = get_object_or_404(News, pk=pk)
+    context = {
+        "title": item.header,
+        "description": item.description,
+        "date": item.created_at.strftime("%B %d, %Y"),
+        "image_src": item.photo.url,
         "email": "example@gmail.com",
         "phone_number": "+251 911 963 441",
         "address": "Comboni School Hawassa",
     }
-    return render(request, "a_visitor/news.html", context)
+    return render(request, "a_visitor/news_detail.html", context)
+
 
 def contact(request):
     if request.method == "POST":
@@ -174,7 +186,7 @@ def contact(request):
             from_email=email,
             recipient_list=[settings.EMAIL_HOST_USER],
             fail_silently=False,
-            html_message=html_message
+            html_message=html_message 
         )
         messages.success(request, "Your message has been sent successfully!")
         return redirect("contact_url")
@@ -196,6 +208,7 @@ def login_choice(request):
     }
     return render(request, "a_visitor/login_choice.html", context)
 
+
 def login_view(request, role):
     if request.method == 'POST':
         email = request.POST['email']
@@ -204,17 +217,16 @@ def login_view(request, role):
 
         try:
             user = UserModel.objects.get(email=email)
+            if not user.check_password(password):
+                messages.error(request, "Incorrect password.")
+                return redirect(reverse('login_url', kwargs={'role': role}))
+
+            if user.role != role:
+                messages.error(request, f"Wrong portal. You are not registered in {role}.")
+                return redirect(reverse('login_url', kwargs={'role': role}))
         except UserModel.DoesNotExist:
             messages.error(request, "Email does not exist.")
-            return redirect(reverse('login_url', kwargs={'role': request.user.role}))
-
-        if not user.check_password(password):
-            messages.error(request, "Incorrect password.")
-            return redirect(reverse('login_url', kwargs={'role': request.user.role}))
-
-        if user.role != role:
-            messages.error(request, f"Wrong portal. You are not registered in {role}.")
-            return redirect(reverse('login_url', kwargs={'role': request.user.role}))
+            return redirect(reverse('login_url', kwargs={'role': role}))
 
         login(request, user)
         messages.success(request, "Logged in successfully.")
@@ -229,5 +241,6 @@ def login_view(request, role):
     return render(request, "a_visitor/login.html", context)
 
 def logout_view(request):
+    messages.success(request, "You have been successfully logged out. See you next time!")
     logout(request)
     return redirect("home_url")

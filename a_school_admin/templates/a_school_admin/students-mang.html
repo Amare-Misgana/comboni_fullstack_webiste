@@ -1,4 +1,4 @@
-{% extends 'a_school_admin/dashboard-frag.html' %}
+{% extends 'fragments/dashboard-frag.html' %}
 {% load static %}
 
 {% block title %}
@@ -18,77 +18,140 @@
 {% endblock %}
 
 {% block content %}
+  <!-- Add Students Method -->
+  <div class="reg-portal">
+    <div class="portal-grid">
+      <!-- Manual Entry -->
+      <article class="reg-card manual-card">
+        <div class="card-ornament"></div>
+        <div class="card-core">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">fingerprint</span>
+          </div>
+          <h3 class="card-header">Precision Enrollment</h3>
+          <p class="card-excerpt">Artisanal student registration with granular control</p>
+          <div class="card-actions">
+            <a href="{% url 'add_student_url' %}" class="card-cta">
+              Begin Manual Process
+              <span class="cta-underline"></span>
+            </a>
+          </div>
+        </div>
+        <div class="card-badge">Recommended for accuracy</div>
+      </article>
+
+      <!-- Bulk Upload -->
+      <article class="reg-card bulk-card">
+        <div class="card-ornament"></div>
+        <div class="card-core">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">deployed_code</span>
+          </div>
+          <h3 class="card-header">Batch Integration</h3>
+          <p class="card-excerpt">Enterprise-grade mass enrollment via structured data</p>
+          <div class="card-actions">
+            <a href="{% url 'add_students_url' %}" class="card-cta">
+              Initiate Bulk Sequence
+              <span class="cta-underline"></span>
+            </a>
+          </div>
+        </div>
+        <div class="card-badge">XLSX optimized</div>
+      </article>
+    </div>
+  </div>
+
   <!-- Top Students Table -->
 
-  <div class="student-table-container top-student-container">
-    <div class="table-header">
-      <h2>Top Students</h2>
-      <a href="#"><button class="add-student-btn">Add Student</button></a>
-    </div>
-    <table id="TopStudentsTable">
-      <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Age</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in students %}
+  {% if students %}
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Top Students</h2>
+      </div>
+      <table id="TopStudentsTable" class="classTable">
+        <thead>
           <tr>
-            <td>{{ student.first_name }}</td>
-            <td>{{ student.middle_name }}</td>
-            <td>{{ student.age }}</td>
-            <td class="student-crud">
-              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
-              <form action="" method="post">
-                {% csrf_token %}
-                <button type="submit" class="delete-btn">Delete</button>
-              </form>
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="edit-btn">Detail</a>
-            </td>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Age</th>
+            <th>Actions</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          {% for student in students %}
+            <tr>
+              <td>{{ student.students.first_name }}</td>
+              <td>{{ student.students.middle_name }}</td>
+              <td>{{ student.class_room }}</td>
+              <td class="crud">
+                <a href="{% url 'student_detail_url' student_username=student.students.username %}" class="detail-btn right-btn">Detail</a>
+                <a href="{% url 'edit_student_url' student_username=student.students.username %}" class="edit-btn left-btn">Edit</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Mark list found. Ranking is unavialable' empty_message="There are currently no students in the system. We can't show the top students." btn_name='+ Add Student' add_url='add_student_url' %}
+  {% endif %}
 
   <!-- Student Table -->
-
-  <div class="student-table-container">
-    <div class="table-header">
-      <h2>Students Table</h2>
-      <a href="#"><button class="add-student-btn">Add Student</button></a>
-    </div>
-    <table id="studentsTable">
-      <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Age</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in students %}
+  {% if classrooms %}
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Students Table</h2>
+        <a href="{% url 'add_student_url' %}"><button class="add-student-btn">Add Student</button></a>
+      </div>
+      <table id="studentsTable" class="classTable">
+        <thead>
           <tr>
-            <td>{{ student.first_name }}</td>
-            <td>{{ student.middle_name }}</td>
-            <td>{{ student.age }}</td>
-            <td class="student-crud">
-              <a href="{% url 'edit_students_url' student_id=student.id %}" class="edit-btn">Edit</a>
-              <form action="" method="post">
-                {% csrf_token %}
-                <button type="submit" class="delete-btn">Delete</button>
-              </form>
-              <a href="{% url 'student_detail_url' student_username=student.username %}" class="edit-btn">Detail</a>
-            </td>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Class</th>
+            <th>Actions</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          {% for classroom in classrooms %}
+            {% for student in classroom.students.all %}
+              <tr>
+                <td>{{ student.user.first_name }}</td>
+                <td>{{ student.user.middle_name }}</td>
+                <td>
+                  {% for student_class in student.classroom_students.all %}
+                    {{ student_class.class_name }}
+                  {% endfor %}
+                </td>
+                <td class="crud">
+                  <a href="{% url 'student_detail_url' student_username=student.user.username %}" class="detail-btn right-btn">Detail</a>
+                  <a href="{% url 'edit_student_url' student_username=student.user.username %}" class="edit-btn left-btn">Edit</a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Students Found' empty_message="There are currently no students in the system. We can't show students tabel." btn_name='+ Add Student' add_url='add_student_url' %}
+  {% endif %}
+
+  {% if students_ %}
+    <!-- Download Students -->
+    <div class="download-container">
+      <div class="download-card">
+        <div class="download-icon">
+          <i class="fas fa-file-excel"></i>
+        </div>
+        <h3>Export Student Data</h3>
+        <p>Download a complete list of all students in Excel format, including their class and teacher information.</p>
+        <a href="{% url 'download_students_excel_url' %}" class="download-btn"><i class="fas fa-download"></i> Download Excel</a>
+      </div>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Students Found' empty_message="We can't create the students excel file." btn_name='+ Add Teacher' add_url='add_teacher_url' %}
+  {% endif %}
 {% endblock %}
 
 {% block script %}

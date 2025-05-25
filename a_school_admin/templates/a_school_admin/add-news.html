@@ -1,0 +1,59 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  News
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/add-news.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Add News</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="news-card">
+    <h2 class="card-title">📰 Add News</h2>
+    <form id="newsForm" class="load" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="field">
+        <input type="file" name="photo" id="photo" accept="image/*" required />
+        <label for="photo">Upload Photo</label>
+        <div class="preview" id="preview"></div>
+      </div>
+
+      <div class="field">
+        <input type="text" name="header" id="header" required />
+        <label for="header">Main Header</label>
+      </div>
+
+      <div class="field">
+        <textarea name="description" id="description" rows="4" required></textarea>
+        <label for="description">Description</label>
+      </div>
+
+      <button type="submit">Save News</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    const photoInput = document.getElementById('photo')
+    const previewDiv = document.getElementById('preview')
+    
+    photoInput.addEventListener('change', function () {
+      previewDiv.innerHTML = ''
+      const file = this.files[0]
+      if (file) {
+        const img = document.createElement('img')
+        img.src = URL.createObjectURL(file)
+        previewDiv.appendChild(img)
+      }
+    })
+  </script>
+{% endblock %}

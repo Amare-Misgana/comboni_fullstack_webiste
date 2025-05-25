@@ -5,9 +5,11 @@ body {
   overflow-x: hidden;
   flex-direction: column;
   overflow-x: hidden !important;
+  font-family: "Merriweather", serif;
 }
+
 .contact-form {
-  max-width: 800px;
+  width: 90vw;
   margin: 2rem auto;
   padding: 2rem;
   border-radius: 8px;
@@ -99,17 +101,20 @@ body {
     font-size: 6em !important;
   }
 }
+
 .contact-info .swiper {
   width: 100vw;
   height: 20em;
   padding: 40px 0;
 }
+
 .contact-info .swiper-slide {
   display: flex;
   justify-content: center;
 }
+
 .contact-info .card {
-  background: var(--primary);
+  background: white;
   border-radius: 6px;
   padding: 24px;
   max-width: 20em;
@@ -121,25 +126,31 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 .contact-info .icon {
   font-size: 5.6em;
-  color: white;
+  color: var(--primary);
   margin-bottom: 12px;
+  text-align: center;
 }
+
 .contact-info h3 {
   margin: 0 0 12px;
   font-size: 1.2em;
   color: var(--primary);
 }
+
 .contact-info p {
   margin: 6px 0;
   font-size: 0.95em;
-  color: #eeeeee;
+  color: var(--primary);
   line-height: 1.4;
 }
+
 .contact-info .swiper-pagination-bullet-active {
   background: var(--primary);
 }
+
 .contact-info .swiper-button-next::after,
 .contact-info .swiper-button-prev::after {
   color: var(--primary);
@@ -157,7 +168,8 @@ body {
 .map-section .map-container {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  padding-bottom: 56.25%;
+  /* 16:9 aspect ratio */
   height: 0;
   overflow: hidden;
   border-radius: 0.5em;

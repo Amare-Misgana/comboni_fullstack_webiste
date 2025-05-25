@@ -1,7 +1,7 @@
 .slide-in-appear {
   opacity: 0;
-  transform: translateY(1em);
-  animation: slideIn 0.6s ease-out forwards;
+  transform: translateY(-3em);
+  animation: slideIn 0.9s ease-out forwards;
 }
 
 @keyframes slideIn {

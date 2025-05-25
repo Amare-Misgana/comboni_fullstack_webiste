@@ -1,0 +1,66 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Add Subjects
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/create-subjects.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="class-creation-container">
+    <h2>Create Multiple Subjects</h2>
+    <form method="post" class="class-creation-form load">
+      {% csrf_token %}
+      <div class="input-group">
+        <label for="subject-input">Enter subject names (separated by commas):</label>
+        <textarea id="subject-input" name="subject_names" placeholder="e.g. Math, Physics, Chemistry" required></textarea>
+      </div>
+
+      <div class="input-group">
+        <label>Subjects are graded</label>
+        {% include 'fragments/checkbox.html' with checkbox_name='is_graded' %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">Create Subjects</button>
+      </div>
+    </form>
+
+    <div class="existing-classes">
+      {% if subjects %}
+        <ul>
+          {% for subject in subjects %}
+            <li>
+              <span>{{ forloop.counter }}.&nbsp;&nbsp;&nbsp;&nbsp;</span>{{ subject.subject_name }}
+              {% if subject.is_graded %}
+                <span>(Graded)</span>
+              {% else %}
+                <span>(Ungraded)</span>
+              {% endif %}
+
+              <div class="subject-actions">
+                <a href="{% url 'edit_subject_url' subject.subject_name %}" class="action-btn edit"><i class="fa fa-pen"></i></a>
+
+                <button type="button" class="action-btn delete" onclick="showDeletePopup('deleteForm{{ subject.id }}')"><i class="fa fa-trash"></i></button>
+              </div>
+
+              <form id="deleteForm{{ subject.id }}" class="load" method="post" action="{% url 'delete_subject_url' subject.subject_name %}" style="display:none;">
+                {% csrf_token %}
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No subjects added yet.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% include 'fragments/confirm.html' with confirm_message='Are you sure you want to delete this subject?' %}
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_school_admin/js/create-subjects.js' %}"></script>
+{% endblock %}

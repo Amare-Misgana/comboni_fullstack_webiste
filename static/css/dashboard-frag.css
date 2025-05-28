@@ -1169,3 +1169,9 @@ body.dark-mode .content .layer {
 .action-btn i {
     font-size: 1em;
 }
+
+/* For a table show label  */
+
+.select-label {
+    color: var(--primary-text);
+}

@@ -1,0 +1,39 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Fill Marks | Dashboard
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_teacher/css/assign-marks.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h1>Enter Marks: {{ activity.get_activity_type_display }} – {{ activity.activity_name }}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="marks-form">
+    {% csrf_token %}
+    <table class="marks-table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.user.first_name }} {{ student.user.middle_name }}</td>
+            <td>
+              <input type="number" name="score_{{ student.id }}" step="0.01" min="0" max="100" value="{{ existing.student.id|default_if_none:'' }}" placeholder="––" required />
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button type="submit" class="btn save">Save Marks</button>
+  </form>
+{% endblock %}

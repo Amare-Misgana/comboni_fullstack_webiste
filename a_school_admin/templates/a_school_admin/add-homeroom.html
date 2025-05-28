@@ -25,7 +25,7 @@
         {% for teacher in available_teachers %}
           {% include 'fragments/radio.html' with group_name='teacher' value=teacher.user.username label=teacher.username %}
         {% empty %}
-          <p class="empty">All teachers are already assigned.</p>
+          <p class="empty">No avaliable teachers.</p>
         {% endfor %}
       </div>
     </section>

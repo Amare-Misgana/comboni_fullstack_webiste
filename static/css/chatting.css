@@ -14,3 +14,11 @@
         display: flex;
     }
 }
+
+.sender {
+    background-color: var(--edit-btn);
+}
+
+.receiver {
+    background-color: var(--primary);
+}

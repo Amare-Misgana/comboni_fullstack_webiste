@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.http import FileResponse
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.conf import settings
@@ -9,7 +10,7 @@ from django.db.models import Q
 from .models import AdminAction, News
 from django.core.mail import EmailMultiAlternatives
 from email.mime.image import MIMEImage
-from common.models import UserProfile, CustomUser, ClassRoom, Class
+from common.models import UserProfile, CustomUser, ClassRoom, Class, Material
 import json
 
 # ==================  HOME ==================
@@ -101,8 +102,116 @@ def school_admin_dashboard(request):
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
-def materials(request):
-    pass
+def share_material(request):
+    if request.method == "POST":
+        title = request.POST.get("title", "").strip()
+        description = request.POST.get("description", "").strip()
+        file = request.FILES.get("file")
+
+        if not (title and file):
+            messages.error(request, "Title and file are required.")
+            return render(request, "a_school_admin/share-material.html", identify)
+
+        user_profile = UserProfile.objects.get(user=request.user)
+        material = Material.objects.create(
+            title=title, file=file, uploaded_by=user_profile, description=description
+        )
+        AdminAction.objects.create(
+            admin=request.user, action=f"Created Material ({material.title})"
+        )
+        messages.success(request, "Material created successfully.")
+        return redirect("materials_list_url")
+
+    return render(request, "a_school_admin/share-material.html", identify)
+
+
+@user_passes_test(lambda user: user.is_authenticated)
+def materials_list(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    materials = Material.objects.filter(uploaded_by=user_profile).order_by(
+        "-uploaded_at"
+    )
+
+    context = {
+        "materials": materials,
+        "is_admin": True if request.user.role == "admin" else False,
+        "is_teacher": True if request.user.role == "teacher" else False,
+        "is_student": True if request.user.role == "student" else False,
+    }
+    return render(request, "a_school_admin/material-list.html", context)
+
+
+@user_passes_test(lambda user: user.is_authenticated)
+def download_material(request, material_id):
+    material = get_object_or_404(Material, pk=material_id)
+    response = FileResponse(
+        open(material.file.path, "rb"), content_type="application/octet-stream"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="{material.file.name.split("/")[-1]}"'
+    )
+    return response
+
+
+@user_passes_test(
+    lambda user: user.is_authenticated
+    and user.role == "admin"
+    or user.role == "teacher"
+)
+def edit_material(request, material_id):
+    material = get_object_or_404(Material, pk=material_id)
+
+    if request.method == "POST":
+        title = request.POST.get("title", "").strip()
+        description = request.POST.get("description", "").strip()
+        file = request.FILES.get("file")
+        has_changes = False
+
+        if description and description != material.description:
+            material.description = description
+            has_changes = True
+
+        if title and title != material.title:
+            material.title = title
+            has_changes = True
+        if file:
+            material.file = file
+            has_changes = True
+
+        if has_changes:
+            material.save()
+            AdminAction.objects.create(
+                admin=request.user, action=f"Updated Material ({material.title})"
+            )
+            messages.success(request, "Material updated successfully.")
+        else:
+            messages.info(request, "No changes detected.")
+
+        return redirect("materials_list_url")
+
+    context = {"material": material}
+    context.update(identify)
+    return render(request, "a_school_admin/edit-material.html", context)
+
+
+@user_passes_test(
+    lambda user: user.is_authenticated
+    and user.role == "admin"
+    or user.role == "teacher"
+)
+def delete_material(request, material_id):
+    material = get_object_or_404(Material, pk=material_id)
+    if request.method == "POST":
+        title = material.title
+        material.delete()
+        AdminAction.objects.create(
+            admin=request.user, action=f"Deleted Material ({title})"
+        )
+        messages.success(request, "Material deleted successfully.")
+        return redirect("materials_list_url")
+    context = {"material": material}
+    context.update(identify)
+    return render(request, "a_school_admin/delete-material.html", context)
 
 
 # =================== Chat View =================
@@ -194,14 +303,7 @@ def chatting(request, username):
     return render(request, "fragments/chatting.html", context)
 
 
-from email.mime.image import MIMEImage
-from django.core.mail import EmailMultiAlternatives
-from django.urls import reverse
-from django.contrib import messages
-from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test
-from django.conf import settings
-from .models import News, AdminAction, CustomUser
+# =================== News =================
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -213,76 +315,87 @@ def add_news(request):
 
         if not (photo and header and description):
             messages.error(request, "All fields are required.")
-            return render(request, "a_school_admin/add-news.html")
+            return render(request, "a_school_admin/add-news.html", identify)
 
         news = News(photo=photo, header=header, description=description)
         news.save()
 
-        student_emails = CustomUser.objects.filter(role="student").values_list(
-            "email", flat=True
+        _send_news_email(
+            news,
+            request,
+            subject_prefix="📢 New News:",
+            action_desc=f"Added News ({news.header})",
         )
-
-        subject = f"📢 New News: {news.header}"
-        plain_message = news.description
-
-        html_message = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>{news.header}</title>
-        </head>
-        <body style="margin:0; padding:20px 0; background-color:rgb(45, 170, 49); font-family:Arial, Helvetica, sans-serif; color:#222;">
-          <center>
-            <div style="max-width:600px; margin:0 auto; background:#fff; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); overflow:hidden;">
-              <div style="background:#196b21; padding:20px; text-align:center;">
-                <h1 style="margin:0; color:#fff; font-size:32px;">📢 {news.header}</h1>
-              </div>
-              <div style="padding:30px; color:#555; line-height:1.5;">
-                <img src="cid:newsimage" alt="News Image" style="max-width:100%; height:auto; border-radius:8px;"><br><br>
-                <p>{news.description}</p>
-                <p style="text-align:center; margin:20px 0;">
-                  <a href="{request.build_absolute_uri(reverse('news_detail', args=[news.id]))}"
-                     style="display:inline-block; padding:12px 24px; background:#196b21; color:#fff !important;
-                            text-decoration:none; border-radius:4px;">
-                    Read the full article
-                  </a>
-                </p>
-              </div>
-              <div style="font-size:12px; color:#999; text-align:center; padding:10px;">
-                Posted on {news.created_at.strftime('%B %d, %Y')}
-              </div>
-            </div>
-          </center>
-        </body>
-        </html>
-        """
-
-        email = EmailMultiAlternatives(
-            subject=subject,
-            body=plain_message,
-            from_email=settings.EMAIL_HOST_USER,
-            to=list(student_emails),
-        )
-        email.attach_alternative(html_message, "text/html")
-
-        try:
-            with open(news.photo.path, "rb") as img_file:
-                img = MIMEImage(img_file.read())
-                img.add_header("Content-ID", "<newsimage>")
-                img.add_header("Content-Disposition", "inline", filename=photo.name)
-                email.attach(img)
-        except Exception as e:
-            print("Image attach failed:", e)
-
-        email.send(fail_silently=False)
-
-        AdminAction.objects.create(
-            admin=request.user, action=f"Added News ({news.header})"
-        )
-        messages.success(request, "News item added!")
+        messages.success(request, "News item added successfully.")
+        return redirect("all_news_url")
 
     return render(request, "a_school_admin/add-news.html", identify)
+
+
+def _send_news_email(news, request, subject_prefix, action_desc):
+    recipients = list(
+        CustomUser.objects.exclude(email=request.user.email)
+        .exclude(email__exact="")
+        .values_list("email", flat=True)
+    )
+    # Log and exit if no recipients
+    if not recipients:
+        AdminAction.objects.create(admin=request.user, action=action_desc)
+        return
+
+    subject = f"{subject_prefix} {news.header}"
+    plain_text = news.description
+    detail_url = request.build_absolute_uri(reverse("news_detail", args=[news.id]))
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html><head><meta charset=\"UTF-8\"><title>{news.header}</title></head>
+    <body style=\"margin:0;padding:20px 0;background-color:#2DAA31;font-family:Arial,sans-serif;color:#222\">
+      <center>
+        <div style=\"max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden\">
+          <div style=\"background:#196b21;padding:20px;text-align:center\">
+            <h1 style=\"margin:0;color:#fff;font-size:32px\">{subject_prefix} {news.header}</h1>
+          </div>
+          <div style=\"padding:30px;color:#555;line-height:1.5\">
+            {f'<img src=\"cid:newsimage\" style=\"max-width:100%;border-radius:8px\"><br><br>' if news.photo else ''}
+            <p>{news.description}</p>
+            <p style=\"text-align:center;margin:20px 0\">
+              <a href=\"{detail_url}\"
+                 style=\"display:inline-block;padding:12px 24px;background:#196b21;color:#fff;text-decoration:none;border-radius:4px\">
+                Read the full article
+              </a>
+            </p>
+          </div>
+          <div style=\"font-size:12px;color:#999;text-align:center;padding:10px\">
+            Posted on {news.created_at.strftime('%B %d, %Y')}
+          </div>
+        </div>
+      </center>
+    </body></html>
+    """
+
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=plain_text,
+        from_email=settings.EMAIL_HOST_USER,
+        to=recipients,
+    )
+    email.attach_alternative(html_content, "text/html")
+
+    if news.photo:
+        try:
+            with open(news.photo.path, "rb") as img_f:
+                img = MIMEImage(img_f.read())
+                img.add_header("Content-ID", "<newsimage>")
+                img.add_header(
+                    "Content-Disposition", "inline", filename=news.photo.name
+                )
+                email.attach(img)
+        except Exception:
+            pass
+
+    email.send(fail_silently=False)
+    AdminAction.objects.create(admin=request.user, action=action_desc)
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
@@ -302,113 +415,124 @@ def all_news_view(request):
             }
         )
 
-    context = {"news_list": news_list, "is_admin": True}
+    context = {"news_list": news_list}
+    context.update(identify)
     return render(request, "a_school_admin/admin-news.html", context)
-
-
-from email.mime.image import MIMEImage
-from django.core.mail import EmailMultiAlternatives
-from django.urls import reverse
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import user_passes_test
-from django.conf import settings
-from .models import News, AdminAction, CustomUser
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def edit_news(request, id):
-    try:
-        news = News.objects.get(id=id)
-    except News.DoesNotExist:
-        messages.error(request, "Can't find the news.")
-        return redirect("all_news_url")
+    news = get_object_or_404(News, pk=id)
 
     if request.method == "POST":
         title = request.POST.get("title", "").strip()
         description = request.POST.get("description", "").strip()
         image_file = request.FILES.get("photo")
 
-        if title and description:
+        # Require both title and description
+        if not (title and description):
+            messages.error(request, "Title and description are required.")
+            return render(request, "a_school_admin/edit-news.html", {"news": news})
+
+        has_changes = False
+        change_list = []
+
+        # Check for changes
+        if title != news.header:
             news.header = title
+            has_changes = True
+            change_list.append("header")
+
+        if description != news.description:
             news.description = description
-            if image_file:
-                news.photo = image_file
-            news.save()
+            has_changes = True
+            change_list.append("description")
 
-            emails = CustomUser.objects.exclude(email=request.user.email).values_list(
-                "email", flat=True
-            )
+        if image_file and getattr(news, "photo", None) != image_file:
+            news.photo = image_file
+            has_changes = True
+            change_list.append("photo")
 
+        if not has_changes:
+            messages.info(request, "No changes detected.")
+            return redirect("all_news_url")
+
+        # Save updated news
+        news.save()
+
+        # Prepare email notification
+        recipients = list(
+            CustomUser.objects.exclude(email=request.user.email)
+            .exclude(email__exact="")
+            .values_list("email", flat=True)
+        )
+
+        if recipients:
             subject = f"📝 News Updated: {news.header}"
             plain_text = news.description
+            detail_url = request.build_absolute_uri(
+                reverse("news_detail", args=[news.id])
+            )
 
             html_content = f"""
             <!DOCTYPE html>
-            <html>
-            <head><meta charset="UTF-8"><title>{news.header}</title></head>
-            <body style="margin:0; padding:20px 0; background-color:rgb(45, 170, 49); font-family:Arial, Helvetica, sans-serif; color:#222;">
+            <html><head><meta charset=\"UTF-8\"><title>{news.header}</title></head>
+            <body style=\"margin:0;padding:20px 0;background-color:#2DAA31;font-family:Arial,sans-serif;color:#222\">
               <center>
-                <div style="max-width:600px; margin:0 auto; background:#fff; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); overflow:hidden;">
-
-                  <div style="background:#196b21; padding:20px; text-align:center;">
-                    <h1 style="margin:0; color:#fff; font-size:32px;">
-                      📝 {news.header}
-                    </h1>
+                <div style=\"max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden\">
+                  <div style=\"background:#196b21;padding:20px;text-align:center\">
+                    <h1 style=\"margin:0;color:#fff;font-size:32px\">📝 {news.header}</h1>
                   </div>
-
-                  <div style="padding:30px; color:#555; line-height:1.5;">
-                    <img src="cid:newsimage" alt="News Image" style="max-width:100%; height:auto; border-radius:8px;"><br><br>
+                  <div style=\"padding:30px;color:#555;line-height:1.5\">
+                    {f'<img src=\"cid:newsimage\" style=\"max-width:100%;border-radius:8px\"><br><br>' if news.photo else ''}
                     <p>{news.description}</p>
-                    <p style="text-align:center; margin:20px 0;">
-                      <a href="{request.build_absolute_uri(reverse('news_detail', args=[news.id]))}"
-                         style="display:inline-block; padding:12px 24px; background:#196b21; color:#fff !important;
-                                text-decoration:none; border-radius:4px;">
+                    <p style=\"text-align:center;margin:20px 0\">
+                      <a href=\"{detail_url}\"
+                         style=\"display:inline-block;padding:12px 24px;background:#196b21;color:#fff;text-decoration:none;border-radius:4px\">
                         View Updated Article
                       </a>
                     </p>
                   </div>
-
-                  <div style="font-size:12px; color:#999; text-align:center; padding:10px;">
+                  <div style=\"font-size:12px;color:#999;text-align:center;padding:10px\">
                     Posted on {news.created_at.strftime('%B %d, %Y')}
                   </div>
-
                 </div>
               </center>
-            </body>
-            </html>
+            </body></html>
             """
 
             email = EmailMultiAlternatives(
                 subject=subject,
                 body=plain_text,
                 from_email=settings.EMAIL_HOST_USER,
-                to=list(emails),
+                to=recipients,
             )
             email.attach_alternative(html_content, "text/html")
-            try:
-                with open(news.photo.path, "rb") as img_f:
-                    img = MIMEImage(img_f.read())
-                    img.add_header("Content-ID", "<newsimage>")
-                    img.add_header(
-                        "Content-Disposition", "inline", filename=news.photo.name
-                    )
-                    email.attach(img)
-            except Exception as e:
-                print("Failed to attach image:", e)
+
+            # Inline image if present
+            if news.photo:
+                try:
+                    with open(news.photo.path, "rb") as img_f:
+                        img = MIMEImage(img_f.read())
+                        img.add_header("Content-ID", "<newsimage>")
+                        img.add_header(
+                            "Content-Disposition", "inline", filename=news.photo.name
+                        )
+                        email.attach(img)
+                except Exception:
+                    pass
 
             email.send(fail_silently=False)
 
-            AdminAction.objects.create(
-                admin=request.user, action=f"Updated News ({news.header})"
-            )
-            messages.success(request, "News item updated and emailed!")
+        # Log the admin action
+        AdminAction.objects.create(
+            admin=request.user,
+            action=f"Updated News ({news.header}): {', '.join(change_list)}",
+        )
+        messages.success(request, "News item updated successfully.")
+        return redirect("all_news_url")
 
-            return redirect("all_news_url")
-
-    context = {"news": news}
-    context.update(identify)
-    return render(request, "a_school_admin/edit-news.html", context)
+    return render(request, "a_school_admin/edit-news.html", {"news": news})
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")

@@ -12,31 +12,31 @@
 
 {% block page_title %}
   <div class="user-info">
-    <h1 class="username">Class Detail: {{ class_object.class_name.class_name }}</h1>
+    <h1 class="username">Class Detail: {{ class_room.class_name.class_name }}</h1>
   </div>
 {% endblock %}
 
 {% block content %}
   <div class="class-info-card">
     <h2>Homeroom Teacher</h2>
-    {% if class_object.room_teacher %}
+    {% if class_room.room_teacher %}
       <div class="homeroom_holder">
-        <h1><strong>Homeroom Teacher:</strong> {{ class_object.room_teacher.username }}</h1>
-        <form method="post" id="room_teacher_delete_form" action="{% url 'remove_homeroom_url' teacher=class_object.room_teacher.user.username class_name=class_object.class_name %}">
+        <h1><strong>Homeroom Teacher:</strong> {{ class_room.room_teacher.username }}</h1>
+        <form method="post" id="room_teacher_delete_form" action="{% url 'remove_homeroom_url' teacher=class_room.room_teacher.user.username class_name=class_room.class_name %}">
           {% csrf_token %}
           <button type="submit" class="btn delete-btn assign-btn" onclick="showDeletePopup('room_teacher_delete_form')">Remove Homeroom Teacher</button>
         </form>
       </div>
     {% else %}
       <h2>Not Set</h2>
-      <a href="{% url 'add_homeroom_url' class_name=class_object.class_name %}"><button class="btn assign-btn">Add homeroom teacher</button></a>
+      <a href="{% url 'add_homeroom_url' class_name=class_room.class_name.class_name %}"><button class="btn assign-btn">Add homeroom teacher</button></a>
     {% endif %}
   </div>
 
   <!-- Assign Class -->
   <div class="assign-box">
     <h3>Assign Subject to Class</h3>
-    <form method="post" action="{% url 'assign_subject_url' class_object.id %}" class="load" id="assigned-subjects">
+    <form method="post" action="{% url 'assign_subject_url' class_room.id %}" class="load" id="assigned-subjects">
       {% csrf_token %}
       <div class="form-group">
         <label for="subject">Subject:</label>
@@ -91,7 +91,7 @@
               <td>{{ assigned_subject.teacher }}</td>
               <td>{{ assigned_subject.subject }}</td>
               <td class="table-actions">
-                <form method="POST" class="load" id="form_class" action="{% url 'delete_subject_url' subject=assigned_subject.subject classroom_id=assigned_subject.class_room.id %}">
+                <form method="POST" id="form_class" action="{% url 'delete_subject_url' subject=assigned_subject.subject classroom_id=assigned_subject.class_room.id %}">
                   {% csrf_token %}
                   <button type="submit" class="action-btn delete btn-delete" onclick="showDeletePopup('form_class')"><i class="fa fa-trash"></i></button>
                 </form>
@@ -108,7 +108,7 @@
   <div class="table-container">
     <div class="table-header">
       <h2>Assigned Students</h2>
-      <a href="{% url 'add_student_url' %}?defined_class={{ class_object.class_name.class_name }}"><button class="add-student-btn">Add Student</button></a>
+      <a href="{% url 'add_student_url' %}?defined_class={{ class_room.class_name.class_name }}"><button class="add-student-btn">Add Student</button></a>
     </div>
     <table id="detailTable2" class="classTable">
       <thead>

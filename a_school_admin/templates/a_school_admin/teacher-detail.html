@@ -58,7 +58,7 @@
       </div>
 
       <div class="crud">
-        <form action="{% url 'delete_teacher_url' teacher_username=teacher.user.username %}" method="post" id="form_class">
+        <form action="{% url 'delete_teacher_url' teacher_username=teacher.user.username %}" method="post" id="form_class" class="load">
           {% csrf_token %}
           <a href=""><button class="delete-btn right-btn" onclick="showDeletePopup('form_class')">Delete</button></a>
         </form>
@@ -70,10 +70,6 @@
 
 {% block script %}
   <script>
-      {% comment %} document.getElementById("form-d").addEventListener('submit', (e) => {
-        e.preventDefault()
-      }) {% endcomment %}
-    
     let status = 85
     Chart.register({
       id: 'centerText',

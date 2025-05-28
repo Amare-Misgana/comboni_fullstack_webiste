@@ -1,0 +1,44 @@
+/* Delete confirmation box */
+.confirm-delete {
+    max-width: 500px;
+    margin: 3em auto;
+    padding: 2em;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* Delete and cancel buttons */
+.btn-delete {
+    background-color: #e84545;
+    color: #fff;
+    padding: 0.7em 1.4em;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 1em;
+}
+
+.btn-delete:hover {
+    background-color: #b43434;
+}
+
+.btn-cancel {
+    color: #555;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 2.5;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.btn-cancel:hover {
+    color: #1a73e8;
+}

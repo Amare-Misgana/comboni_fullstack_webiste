@@ -1,0 +1,39 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  My Classes
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_teacher/css/teacher-classes.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Classes I Teach</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="classes-container">
+    {% for cls in classes %}
+      <div class="class-card">
+        <h2>{{ cls.class_name }}</h2>
+        <p>
+          <strong>Subject:</strong> {{ cls.subject }}
+        </p>
+        <p>
+          <strong>Total Students:</strong> {{ cls.total_students }}
+        </p>
+        <p>
+          <strong>Shared Materials:</strong> {{ cls.total_materials }}
+        </p>
+        <div class="card-buttons">
+          <a href="{% url 'view_class_url' cls.class_name %}" class="btn detail">View Class</a>
+          <a href="{% url 'share_material_teacher_url' cls.class_name %}" class="btn share">Share Material</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

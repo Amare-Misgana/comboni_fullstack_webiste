@@ -110,34 +110,29 @@ def create_classes(request):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def class_detail(request, class_name):
-    try:
-        class_name_obj = get_object_or_404(Class, class_name=class_name)
-        class_room, created = ClassRoom.objects.get_or_create(class_name=class_name_obj)
-        if not class_room.class_name:
-            messages.error(request, "Empty class name")
-        students = list(class_room.students.all())
-    except Exception as e:
-        messages.error(request, f"Error querying data from the database: {e}")
-        return redirect("class_mang_url")
+    # 1) Grab or make the ClassRoom
+    class_obj = get_object_or_404(Class, class_name=class_name)
+    class_room, _ = ClassRoom.objects.get_or_create(class_name=class_obj)
 
-    assigned_subjects = ClassSubject.objects.filter(class_room=class_room)
-    assigned_subject_ids = assigned_subjects.values_list("subject", flat=True)
-    assigned_teacher_ids = assigned_subjects.values_list("teacher", flat=True)
+    # 2) Who’s already assigned?
+    assigned = ClassSubject.objects.filter(class_room=class_room)
+    assigned_subject_ids = assigned.values_list("subject", flat=True).distinct()
+    assigned_teacher_ids = assigned.values_list("teacher", flat=True).distinct()
 
+    # 3) Find “free” teachers and subjects
     teachers = CustomUser.objects.filter(role="teacher").exclude(
         id__in=assigned_teacher_ids
     )
     subjects = Subject.objects.exclude(id__in=assigned_subject_ids)
 
-    class_object = class_room
-
+    # 4) Load students in that room
+    students = class_room.students.all()
     context = {
-        "assigned_subjects": assigned_subjects,
-        "students": students,
         "class_room": class_room,
+        "assigned_subjects": assigned,
         "teachers": teachers,
         "subjects": subjects,
-        "class_object": class_object,
+        "students": students,
     }
     context.update(identify)
     return render(request, "a_school_admin/class-detail.html", context)
@@ -311,55 +306,56 @@ def delete_subject(request, subject_name):
     return redirect("add_subjects_url")
 
 
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+@user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
 def assign_subject_view(request, classroom_id):
-    class_room = get_object_or_404(ClassRoom, id=classroom_id)
-    classroom = class_room.class_name
-    assigned_teacher_ids = ClassSubject.objects.values_list("teacher", flat=True)
+    room = get_object_or_404(ClassRoom, id=classroom_id)
+    # room.class_name is a OneToOneField to Class, whose PK is the class_name string
+    class_name_str = room.class_name.class_name
+
+    # only look at assignments for this room
+    existing = ClassSubject.objects.filter(class_room=room)
+    assigned_teachers = set(existing.values_list("teacher_id", flat=True))
+    assigned_subjects = set(existing.values_list("subject_id", flat=True))
 
     if request.method == "POST":
-        subject_id = request.POST.get("subject")
-        teacher_username = request.POST.get("teacher")
+        subj_id = request.POST.get("subject")
+        teach_username = request.POST.get("teacher")
 
-        if not subject_id:
+        if not subj_id:
             messages.error(request, "Please select a subject.")
-            return redirect("class_detail_url", class_name=classroom)
-
-        if not teacher_username:
+            return redirect("class_detail_url", class_name=class_name_str)
+        if not teach_username:
             messages.error(request, "Please select a teacher.")
-            return redirect("class_detail_url", class_name=classroom)
+            return redirect("class_detail_url", class_name=class_name_str)
 
+        # fetch subject and teacher
         try:
-            subject_model = Subject.objects.get(id=subject_id)
+            subj = Subject.objects.get(id=subj_id)
         except Subject.DoesNotExist:
             messages.error(request, "Subject doesn't exist.")
-            return redirect("class_detail_url", class_name=classroom)
+            return redirect("class_detail_url", class_name=class_name_str)
 
         try:
-            teacher_model = CustomUser.objects.get(username=teacher_username)
+            teach = CustomUser.objects.get(username=teach_username, role="teacher")
         except CustomUser.DoesNotExist:
-            messages.error(request, "Teacher not found.")
-            return redirect("class_detail_url", class_name=classroom)
+            messages.error(request, "Teacher not found or not a teacher.")
+            return redirect("class_detail_url", class_name=class_name_str)
 
-        if teacher_model.id in assigned_teacher_ids:
-            messages.error(request, "Teacher already exists.")
-            return redirect("class_detail_url", class_name=classroom)
+        # now check for this class only
+        if teach.id in assigned_teachers:
+            messages.error(request, "That teacher is already assigned to this class.")
+            return redirect("class_detail_url", class_name=class_name_str)
 
-        if ClassSubject.objects.filter(subject=subject_model).exists():
-            messages.error(request, "Subject already assigned.")
-            return redirect("class_detail_url", class_name=classroom)
+        if subj.id in assigned_subjects:
+            messages.error(request, "That subject is already assigned to this class.")
+            return redirect("class_detail_url", class_name=class_name_str)
 
-        try:
-            ClassSubject.objects.create(
-                class_room=class_room, subject=subject_model, teacher=teacher_model
-            )
-            messages.success(request, "Subject assigned successfully.")
-        except Exception as e:
-            messages.error(request, f"Failed to assign subject: {e}")
+        # finally create
+        ClassSubject.objects.create(class_room=room, subject=subj, teacher=teach)
+        messages.success(request, "Subject assigned successfully.")
+        return redirect("class_detail_url", class_name=class_name_str)
 
-        return redirect("class_detail_url", class_name=classroom)
-
-    return redirect("class_detail_url", class_name=classroom)
+    return redirect("class_detail_url", class_name=class_name_str)
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")

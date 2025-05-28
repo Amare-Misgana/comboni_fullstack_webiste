@@ -310,17 +310,16 @@ i.fa-brands {
     padding: 0.7em 1em;
     border-top-left-radius: 1.5em;
     border-top-right-radius: 1.5em;
-    background-color: var(--primary-text);
 }
 
 .message-data div p {
-    color: var(--background);
+    color: white;
     font-size: 0.9em;
     line-height: 1.4em;
 }
 
 .message-data div .data {
-    color: var(--last-text);
+    color: rgb(201, 201, 201);
     margin-top: 0.6em;
 }
 
@@ -457,7 +456,9 @@ i.fa-brands {
 
 .chat-user-btn.active {
     background: #196b21;
+    color: white;
 }
+
 
 .content {
     position: relative;

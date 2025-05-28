@@ -66,16 +66,33 @@
           <span class="label">Class</span><span class="value">{{ student_class.class_name }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Conduct</span><span class="value">A</span>
+          <span class="label">Conduct</span><span class="value">
+            {% for cond in conduct %}
+              {% if cond.student == student_profile %}
+                {{ cond.conduct }}
+              {% endif %}
+            {% endfor %}
+          </span>
         </div>
       </div>
 
       <div class="action-buttons">
-        <a href="{% url 'edit_student_url' student_username=student_profile.user.username %}"><button class="edit-btn">Edit</button></a>
-        <form action="{% url 'delete_student_url' student_username=student_profile.user.username %}" method="post" id="form_class">
-          {% csrf_token %}
-          <a href=""><button type="submit" onclick="showDeletePopup('form_class')" class="delete-btn">Delete</button></a>
-        </form>
+        {% if not only_back %}
+          {% if not teacher_user %}
+            <a href="{% url 'edit_student_url' student_username=student_profile.user.username %}"><button class="edit-btn">Edit</button></a>
+            <form action="{% url 'delete_student_url' student_username=student_profile.user.username %}" method="post" id="form_class">
+              {% csrf_token %}
+              <a href=""><button type="submit" onclick="showDeletePopup('form_class')" class="delete-btn">Delete</button></a>
+            </form>
+          {% else %}
+            <a href="{% url 'edit_conduct_url' username=student_profile.user.username %}"><button class="edit-btn">Edit Conduct</button></a>
+            <a href="{% url 'teacher_dashboard_url' %}"><button class="delete-btn">Go back</button></a>
+          {% endif %}
+        {% else %}
+          <div class="action-buttons">
+            <a href="{% url 'teacher_dashboard_url' %}"><button class="delete-btn">Go back</button></a>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

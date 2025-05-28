@@ -1,0 +1,74 @@
+.material-card {
+    background: var(--light-background);
+    border-radius: 0.3em;
+    padding: 1.5em;
+    max-width: 480px;
+    margin: 2em auto;
+}
+
+.card-title {
+    margin: 0 0 1em;
+    font-size: 1.4em;
+    color: var(--primaryD);
+    text-align: center;
+}
+
+.field {
+    position: relative;
+    margin-bottom: 1.5em;
+}
+
+.field input[type="text"],
+.field input[type="file"],
+.field textarea {
+    width: 100%;
+    padding: 0.75em;
+    border: 1px solid var(--tint);
+    border-radius: 0.3em;
+    background: var(--background);
+    font-size: 1em;
+    outline: none;
+    transition: var(--transition);
+    color: var(--primary-text);
+}
+
+.field input:focus,
+.field textarea:focus {
+    border-color: var(--primaryL);
+}
+
+.field label {
+    position: absolute;
+    top: -0.6em;
+    left: 0.75em;
+    background: var(--light-background);
+    padding: 0 0.25em;
+    font-size: 0.9em;
+    color: var(--secondary-text);
+}
+
+.preview {
+    margin-top: 0.5em;
+    font-size: 0.95em;
+    color: var(--primary-text);
+}
+
+.file-icon {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    border: 1px solid var(--tint);
+    border-radius: 0.3em;
+    background: var(--background);
+}
+
+.btn.share-btn {
+    display: block;
+    width: 100%;
+    padding: 0.75em;
+    background: var(--edit-btn);
+    color: #fff;
+    border: none;
+    border-radius: 0.3em;
+    font-size: 1em;
+    cursor: pointer;
+}

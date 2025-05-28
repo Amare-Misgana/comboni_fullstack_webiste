@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.db import transaction
 from a_school_admin.models import AdminAction
 import pandas as pd
-from common.models import UserProfile, CustomUser, ClassRoom, Class
+from common.models import UserProfile, CustomUser, ClassRoom, Class, Conduct
 from django.db.models.functions import Length
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
@@ -64,7 +64,11 @@ def delete_student(request, student_username):
     return redirect("students_mang_url")
 
 
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
+@user_passes_test(
+    lambda user: user.is_authenticated
+    and user.role == "admin"
+    or user.role == "teacher"
+)
 def student_detail(request, student_username):
     try:
         student = CustomUser.objects.get(username=student_username)
@@ -88,10 +92,14 @@ def student_detail(request, student_username):
     except CustomUser.DoesNotExist:
         messages.error(request, "Student can't be found!")
         return redirect("students_mang_url")
+    conduct = Conduct.objects.all()
+    print(conduct)
     context = {
         "student": student,
         "student_profile": student_profile,
         "student_class": student_class,
+        "conduct": conduct,
+        "only_back": True if request.user.role == "teacher" else False,
     }
     context.update(identify)
     return render(request, "a_school_admin/student-detail.html", context)

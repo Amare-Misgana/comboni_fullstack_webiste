@@ -1,52 +1,196 @@
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test
-from common.models import UserProfile, CustomUser
+from common.models import (
+    UserProfile,
+    CustomUser,
+    ClassRoom,
+    ClassSubject,
+    Class,
+    Conduct,
+    Material,
+    Activity,
+    Mark,
+)
+from .models import TeacherAction
 from a_message.models import Message
+from django.contrib import messages
 from django.db.models import Q
 
-# Global Variables for chat and chatting views 
+# Global Variables for chat and chatting views
 identify = {
-    'is_student': False,
-    'is_teacher': True,
-    'is_admin': False,
+    "is_student": False,
+    "is_teacher": True,
+    "is_admin": False,
 }
 
-@user_passes_test(lambda user: user.is_authenticated and user.role=="teacher")
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "teacher")
 def teacher_dashboard(request):
+    teacher_profile = UserProfile.objects.get(user=request.user)
+    class_room = ClassRoom.objects.filter(room_teacher__user=request.user).first()
+
+    teaching = ClassSubject.objects.filter(teacher=request.user)
+
+    subject_list = []
+
+    for _teaching in teaching:
+
+        _teaching.subject in subject_list or subject_list.append(_teaching.subject)
+    subjects = len(subject_list)
+
+    total_students = (
+        UserProfile.objects.filter(
+            classroom_students__class_subjects__teacher=request.user,
+            user__role="student",
+        )
+        .distinct()
+        .count()
+    )
+
+    total_sections = ClassSubject.objects.filter(teacher=request.user).values("class_room").distinct().count()
+
+    # Students in the homeroom class (optional)
+    # Error querying students from the database: 'NoneType' object has no attribute 'students'
+    try:
+        if class_room:
+            students = list(class_room.students.select_related("user"))
+    except Exception as e:
+        messages.error(request, f"Error querying students from the database: {e}")
+        return redirect("teachers_mang_url")
+    if class_room:
+        student_data = []
+        for student in students:
+            conduct = Conduct.objects.filter(student=student, teacher=teacher_profile).first()
+            if not conduct:
+                conduct = Conduct.objects.create(student=student, teacher=teacher_profile)
+            student_data.append(
+                {
+                    "user": student.user,
+                    "profile": student,
+                    "conduct": conduct.conduct if conduct else "None",
+                }
+            )
+    else:
+        student_data = None
+
+    # 🧠 Students the teacher teaches in any subject (not just homeroom)
+    taught_students = (
+        UserProfile.objects.filter(
+            classroom_students__class_subjects__teacher=request.user,
+            user__role="student",
+        )
+        .select_related("user")
+        .distinct()
+    )
+
+    students_taught = []
+    for student in taught_students:
+        conduct = Conduct.objects.filter(student=student, teacher=teacher_profile).first()
+        class_room = ClassRoom.objects.filter(students=student).first()
+        if not conduct:
+            conduct = Conduct.objects.create(student=student, teacher=teacher_profile)
+        students_taught.append(
+            {
+                "user": student.user,
+                "profile": student,
+                "conduct": conduct.conduct if conduct else "None",
+                "class": class_room.class_name.class_name,
+            }
+        )
+
     context = {
-        "user_profile": UserProfile.objects.get(user=request.user),
+        "user_profile": teacher_profile,
+        "class_room": class_room,
+        "students": student_data,
+        "students_taught": students_taught,  # Added full list
+        "subjects": subjects,
+        "total_students": total_students,
+        "total_sections": total_sections,
     }
+
     context.update(identify)
     return render(request, "a_teacher/dashboard.html", context)
 
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "teacher")
+def student_detail(request, student_username):
+    try:
+        student = CustomUser.objects.get(username=student_username)
+        try:
+            student_profile = UserProfile.objects.get(user=student)
+            student_class = student_profile.classroom_students.all().first()
+            if not student_profile.user_pic:
+                messages.warning(request, "Student Profile is incomplete. Add profile picture")
+        except UserProfile.DoesNotExist:
+            messages.warning(request, "Student Profile is incomplete. Compelete Profile")
+            return redirect(reverse("edit_student_url", kwargs={"student_username": student_username}))
+
+    except CustomUser.DoesNotExist:
+        messages.error(request, "Student can't be found!")
+        return redirect("students_mang_url")
+    conduct = Conduct.objects.all()
+    context = {
+        "student": student,
+        "conduct": conduct,
+        "student_profile": student_profile,
+        "student_class": student_class,
+        "teacher_user": True,
+    }
+    context.update(identify)
+    return render(request, "a_school_admin/student-detail.html", context)
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "teacher")
+def edit_conduct(request, username):
+    teacher_profile = get_object_or_404(UserProfile, user=request.user, user__role="teacher")
+    student_profile = get_object_or_404(UserProfile, user__username=username, user__role="student")
+    conduct_obj, _ = Conduct.objects.get_or_create(teacher=teacher_profile, student=student_profile)
+    if request.method == "POST":
+        new_val = request.POST.get("conduct")
+        valid_vals = [choice[0] for choice in Conduct.CONDUCT_VALUES]
+        if new_val in valid_vals:
+            conduct_obj.conduct = new_val
+            conduct_obj.save()
+            messages.success(request, f"Conduct for {student_profile.username} set to “{new_val}”")
+        else:
+            messages.error(request, "Invalid conduct value.")
+        return redirect("edit_conduct_url", username=username)
+    context = {
+        "student": student_profile,
+        "class_room": ClassRoom.objects.filter(room_teacher=teacher_profile).first(),
+        "current": conduct_obj.conduct,
+        "choices": Conduct.CONDUCT_VALUES,
+    }
+    context.update(identify)
+    return render(request, "a_teacher/edit-conduct.html", context)
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
 def chat(request):
     me = UserProfile.objects.get(user=request.user)
 
-    students = UserProfile.objects.filter(user__role='student')
-    teachers = UserProfile.objects.filter(user__role='teacher').exclude(pk=me.pk)
-    admins   = UserProfile.objects.filter(user__role='admin')
+    students = UserProfile.objects.filter(user__role="student")
+    teachers = UserProfile.objects.filter(user__role="teacher").exclude(pk=me.pk)
+    admins = UserProfile.objects.filter(user__role="admin")
 
     def attach_last_msg(qs):
         for peer in qs:
             peer.last_message = (
-                Message.objects
-                       .filter(Q(sender=me, receiver=peer) | Q(sender=peer, receiver=me))
-                       .order_by('-timestamp')
-                       .first()
+                Message.objects.filter(Q(sender=me, receiver=peer) | Q(sender=peer, receiver=me))
+                .order_by("-timestamp")
+                .first()
             )
         return qs
 
     context = {
-        'students': attach_last_msg(students),
-        'teachers': attach_last_msg(teachers),
-        'admins':   attach_last_msg(admins),
+        "students": attach_last_msg(students),
+        "teachers": attach_last_msg(teachers),
+        "admins": attach_last_msg(admins),
     }
     context.update(identify)
-    return render(request, 'fragments/chat.html', context)
+    return render(request, "fragments/chat.html", context)
 
 
 def get_room_name(user1, user2):
@@ -56,14 +200,12 @@ def get_room_name(user1, user2):
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
 def chatting(request, username):
-    me = UserProfile.objects.get(user=request.user) 
-    students = UserProfile.objects.filter(user__role='student')
-    teachers = UserProfile.objects.filter(user__role='teacher').exclude(id=me.id)
-    admins   = UserProfile.objects.filter(user__role='admin')
+    me = UserProfile.objects.get(user=request.user)
+    students = UserProfile.objects.filter(user__role="student")
+    teachers = UserProfile.objects.filter(user__role="teacher").exclude(id=me.id)
+    admins = UserProfile.objects.filter(user__role="admin")
 
-    msgs = Message.objects.filter(
-        Q(sender=me) | Q(receiver=me)
-    ).order_by('-timestamp')
+    msgs = Message.objects.filter(Q(sender=me) | Q(receiver=me)).order_by("-timestamp")
 
     seen = set()
     latest_messages = []
@@ -75,39 +217,210 @@ def chatting(request, username):
 
     other = UserProfile.objects.get(user__username=username)
 
-    chats = Message.objects.filter(
-        Q(sender=me,    receiver=other) |
-        Q(sender=other, receiver=me)
-    ).order_by('timestamp')
+    chats = Message.objects.filter(Q(sender=me, receiver=other) | Q(sender=other, receiver=me)).order_by("timestamp")
 
     try:
         receiver = CustomUser.objects.get(username=username)
     except CustomUser.DoesNotExist:
         raise Http404("User does not exist")
-    
+
     userprofile = UserProfile.objects.all()
-    
+
     room_name = get_room_name(request.user.username, receiver.username)
 
-
-    chat_messages = Message.objects.filter(
-        Q(sender__user=request.user, receiver__user=receiver) |
-        Q(sender__user=receiver, receiver__user=request.user)
-    ).order_by('timestamp').distinct()
-    context =  {
-        'students': students,
-        'teachers': teachers,
-        'admins': admins,
-        'latest_messages': latest_messages,
-        'chats': chats,
-        'room_name': room_name,
-        'receiver': receiver,
-        'receiver_profile': UserProfile.objects.get(user=receiver),
-        'current_user': request.user,
-        'other_user': receiver,
-        'chat_messages': chat_messages,
-        'userprofile': userprofile, 
+    chat_messages = (
+        Message.objects.filter(
+            Q(sender__user=request.user, receiver__user=receiver)
+            | Q(sender__user=receiver, receiver__user=request.user)
+        )
+        .order_by("timestamp")
+        .distinct()
+    )
+    context = {
+        "students": students,
+        "teachers": teachers,
+        "admins": admins,
+        "latest_messages": latest_messages,
+        "chats": chats,
+        "room_name": room_name,
+        "receiver": receiver,
+        "receiver_profile": UserProfile.objects.get(user=receiver),
+        "current_user": request.user,
+        "other_user": receiver,
+        "chat_messages": chat_messages,
+        "userprofile": userprofile,
     }
     context.update(identify)
 
-    return render(request, 'fragments/chatting.html', context)
+    return render(request, "fragments/chatting.html", context)
+
+
+@user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
+def teacher_classes(request):
+    taught = ClassSubject.objects.filter(teacher=request.user)
+
+    stats = []
+    for cs in taught:
+        room = cs.class_room
+        students_count = room.students.count()
+        materials_count = Material.objects.filter(uploaded_by__user=request.user).count()
+
+        stats.append(
+            {
+                "class_name": room.class_name.class_name,
+                "subject": cs.subject.subject_name,
+                "total_students": students_count,
+                "total_materials": Material.objects.filter(
+                    uploaded_by__user=request.user,
+                    class_name__class_name=room.class_name.class_name,
+                ).count(),
+            }
+        )
+    context = {"classes": stats}
+    context.update(identify)
+    return render(request, "a_teacher/teacher-classes.html", context)
+
+
+@user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
+def share_material(request, class_name):
+
+    if request.method == "POST":
+        title = request.POST.get("title", "").strip()
+        description = request.POST.get("description", "").strip()
+        file = request.FILES.get("file")
+
+        try:
+            class_object = Class.objects.get(class_name=class_name)
+        except Exception as e:
+            messages.error(request, f"Can't query class: {e}")
+            return render(request, "a_teacher/share-material.html", identify)
+
+        if not (title and file):
+            messages.error(request, "Title and file are required.")
+            return render(request, "a_teacher/share-material.html", identify)
+
+        user_profile = UserProfile.objects.get(user=request.user)
+        Material.objects.create(
+            title=title,
+            file=file,
+            uploaded_by=user_profile,
+            description=description,
+            class_name=class_object,
+        )
+
+        messages.success(request, "Material shared successfully.")
+        return redirect("materials_list_url")
+
+    return render(request, "a_teacher/share-material.html", identify)
+
+
+@user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
+def view_class_teacher(request, class_name):
+    # 1. Fetch the classroom
+    class_room = get_object_or_404(ClassRoom, class_name__class_name=class_name)
+
+    # 2. Ensure this teacher is assigned
+    if not ClassSubject.objects.filter(class_room=class_room, teacher=request.user).exists():
+        messages.error(request, "You are not assigned to this class.")
+        return redirect("teacher_home_url")
+
+    # 3. Handle inline “Create Activity” POST
+    if request.method == "POST":
+        atype = request.POST.get("activity_type", "").strip()
+        name = request.POST.get("activity_name", "").strip()
+        if atype and name:
+            profile = UserProfile.objects.get(user=request.user)
+            subject = class_room.class_subjects.get(teacher=request.user).subject
+            Activity.objects.create(
+                class_room=class_room,
+                subject=subject,
+                teacher=profile,
+                activity_type=atype,
+                activity_name=name,
+            )
+            messages.success(request, "Activity created.")
+            return redirect("view_class_url", class_name=class_name)
+        else:
+            messages.error(request, "All fields are required.")
+
+    # 4. Gather data for rendering
+    try:
+        class_object = Class.objects.get(class_name=class_name)
+    except Class.DoesNotExist:
+        messages.error(request, f"Can't query class: {class_name}")
+        return redirect("teacher_home_url")
+
+    subjects = ClassSubject.objects.get(class_room=class_room, teacher=request.user)
+    students = subjects.class_room.students.select_related("user").all()
+    student_count = class_room.students.count()
+    user_profile = UserProfile.objects.get(user=request.user)
+    materials = Material.objects.filter(uploaded_by=user_profile, class_name=class_object)
+    activities = Activity.objects.filter(class_room=class_room, teacher=user_profile)
+
+    context = {
+        "class_room": class_room,
+        "subjects": subjects,
+        "student_count": student_count,
+        "materials": materials,
+        "students": students,
+        "activities": activities,
+    }
+    context.update(identify)
+
+    return render(request, "a_teacher/view-class.html", context)
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "teacher")
+def activities_list(request, class_name):
+    room = get_object_or_404(ClassRoom, class_name__class_name=class_name)
+
+    # ensure teacher teaches here
+    if not room.class_subjects.filter(teacher=request.user).exists():
+        messages.error(request, "You’re not assigned to that class.")
+        return redirect("teacher_home_url")
+
+    # only activities this teacher created in this class
+    profile = UserProfile.objects.get(user=request.user)
+    activities = Activity.objects.filter(class_room=room, teacher=profile)
+
+    return render(
+        request,
+        "a_teacher/activities-list.html",
+        {
+            "class_room": room,
+            "activities": activities,
+        },
+    )
+
+
+def assign_marks(request, activity_id):
+    activity = get_object_or_404(Activity, id=activity_id)
+    teacher_profile = UserProfile.objects.get(user=request.user)
+    # authorize
+    if activity.teacher != teacher_profile:
+        messages.error(request, "Not authorized to grade this activity.")
+        return redirect("teacher_dashboard_url")
+
+    students = activity.class_room.students.select_related("user").all()
+    # map student_id → existing score
+    existing = {m.student_id: m.score for m in activity.marks.all()}
+
+    if request.method == "POST":
+        # save each non-empty score
+        for student in students:
+            key = f"score_{student.id}"
+            val = request.POST.get(key, "").strip()
+            if val != "":
+                Mark.objects.update_or_create(activity=activity, student=student, defaults={"score": val})
+        messages.success(request, "Marks saved.")
+        return redirect("view_class_url", class_name=activity.class_room.class_name.class_name)
+
+    return render(
+        request,
+        "a_teacher/assign-marks.html",
+        {
+            "activity": activity,
+            "students": students,
+            "existing": existing,
+        },
+    )

@@ -3,6 +3,13 @@
   <h2>{{ empty_title }}</h2>
   <p>{{ empty_message }}</p>
   {% if add_url %}
+    {% if query_p %}
+      {% if arg %}
+        <a href="{% url add_url arg %} ?qp=query_p" class="no-data-add-btn">{{ btn_name }}</a>
+      {% else %}
+        <a href="{% url add_url %} ?qp=query_p" class="no-data-add-btn">{{ btn_name }}</a>
+      {% endif %}
+    {% endif %}
     {% if arg %}
       <a href="{% url add_url arg %}" class="no-data-add-btn">{{ btn_name }}</a>
     {% else %}

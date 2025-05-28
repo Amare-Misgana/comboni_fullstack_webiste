@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block head %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
   <link rel="stylesheet" href="{% static 'a_teacher/css/dashboard.css' %}" />
 {% endblock %}
 
@@ -26,38 +27,148 @@
     <div class="info-card" id="total-students">
       <i class="fas fa-user-graduate"></i>
       <div class="info">
-        <h1>{{ students_amount }}</h1>
+        <h1>{{ total_students }}</h1>
         <p>Total Students</p>
       </div>
     </div>
     <div class="info-card" id="total-teachers">
-      <i class="fas fa-chalkboard-teacher"></i>
+      <i class="fas fa-book"></i>
       <div class="info">
-        <h1>{{ teachers_amount }}</h1>
-        <p>Total Teachers</p>
+        <h1>{{ subjects }}</h1>
+        <p>Total Subjects</p>
       </div>
     </div>
-    <div class="info-card" id="total-classes">
+    <div class="info-card" id="assigned-class">
       <i class="fas fa-school"></i>
       <div class="info">
-        <h1>{{ classes_amount }}</h1>
-        <p>Total Classes</p>
+        {% if class_room %}
+          <h1>{{ class_room.class_name.class_name }}</h1>
+        {% else %}
+          <h1>None</h1>
+        {% endif %}
+        <p>Assigned Class</p>
       </div>
     </div>
     <div class="info-card" id="total-sections">
       <i class="fas fa-layer-group"></i>
       <div class="info">
-        <h1>{{ sections_amount }}</h1>
+        <h1>{{ total_sections }}</h1>
         <p>Total Sections</p>
       </div>
     </div>
   </div>
 
-  <!-- Profile Detail Template -->
+  <!-- Profile Detail -->
   {% include 'fragments/profile_detail.html' %}
   <div class="sub-layer"></div>
+
+  <!-- Student Table -->
+  {% if students %}
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Assigned Students</h2>
+      </div>
+      <table id="detailTable2" class="classTable">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Age</th>
+            <th>Conduct</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+            <tr>
+              <td>{{ student.user.first_name }}</td>
+              <td>{{ student.user.middle_name }}</td>
+              <td>{{ student.user.age }}</td>
+              <td>{{ student.conduct }}</td>
+              <td class="table-actions">
+                <a href="{% url 'teacher_student_detail_url' student.user.username %}" class="action-btn detail"><i class="fa fa-file-lines"></i></a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-center">No students assigned.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Students Found' empty_message='You are not assigned to any class' %}
+  {% endif %}
+  <!-- Taught Students Table -->
+  <div class="table-container">
+    <div class="table-header">
+      <h2>Taught Students</h2>
+    </div>
+    <table id="detailTable3" class="classTable">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Conduct</th>
+          <th>Class</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students_taught %}
+          <tr>
+            <td>{{ student.user.first_name }}</td>
+            <td>{{ student.user.middle_name }}</td>
+            <td>{{ student.conduct }}</td>
+            <td>{{ student.class }}</td>
+            <td class="table-actions">
+              <a href="{% url 'student_detail_url' student.user.username %}" class="action-btn detail"><i class="fa fa-file-lines"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
 
 {% block script %}
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{% static 'a_teacher/js/dashboard.js' %}"></script>
+  <script>
+    ;['#detailTable2', '#detailTable3'].forEach(function (id) {
+      $(id).DataTable({
+        responsive: true,
+        initComplete: function () {
+          var api = this.api()
+          var $cont = $(api.table().container())
+    
+          // strip the original text
+          $cont
+            .find('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').replace('Show', '').trim()
+            })
+          $cont
+            .find('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // add one Show / Search per table
+          $('<p class="select-label">Show</p>').appendTo($cont.find('.dataTables_length label'))
+          $('<p class="search-label">Search</p>').appendTo($cont.find('.dataTables_filter label'))
+        }
+      })
+    })
+  </script>
 {% endblock %}

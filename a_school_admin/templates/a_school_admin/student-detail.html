@@ -66,13 +66,7 @@
           <span class="label">Class</span><span class="value">{{ student_class.class_name }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Conduct</span><span class="value">
-            {% for cond in conduct %}
-              {% if cond.student == student_profile %}
-                {{ cond.conduct }}
-              {% endif %}
-            {% endfor %}
-          </span>
+          <span class="label">Conduct</span><span class="value">{{ conduct.conduct }}</span>
         </div>
       </div>
 

@@ -5,6 +5,9 @@ from django.contrib.auth.models import (
     BaseUserManager,
 )
 from django.templatetags.static import static
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.core.exceptions import ValidationError
+from decimal import Decimal
 
 
 default_avatar_path = "avatars/default-avatar.png"
@@ -225,8 +228,45 @@ class Conduct(models.Model):
         ("D", "D"),
     ]
     student = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="condact_student")
-    teacher = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="condact_teacher")
+    teacher = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="condact_teacher", null=True)
     conduct = models.CharField(max_length=15, choices=CONDUCT_VALUES, default="A")
+
+
+class Mark(models.Model):
+    """
+    A single student's score on one Activity.
+    """
+
+    activity = models.ForeignKey(
+        "Activity",
+        on_delete=models.CASCADE,
+        related_name="marks",
+    )
+    student = models.ForeignKey(
+        UserProfile,
+        on_delete=models.PROTECT,
+        related_name="marks_received",
+    )
+    score = models.DecimalField(max_digits=5, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("activity", "student")
+        ordering = ["activity", "student"]
+
+    def save(self, *args, **kwargs):
+        max_score = self.activity.max_score or Decimal("0")
+        score = self.score if isinstance(self.score, Decimal) else Decimal(str(self.score))
+
+        if score > max_score:
+            raise ValidationError(f"Score ({score}) cannot exceed max ({max_score}).")
+
+        # assign back in case we coerced from str
+        self.score = score
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.student} → {self.score} on {self.activity}"
 
 
 class Material(models.Model):
@@ -241,30 +281,31 @@ class Material(models.Model):
         return self.title
 
 
-class Activity(models.Model):
-    """
-    One scored activity (test/quiz/homework) in a class & subject.
-    """
+class ActivityCategory(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    weight = models.DecimalField(
+        max_digits=5, decimal_places=2, help_text="Percentage weight (e.g. 25.00 for 25%)", null=True
+    )
 
-    class_room = models.ForeignKey(
-        ClassRoom,
+    def __str__(self):
+        return f"{self.name} ({self.weight}%)"
+
+
+class Activity(models.Model):
+    class_room = models.ForeignKey(ClassRoom, on_delete=models.PROTECT, related_name="activities")
+    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="activities")
+    teacher = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="activities_created")
+
+    # 2️⃣ New FK field (nullable at first):
+    activity_category = models.ForeignKey(
+        ActivityCategory,
         on_delete=models.PROTECT,
         related_name="activities",
+        null=True,
+        blank=True,
     )
-    subject = models.ForeignKey(
-        Subject,
-        on_delete=models.PROTECT,
-        related_name="activities",
-    )
-    teacher = models.ForeignKey(
-        UserProfile,
-        on_delete=models.PROTECT,
-        related_name="activities_created",
-    )
-    activity_type = models.CharField(
-        max_length=20,
-        choices=[("test", "Test"), ("quiz", "Quiz"), ("homework", "Homework")],
-    )
+
+    max_score = models.DecimalField(max_digits=7, decimal_places=2, null=True)
     activity_name = models.CharField(max_length=100)
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -273,31 +314,6 @@ class Activity(models.Model):
         ordering = ["-date_created"]
 
     def __str__(self):
-        return f"{self.get_activity_type_display()}: {self.activity_name}"
-
-
-class Mark(models.Model):
-    """
-    A single student's score on one Activity.
-    """
-
-    activity = models.ForeignKey(
-        Activity,
-        on_delete=models.CASCADE,
-        related_name="marks",
-    )
-    student = models.ForeignKey(
-        UserProfile,
-        on_delete=models.PROTECT,
-        related_name="marks_received",
-    )
-    out_of = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    score = models.DecimalField(max_digits=5, decimal_places=2)
-    timestamp = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        unique_together = ("activity", "student")
-        ordering = ["activity", "student"]
-
-    def __str__(self):
-        return f"{self.student} → {self.score} on {self.activity}"
+        # prefer the FK once it’s populated
+        cat = self.activity_category.name if self.activity_category else self.activity_type
+        return f"{self.activity_name} ({cat})"

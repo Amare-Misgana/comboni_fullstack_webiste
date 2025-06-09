@@ -14,7 +14,6 @@ urlpatterns = [
     path("classes/", views.teacher_classes, name="teacher_classes_url"),
     path("edit-conduct/<str:username>/", views.edit_conduct, name="edit_conduct_url"),
     path("view-class/<str:class_name>/", views.view_class_teacher, name="view_class_url"),
-
     path(
         "class/<str:class_name>/activities/",
         views.activities_list,
@@ -29,5 +28,10 @@ urlpatterns = [
         "activity/<int:activity_id>/marks/",
         views.assign_marks,
         name="fill_marks_url",
+    ),
+    path(
+        "activity/<int:activity_id>/view-marks/",
+        views.view_activity_marks,
+        name="view_activity_marks_url",
     ),
 ]

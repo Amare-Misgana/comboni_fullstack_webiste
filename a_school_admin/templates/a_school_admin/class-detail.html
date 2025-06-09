@@ -88,7 +88,7 @@
         <tbody>
           {% for assigned_subject in assigned_subjects %}
             <tr>
-              <td>{{ assigned_subject.teacher }}</td>
+              <td>{{ assigned_subject.teacher.first_name|capfirst }} {{ assigned_subject.teacher.middle_name|capfirst }}</td>
               <td>{{ assigned_subject.subject }}</td>
               <td class="table-actions">
                 <form method="POST" id="form_class" action="{% url 'delete_subject_url' subject=assigned_subject.subject classroom_id=assigned_subject.class_room.id %}">
@@ -145,7 +145,10 @@
       $('#detailTable').DataTable({
         responsive: true,
         initComplete: function () {
-          $('.dataTables_length label')
+          const tableWrapper = $('#detailTable').closest('.dataTables_wrapper')
+    
+          const lengthLabel = tableWrapper.find('.dataTables_length label')
+          lengthLabel
             .contents()
             .filter(function () {
               return this.nodeType === 3
@@ -155,7 +158,8 @@
               this.textContent = this.textContent.replace('Show', '').trim()
             })
     
-          $('.dataTables_filter label')
+          const filterLabel = tableWrapper.find('.dataTables_filter label')
+          filterLabel
             .contents()
             .filter(function () {
               return this.nodeType === 3
@@ -164,27 +168,25 @@
               this.textContent = this.textContent.replace('Search:', '').trim()
             })
     
-          // Now append your <p>…
-          const labelEl = document.querySelector('.dataTables_length label')
           const selectList = document.createElement('p')
           selectList.className = 'select-label'
           selectList.textContent = 'Show'
-          labelEl.appendChild(selectList)
+          lengthLabel.append(selectList)
     
-          // Now append your <p>…
-          const labelSR = document.querySelector('.dataTables_filter label')
           const searchList = document.createElement('p')
           searchList.className = 'search-label'
           searchList.textContent = 'Search'
-          labelSR.appendChild(searchList)
+          filterLabel.append(searchList)
         }
       })
-    })
-    $(function () {
+    
       $('#detailTable2').DataTable({
         responsive: true,
         initComplete: function () {
-          $('.dataTables_length label')
+          const tableWrapper = $('#detailTable2').closest('.dataTables_wrapper')
+    
+          const lengthLabel = tableWrapper.find('.dataTables_length label')
+          lengthLabel
             .contents()
             .filter(function () {
               return this.nodeType === 3
@@ -194,7 +196,8 @@
               this.textContent = this.textContent.replace('Show', '').trim()
             })
     
-          $('.dataTables_filter label')
+          const filterLabel = tableWrapper.find('.dataTables_filter label')
+          filterLabel
             .contents()
             .filter(function () {
               return this.nodeType === 3
@@ -203,19 +206,15 @@
               this.textContent = this.textContent.replace('Search:', '').trim()
             })
     
-          // Now append your <p>…
-          const labelEl = document.querySelector('.dataTables_length label')
           const selectList = document.createElement('p')
           selectList.className = 'select-label'
           selectList.textContent = 'Show'
-          labelEl.appendChild(selectList)
+          lengthLabel.append(selectList)
     
-          // Now append your <p>…
-          const labelSR = document.querySelector('.dataTables_filter label')
           const searchList = document.createElement('p')
           searchList.className = 'search-label'
           searchList.textContent = 'Search'
-          labelSR.appendChild(searchList)
+          filterLabel.append(searchList)
         }
       })
     })

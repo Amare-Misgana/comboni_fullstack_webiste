@@ -4,15 +4,16 @@
 {% block title %}
   Share Material
 {% endblock %}
- 
+
 {% block head %}
   <link rel="stylesheet" href="{% static 'a_teacher/css/share-material.css' %}" />
 {% endblock %}
 
 {% block page_title %}
   <div class="user-info">
-    <h1 class="username">Share Material</h1>
+    <h1 class="username">Class: {{ class_name }}</h1>
   </div>
+  <h2>Share Material</h2>
 {% endblock %}
 
 {% block content %}

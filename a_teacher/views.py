@@ -12,11 +12,15 @@ from common.models import (
     Material,
     Activity,
     Mark,
+    ActivityCategory,
 )
 from .models import TeacherAction
 from a_message.models import Message
 from django.contrib import messages
 from django.db.models import Q
+from decimal import Decimal, InvalidOperation
+from django.core.exceptions import ValidationError
+from common.utils import get_student_activities, get_student_activities_by_category
 
 # Global Variables for chat and chatting views
 identify = {
@@ -130,7 +134,11 @@ def student_detail(request, student_username):
     except CustomUser.DoesNotExist:
         messages.error(request, "Student can't be found!")
         return redirect("students_mang_url")
-    conduct = Conduct.objects.all()
+
+    conduct = Conduct.objects.filter(student__user=student).first()
+    if not conduct:
+        student_profile = UserProfile.objects.get(user=student)
+        conduct = Conduct.objects.create(student=student_profile)
     context = {
         "student": student,
         "conduct": conduct,
@@ -284,6 +292,8 @@ def teacher_classes(request):
 @user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
 def share_material(request, class_name):
 
+    identify.update({"class_name": class_name})
+
     if request.method == "POST":
         title = request.POST.get("title", "").strip()
         description = request.POST.get("description", "").strip()
@@ -326,17 +336,31 @@ def view_class_teacher(request, class_name):
 
     # 3. Handle inline “Create Activity” POST
     if request.method == "POST":
-        atype = request.POST.get("activity_type", "").strip()
+        atype = request.POST.get("activity_category", "").strip()
         name = request.POST.get("activity_name", "").strip()
-        if atype and name:
+        max_score = request.POST.get("activity_max_score", "").strip()
+        print(request.POST)
+        for a in list(ActivityCategory.objects.filter(name=atype)):
+            print(a)
+        if max_score and int(max_score) > 120:
+            messages.error(request, "Invalid max score.")
+            return redirect("view_class_url", class_name=class_name)
+        try:
+            activity_category = ActivityCategory.objects.filter(name=atype).first()
+            print(activity_category)
+        except ActivityCategory.DoesNotExist:
+            messages.error(request, "Invalid class name.")
+            return redirect("view_class_url", class_name=class_name)
+        if activity_category and name:
             profile = UserProfile.objects.get(user=request.user)
             subject = class_room.class_subjects.get(teacher=request.user).subject
             Activity.objects.create(
                 class_room=class_room,
                 subject=subject,
                 teacher=profile,
-                activity_type=atype,
+                activity_category=activity_category,
                 activity_name=name,
+                max_score=max_score,
             )
             messages.success(request, "Activity created.")
             return redirect("view_class_url", class_name=class_name)
@@ -356,6 +380,7 @@ def view_class_teacher(request, class_name):
     user_profile = UserProfile.objects.get(user=request.user)
     materials = Material.objects.filter(uploaded_by=user_profile, class_name=class_object)
     activities = Activity.objects.filter(class_room=class_room, teacher=user_profile)
+    activities_list = list(ActivityCategory.objects.order_by("name"))
 
     context = {
         "class_room": class_room,
@@ -364,6 +389,7 @@ def view_class_teacher(request, class_name):
         "materials": materials,
         "students": students,
         "activities": activities,
+        "activities_list": activities_list,
     }
     context.update(identify)
 
@@ -393,26 +419,75 @@ def activities_list(request, class_name):
     )
 
 
+@user_passes_test(lambda u: u.is_authenticated and u.role == "teacher")
 def assign_marks(request, activity_id):
     activity = get_object_or_404(Activity, id=activity_id)
     teacher_profile = UserProfile.objects.get(user=request.user)
-    # authorize
+
     if activity.teacher != teacher_profile:
         messages.error(request, "Not authorized to grade this activity.")
         return redirect("teacher_dashboard_url")
 
-    students = activity.class_room.students.select_related("user").all()
-    # map student_id → existing score
+    # fetch your students + existing scores…
+    activity_catagory = ActivityCategory.objects.filter(name="Final Exam").first()
+    students = list(activity.class_room.students.select_related("user"))
+    for student in students:
+        print(get_student_activities_by_category(student, activity_catagory))
+        print("hi")
+
     existing = {m.student_id: m.score for m in activity.marks.all()}
+    for st in students:
+        st.score = existing.get(st.id, "")
 
     if request.method == "POST":
-        # save each non-empty score
-        for student in students:
-            key = f"score_{student.id}"
-            val = request.POST.get(key, "").strip()
-            if val != "":
-                Mark.objects.update_or_create(activity=activity, student=student, defaults={"score": val})
-        messages.success(request, "Marks saved.")
+        updated = False
+        had_error = False
+
+        for st in students:
+            val = request.POST.get(f"score_{st.id}", "").strip()
+            orig = str(existing.get(st.id, ""))
+
+            if not val or val == orig:
+                continue
+
+            # quick Decimal check
+            try:
+                Decimal(val)
+            except InvalidOperation:
+                messages.error(request, f"“{val}” is not a valid number for {st.user.first_name}.")
+                had_error = True
+                continue
+
+            # try saving
+            try:
+                Mark.objects.update_or_create(
+                    activity=activity,
+                    student=st,
+                    defaults={"score": val},
+                )
+            except ValidationError as e:
+                messages.error(request, f"{st.user.first_name}: {e.messages[0]}")
+                had_error = True
+            else:
+                updated = True
+
+        if had_error:
+            # re-render so errors are visible
+            return render(
+                request,
+                "a_teacher/assign-marks.html",
+                {
+                    "activity": activity,
+                    "students": students,
+                    **identify,
+                },
+            )
+
+        if updated:
+            messages.success(request, "Marks saved.")
+        else:
+            messages.info(request, "No changes detected; nothing to save.")
+
         return redirect("view_class_url", class_name=activity.class_room.class_name.class_name)
 
     return render(
@@ -421,6 +496,41 @@ def assign_marks(request, activity_id):
         {
             "activity": activity,
             "students": students,
-            "existing": existing,
+            **identify,
         },
     )
+
+
+@user_passes_test(lambda user: user.is_authenticated and user.role == "teacher")
+def view_activity_marks(request, activity_id):
+    activity = get_object_or_404(Activity, pk=activity_id)
+    try:
+        marks = Mark.objects.filter(activity=activity)
+    except Exception as e:
+        messages.error(request, "Can't query marks.")
+        return redirect("teacher_dashboard_url")
+
+    teacher_profile = UserProfile.objects.get(user=request.user)
+
+    if activity.teacher != teacher_profile:
+        messages.error(request, "Not authorized to view these marks.")
+        return redirect("teacher_dashboard_url")
+
+    # Fetch all marks for this activity
+    marks_qs = Mark.objects.filter(activity=activity).select_related("student__user")
+    # Map student_id → score (or None)
+    scores = {m.student.id: m.score for m in marks_qs}
+
+    # Get full student list
+    students = activity.class_room.students.select_related("user").all()
+
+    context = {
+        "activity": activity,
+        "students": students,
+        "scores": scores,
+        "marks": marks,
+        "activites_list": list(ActivityCategory.objects.order_by("name")),
+    }
+    context.update(identify)
+
+    return render(request, "a_teacher/view-marks.html", context)

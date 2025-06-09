@@ -160,4 +160,10 @@ urlpatterns = [
         views.delete_material,
         name="delete_material_url",
     ),
+    path(
+        "activity-weights/",
+        views.manage_activity_weights,
+        name="manage_activity_weights",
+    ),
+    path("delete-category/<int:category_id>/", views.delete_category, name="delete_category"),
 ]

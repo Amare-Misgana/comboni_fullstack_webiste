@@ -64,13 +64,19 @@
     <form method="post" class="load">
       {% csrf_token %}
       <div class="field-group">
-        <label for="activity_type">Type</label>
-        <select name="activity_type" id="activity_type" required>
-          <option value="">-- Select --</option>
-          <option value="test">Test</option>
-          <option value="quiz">Quiz</option>
-          <option value="homework">Homework</option>
+        <label for="activity_category">Type</label>
+        <select name="activity_category" id="activity_category" required>
+          <option value="" selected>-- Select --</option>
+          {% for activity in activities_list %}
+            <option value="{{ activity.name }}">{{ activity.name }}</option>
+          {% empty %}
+            <option>No Activites</option>
+          {% endfor %}
         </select>
+      </div>
+      <div class="field-group">
+        <label for="activity_max_score">Max Score</label>
+        <input type="number" name="activity_max_score" id="activity_max_score" required />
       </div>
       <div class="field-group">
         <label for="activity_name">Name</label>
@@ -80,13 +86,14 @@
     </form>
   </div>
   <!-- 4. List Activities -->
-  <div class="activities-section">
+  <div class="activities-section" id="activities_list">
     <h2>Recent Activities</h2>
     <table id="activitiesTable" class="classTable">
       <thead>
         <tr>
           <th>Type</th>
           <th>Name</th>
+          <th>Max Score</th>
           <th>Created</th>
           <th>Actions</th>
         </tr>
@@ -94,11 +101,15 @@
       <tbody>
         {% for act in activities %}
           <tr>
-            <td>{{ act.get_activity_type_display }}</td>
+            <td>{{ act.activity_category.name }}</td>
             <td>{{ act.activity_name }}</td>
+            <td>{{ act.max_score }}</td>
             <td>{{ act.date_created|date:'Y-m-d' }}</td>
             <td class="table-actions">
+              <!-- Fill/Edit Marks -->
               <a href="{% url 'fill_marks_url' act.id %}" class="action-btn fill">✏️</a>
+              <!-- View Marks -->
+              <a href="{% url 'view_activity_marks_url' act.id %}" class="action-btn view">👁️</a>
             </td>
           </tr>
         {% endfor %}

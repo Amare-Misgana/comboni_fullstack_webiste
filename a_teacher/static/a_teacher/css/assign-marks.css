@@ -1,3 +1,7 @@
+.content {
+    padding: 1em 0 0 0;
+}
+
 .marks-form {
     max-width: 600px;
     margin: 1.5em auto;
@@ -39,4 +43,36 @@
 
 .btn.save:hover {
     background: #45A049;
+}
+
+.actions {
+    display: flex;
+    gap: 1em;
+    margin-top: 1.5em;
+}
+
+.btn.edit {
+    padding: 0.5em 1em;
+    background: var(--edit-btn);
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.btn.edit:hover {
+    background: var(--edit-btn-hover);
+}
+
+.btn.back {
+    padding: 0.5em 1em;
+    background: var(--detail-btn);
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.btn.back:hover {
+    background: var(--detail-btn-hover);
 }

@@ -6,13 +6,13 @@
   --primaryLL: rgba(143, 212, 145, 0.664);
   --primaryD: rgb(45, 170, 49);
   --low-light: rgb(219, 219, 219);
-  --primary-text: rgb(32, 32, 32);
+  --primary-text: rgb(48, 48, 48);
   --secondary-text: rgb(97, 97, 97);
   --last-text: rgb(153, 153, 153);
   --high-dark: rgb(26, 26, 26);
   --low-dark: rgb(49, 49, 49);
   --background: rgb(255, 255, 255);
-  --light-background: rgb(243, 243, 243);
+  --light-background: rgb(226, 226, 226);
   --dark-background: rgb(235, 235, 235);
   --transparent: 235, 235, 235;
   --switch-mode: 0.5s;

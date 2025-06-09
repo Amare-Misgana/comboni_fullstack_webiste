@@ -37,7 +37,7 @@
     position: absolute;
     top: 0.75em;
     left: 1em;
-    font-size: 0.9em;
+    font-size: 0.9em; 
     color: var(--secondary-text);
     pointer-events: none;
     transition: var(--transition);

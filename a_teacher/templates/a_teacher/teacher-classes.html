@@ -34,6 +34,8 @@
           <a href="{% url 'share_material_teacher_url' cls.class_name %}" class="btn share">Share Material</a>
         </div>
       </div>
+    {% empty %}
+      {% include 'fragments/no_data_box.html' with empty_title='Not assigned yet.' empty_message='You are not assigned to any class' %}
     {% endfor %}
   </div>
 {% endblock %}

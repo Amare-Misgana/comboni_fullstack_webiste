@@ -1,0 +1,105 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_student/css/quiz_detail.css' %}" />
+  <style>
+    .score-progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: </style>
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <h2>{{ quiz_name }}</h2>
+      <p class="teacher-name">by {{ teacher.get_full_name }}</p>
+
+      <div class="score-display">Your score: {{ correct }} / {{ total }}</div>
+
+      <div class="score-progress">
+        <div class="score-progress-bar"></div>
+      </div>
+    </div>
+
+    <div class="quiz-cards">
+      {% for question, result in question_results %}
+        <div class="quiz-card {% if result %}answered{% endif %}">
+          <div class="question-header">
+            <div class="question-counter">Question {{ forloop.counter }}</div>
+            {% if result %}
+              {% if result.is_correct %}
+                <span class="correct-badge">✓ Correct</span>
+              {% else %}
+                <span class="incorrect-badge">✗ Incorrect</span>
+              {% endif %}
+            {% endif %}
+          </div>
+
+          <div class="question-content">{{ question.paragraph }}</div>
+
+          {% if result %}
+            <!-- Answered state -->
+            <div class="answer-section">
+              <div class="answer-header">Your answer:</div>
+              <div class="student-answer">{{ result.answer_text }}</div>
+
+              {% if not result.is_correct %}
+                <div class="feedback">
+                  <div class="feedback-header">Feedback</div>
+                  <p>
+                    <strong>Correct answer:</strong>
+                    {% if question.type == 'MC' %}
+                      {% for choice in question.choices.all %}
+                        {% if choice.is_correct %}{{ choice.text }}{% endif %}
+                      {% endfor %}
+                    {% else %}
+                      {{ question.correct_answer }}
+                    {% endif %}
+                  </p>
+                  <p>
+                    <strong>Explanation:</strong> {{ question.explanation }}
+                  </p>
+                </div>
+              {% endif %}
+            </div>
+          {% else %}
+            <!-- Unanswered state -->
+            <form method="post" class="{% if result %}disabled-form{% endif %}">
+              {% csrf_token %}
+              <input type="hidden" name="question_id" value="{{ question.id }}" />
+
+              {% if question.type == 'MC' %}
+                <!-- Multiple Choice Question -->
+                <div class="choices-container">
+                  {% for choice in question.choices.all %}
+                    <label class="choice-label">
+                      <input type="radio" name="answer" value="{{ choice.text }}" required />
+                      <span class="choice-text">{{ choice.text }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <!-- Text-based Question -->
+                <input type="text" name="answer" placeholder="Type your answer..." required class="text-input" />
+              {% endif %}
+
+              <button type="submit" class="submit-btn">Submit Answer</button>
+            </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+    // Add progress percentage to CSS variable
+    document.documentElement.style.setProperty(
+      '--progress-percent', 
+      "{{ progress_percent }}%"
+    );
+  </script>
+{% endblock %}

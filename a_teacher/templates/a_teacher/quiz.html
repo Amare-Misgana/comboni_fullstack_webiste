@@ -1,0 +1,62 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  New Quick Quiz
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_teacher/css/quiz.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="load">
+    {% csrf_token %}
+    <label>Quiz name<input name="quiz_name" /></label>
+
+    <label>
+      Type<select name="type" id="qtype" onchange="toggleFields()">
+        <option value="TF">True/False</option>
+        <option value="MC">Multiple Choice</option>
+        <option value="FI">Fill in the Blank</option>
+      </select>
+    </label>
+
+    <label>Question<textarea name="paragraph"></textarea></label>
+
+    <div id="tf-fields" style="display:none;">
+      <label><input type="radio" name="correct" value="choice1" />True</label>
+      <label><input type="radio" name="correct" value="choice2" />False</label>
+      <input type="hidden" name="choice1" value="True" />
+      <input type="hidden" name="choice2" value="False" />
+    </div>
+
+    <div id="mc-fields" style="display:none;">
+      {% for i in '1234'|make_list %}
+        <label>
+          Option {{ forloop.counter }}
+          <input name="choice{{ forloop.counter }}" />
+        </label>
+        <label>Correct?<input type="radio" name="correct" value="choice{{ forloop.counter }}" /></label>
+      {% endfor %}
+    </div>
+
+    <div id="fi-fields" style="display:none;">
+      <label>Correct answer<input name="correct_answer" /></label>
+    </div>
+
+    <label>Explanation<textarea name="explanation"></textarea></label>
+
+    <button class="btn-primary" type="submit">Save</button>
+  </form>
+
+  <script>
+    function toggleFields() {
+      const t = document.getElementById('qtype').value
+      document.getElementById('tf-fields').style.display = t === 'TF' ? '' : 'none'
+      document.getElementById('mc-fields').style.display = t === 'MC' ? '' : 'none'
+      document.getElementById('fi-fields').style.display = t === 'FI' ? '' : 'none'
+    }
+    toggleFields()
+  </script>
+{% endblock %}

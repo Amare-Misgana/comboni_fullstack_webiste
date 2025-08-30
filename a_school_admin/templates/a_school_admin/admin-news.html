@@ -1,0 +1,64 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  News Management
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/admin-news.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">News</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="news-section-all">
+    {% if is_admin %}
+      <div class="news-header">
+        <h2 class="section-title">News Management</h2>
+        <a href="{% url 'add_news_url' %}" class="btn btn-add"><i class="fa fa-plus"></i> Add</a>
+      </div>
+    {% endif %}
+
+    {% if news_list %}
+      {% for item in news_list %}
+        <article class="news-card">
+          <div class="news-image">
+            <img src="{{ item.image_src }}" alt="{{ item.title }}" />
+          </div>
+
+          <div class="news-content">
+            <h3>{{ item.title }}</h3>
+            <p class="description">{{ item.description }}</p>
+            <div class="news-footer">
+              <span class="news-date">{{ item.date }}</span>
+              <a href="{{ item.url }}" class="read-more">Read more</a>
+            </div>
+          </div>
+
+          {% if is_admin %}
+            <div class="admin-controls">
+              <a href="{% url 'edit_news_url' item.id %}" class="btn btn-edit absolute"><i class="fa fa-edit"></i></a>
+              <a href="{% url 'view_news_url' item.id %}" class="btn btn-view absolute"><i class="fa fa-eye"></i></a>
+              <a href="{% url 'delete_news_url' item.id %}" class="btn btn-delete"><i class="fa fa-trash"></i></a>
+            </div>
+          {% endif %}
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="empty-box">
+        <h2>No News Available</h2>
+        <p>To share information for all school memeber, add news</p>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'a_school_admin/js/admin-news.js' %}"></script>
+{% endblock %}

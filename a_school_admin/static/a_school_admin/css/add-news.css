@@ -1,0 +1,93 @@
+.news-card {
+    max-width: 600px;
+    margin: 3em auto;
+    background: var(--light-background);
+    padding: 2em;
+    border-radius: 0.3em;
+    border: 1px solid var(--tint);
+    transition: var(--transition);
+}
+
+.card-title {
+    font-size: 1.8em;
+    margin-bottom: 1em;
+    text-align: center;
+    color: var(--primary);
+}
+
+form .field {
+    position: relative;
+    margin-bottom: 2em;
+}
+
+form input[type="text"],
+form textarea,
+form input[type="file"] {
+    width: 100%;
+    padding: 0.9em 1em;
+    border: 2px solid var(--tint);
+    border-radius: 0.3em;
+    background: var(--background);
+    font-size: 1em;
+    color: var(--primary-text);
+    transition: var(--transition);
+}
+
+form input:focus {
+    outline: 1px solid var(--primary);
+}
+
+
+form label {
+    position: absolute;
+    top: -0.8em;
+    left: 1em;
+    background: var(--light-background);
+    padding: 0 0.4em;
+    font-size: 0.9em;
+    color: var(--secondary-text);
+    transition: var(--transition);
+}
+
+.preview {
+    margin-top: 1em;
+    width: 100%;
+    height: 220px;
+    border-radius: 0.3em;
+    border: 2px dashed var(--low-light);
+    background: var(--dark-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+button[type="submit"] {
+    width: 100%;
+    background: var(--edit-btn);
+    color: white;
+    padding: 0.9em;
+    font-size: 1.3em;
+    border: none;
+    border-radius: 0.3em;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+button[type="submit"]:hover {
+    background: var(--edit-btn-hover);
+}
+
+#description {
+    resize: vertical;
+}
+
+#description:focus {
+    outline: 1px solid var(--primary);
+}

@@ -1,13 +1,14 @@
-{% extends 'a_school_admin/dashboard-frag.html' %}
+{% extends 'fragments/dashboard-frag.html' %}
 {% load static %}
 
 {% block title %}
-  Dashboard
+  Dashboard | Teachers Management
 {% endblock %}
 
 {% block head %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="{% static 'a_school_admin/css/teachers-mang.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/sub_title.css' %}" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
 {% endblock %}
 
 {% block page_title %}
@@ -18,5 +19,198 @@
 {% endblock %}
 
 {% block content %}
+  <!-- Add Students Method -->
+  <div class="reg-portal">
+    <div class="portal-grid">
+      <!-- Manual Entry -->
+      <article class="reg-card manual-card">
+        <div class="card-ornament"></div>
+        <div class="card-core">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">fingerprint</span>
+          </div>
+          <h3 class="card-header">Precision Enrollment</h3>
+          <p class="card-excerpt">Artisanal teacher registration with granular control</p>
+          <div class="card-actions">
+            <a href="{% url 'add_teacher_url' %}" class="card-cta">
+              Begin Manual Process
+              <span class="cta-underline"></span>
+            </a>
+          </div>
+        </div>
+        <div class="card-badge">Recommended for accuracy</div>
+      </article>
 
+      <!-- Bulk Upload -->
+      <article class="reg-card bulk-card">
+        <div class="card-ornament"></div>
+        <div class="card-core">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">deployed_code</span>
+          </div>
+          <h3 class="card-header">Batch Integration</h3>
+          <p class="card-excerpt">Enterprise-grade mass enrollment via structured data</p>
+          <div class="card-actions">
+            <a href="{% url 'add_teachers_url' %}" class="card-cta">
+              Initiate Bulk Sequence
+              <span class="cta-underline"></span>
+            </a>
+          </div>
+        </div>
+        <div class="card-badge">XLSX optimized</div>
+      </article>
+    </div>
+  </div>
+  {% if not subjects %}
+    <div class="teachers-per-subject generic-graph-container">
+      <canvas id="teachersPerSubject" class="generic-graph"></canvas>
+    </div>
+  {% endif %}
+  {% if teachers %}
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Teacher</h2>
+        <a href="{% url 'add_teacher_url' %}"><button class="add-student-btn action-btn">Add Teacher</button></a>
+      </div>
+      <table id="teachersTable" class="classTable">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Age</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for teacher in teachers %}
+            <tr>
+              <td>{{ teacher.first_name }}</td>
+              <td>{{ teacher.middle_name }}</td>
+              <td>{{ teacher.age }}</td>
+              <td class="crud">
+                <a href="{% url 'teacher_detail_url' teacher_username=teacher.username %}" class="detail-btn right-btn">Details</a>
+                <a href="{% url 'edit_teacher_url' teacher_username=teacher.username %}" class="edit-btn left-btn">Edit</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Teachers Found' empty_message='There are currently no teachers in the system.' btn_name='+ Add Teacher' add_url='add_teacher_url' %}
+  {% endif %}
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    function getLabelColor() {
+      return localStorage.getItem('theme') === 'true' ? 'black' : 'white'
+    }
+    const teachers_per_subject_ctx = document.getElementById('teachersPerSubject').getContext('2d')
+    
+    const teachersPerSubject = new Chart(teachers_per_subject_ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Math', 'English', 'Science', 'History', 'English', 'Science', 'History'],
+        datasets: [
+          {
+            label: 'Score',
+            data: [5, 9, 5, 6, 9, 7, 1],
+            backgroundColor: '#196b21'
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: getLabelColor() }
+          },
+          title: {
+            display: true,
+            text: 'Teachers Per Subject',
+            color: getLabelColor(),
+            font: { size: 25, weight: 'normal' },
+            align: 'start'
+          },
+          datalabels: {
+            anchor: 'center',
+            align: 'center',
+            color: 'white',
+            font: { weight: 'bold' },
+            formatter: Math.round
+          }
+        },
+        scales: {
+          x: { ticks: { color: getLabelColor() } },
+          y: { ticks: { color: getLabelColor() } }
+        }
+      },
+      plugins: [ChartDataLabels]
+    })
+    
+    document.querySelector('.theme-toggle').addEventListener('change', function () {
+      const newColor = getLabelColor()
+      teachersPerSubject.options.plugins.legend.labels.color = newColor
+      teachersPerSubject.options.plugins.title.color = newColor
+      teachersPerSubject.options.scales.x.ticks.color = newColor
+      teachersPerSubject.options.scales.y.ticks.color = newColor
+      teachersPerSubject.update()
+    })
+    
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'F9') {
+        const newColor = getLabelColor()
+        teachersPerSubject.options.plugins.legend.labels.color = newColor
+        teachersPerSubject.options.plugins.title.color = newColor
+        teachersPerSubject.options.scales.x.ticks.color = newColor
+        teachersPerSubject.options.scales.y.ticks.color = newColor
+        teachersPerSubject.update()
+      }
+    })
+    
+    $(document).ready(function () {
+      const table = $('#teachersTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+  </script>
 {% endblock %}

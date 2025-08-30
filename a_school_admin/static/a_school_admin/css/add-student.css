@@ -1,0 +1,80 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.add-student-form {
+    background-color: var(--light-background);
+    color: var(--primary-text);
+    max-width: 700px;
+    margin: 2em auto;
+    padding: 2em;
+    border-radius: 0.3em;
+}
+
+.add-student-form h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 1.5em;
+}
+
+.profile-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2em;
+}
+
+.profile-label {
+    cursor: pointer;
+    position: relative;
+}
+
+.profile-label img {
+    width: 10em;
+    height: 10em;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px dashed var(--primary);
+    transition: transform 0.3s ease;
+}
+
+.profile-label:hover img {
+    transform: scale(1.05);
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    margin-bottom: 1.5em;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: var(--secondary-text);
+    margin-bottom: 0.5em;
+    font-size: 0.95em;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.6em;
+    font-size: 1em;
+    border: 1px solid var(--light-background);
+    border-radius: 0.5em;
+    background-color: var(--tint);
+    color: var(--primary-text);
+}
+
+.form-group input:focus {
+    outline: none;
+    border: 1px solid var(--primary);
+}

@@ -1,0 +1,36 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Edit Subject
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/edit-subject.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="edit-subject-container">
+    <h2>Edit Subject</h2>
+    <form method="post" class="edit-subject-form">
+      {% csrf_token %}
+
+      <div class="input-group">
+        <label for="subject_name">Subject Name:</label>
+        <input type="text" id="subject_name" name="subject_name" value="{{ subject.subject_name }}" required />
+      </div>
+
+      <div class="input-group">
+        <label>Is Graded?</label>
+        {% include 'fragments/checkbox.html' with checkbox_name='is_graded' %}
+        <script>
+          document.querySelector('[name="is_graded"]').checked = {{ subject.is_graded|yesno:"true,false" }};
+        </script>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">Update Subject</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

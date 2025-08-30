@@ -1,8 +1,3 @@
-* {
-  margin: 0;
-  padding: 0;
-}
-
 .content {
   display: flex;
   justify-content: flex-start;
@@ -17,9 +12,9 @@
 
 .content .overview {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  width: 91%;
+  width: 90%;
 }
 
 .content .overview .info-card {
@@ -120,6 +115,16 @@
   }
 }
 
+@media (max-width: 600px) {
+  .content .overview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 1em;
+  }
+}
+
 
 /* OVERVIEW CARDS END!!!!!!!!!!!!!!!!! */
 
@@ -127,21 +132,7 @@
 /* STUDENT PER GRADE GRAPH  */
 
 
-.content .student-per-grade,
-.content .student-gender {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 90%;
-  height: 30em;
-  padding: 0 2em;
-  background-color: var(--light-background);
-}
 
-.content .student-per-grade #student-per-grade,
-.content .student-gender #student-gender {
-  width: 100%;
-}
 
 
 /* STUDENT PER GRADE GRAPH END!!!!!!!!!!!!!!!!! */
@@ -155,6 +146,15 @@
   background: var(--light-background);
   overflow-x: auto;
 }
+
+.content .admin-table .table-header {
+  display: flex;
+}
+
+.content .admin-table .table-header h2 {
+  font-weight: 500;
+}
+
 
 .content table {
   width: 100%;
@@ -190,4 +190,4 @@
   font-size: 0.9em;
 }
 
-/* RECENT ACTIONS BY ADMIN END!!!!!!!!!!!!!!!! */
+/* RECENT ACTIONS BY ADMIN END!!!!!!!!!!!!!!!! *

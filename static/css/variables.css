@@ -6,22 +6,32 @@
   --primaryLL: rgba(143, 212, 145, 0.664);
   --primaryD: rgb(45, 170, 49);
   --low-light: rgb(219, 219, 219);
-  --primary-text: rgb(32, 32, 32);
+  --primary-text: rgb(48, 48, 48);
   --secondary-text: rgb(97, 97, 97);
   --last-text: rgb(153, 153, 153);
   --high-dark: rgb(26, 26, 26);
   --low-dark: rgb(49, 49, 49);
   --background: rgb(255, 255, 255);
-  --light-background: rgb(243, 243, 243);
+  --light-background: rgb(226, 226, 226);
   --dark-background: rgb(235, 235, 235);
   --transparent: 235, 235, 235;
   --switch-mode: 0.5s;
+  --edit-btn: #1f8029;
+  --edit-btn-hover: #29bb37;
+  --delete-btn: #ce1d1d;
+  --delete-btn-hover: #db2323;
+  --detail-btn: #21828d;
+  --detail-btn-hover: #269eac;
+  --card-radius: 18px;
+  --hover-elevate: 8px;
+  --icon-size: 56px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.dark-mode {
   --transparent: 25, 25, 25;
   --primary-text: rgb(228, 228, 228);
-  --primary: #24722b;
+  --primary: #2e9237;
   --box-shadow: rgb(45, 45, 45);
   --tint: rgb(75, 75, 75);
   --primaryL: rgb(118, 212, 121);
@@ -35,5 +45,11 @@ body.dark-mode {
   --background: rgb(18, 18, 18);
   --light-background: rgb(43, 46, 42);
   --dark-background: rgb(32, 32, 32);
+  --edit-btn: #42c44f;
+  --edit-btn-hover: #36a142;
+  --delete-btn: #ff5b5c;
+  --delete-btn-hover: #cc4748;
+  --detail-btn: #4db7bd;
+  --detail-btn-hover: #3e959a;
   background-color: var(--background);
 }

@@ -1,0 +1,90 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Fill Marks | Dashboard
+{% endblock %}
+
+{% block head %}
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+  <!-- Your custom (optional minimal tweaks) -->
+  <link rel="stylesheet" href="{% static 'a_teacher/css/assign-marks.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Class: {{ activity.class_room.class_name.class_name }}</h1>
+  </div>
+  <h2>Enter Marks: {{ activity.get_activity_type_display }} – {{ activity.activity_name }}</h2>
+{% endblock %}
+
+{% block content %}
+  {% if students %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="table-container">
+        <div class="table-header">
+          <h2>Out Of: {{ activity.max_score }}</h2>
+          <button type="submit" class="btn save">Save Marks</button>
+        </div>
+        <table id="marksTable" class="classTable" style="width:100%">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+              <tr>
+                <td>{{ student.user.first_name }} {{ student.user.middle_name }}</td>
+                <td>
+                  <input type="number" name="score_{{ student.id }}" step="0.01" min="0" max="100" value="{{ student.score }}" placeholder="––" required style="width:4em;" />
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="actions">
+          <a href="{% url 'view_class_url' class_name=activity.class_room.class_name.class_name %}#activities_list" class="btn back"><i class="fa fa-arrow-left"></i> Back</a>
+        </div>
+      </div>
+    </form>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Students Found' empty_message='There are no students in this class.' btn_name='Go back' add_url='view_class_url' arg=activity.class_room.class_name.class_name %}
+  {% endif %}
+{% endblock %}
+
+{% block script %}
+  <!-- jQuery is required by DataTables -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(function () {
+      $('#marksTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          var api = this.api()
+          var $cont = $(api.table().container())
+    
+          // clean labels
+          $cont
+            .find('.dataTables_length label, .dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace(/Show|entries|Search:/g, '').trim()
+            })
+    
+          // add our Show/Search labels
+          $('<span class="select-label">Show</span>').appendTo($cont.find('.dataTables_length label'))
+          $('<span class="search-label">Search</span>').appendTo($cont.find('.dataTables_filter label'))
+        }
+      })
+    })
+  </script>
+{% endblock %}

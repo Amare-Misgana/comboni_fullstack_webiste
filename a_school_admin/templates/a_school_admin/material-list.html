@@ -1,0 +1,56 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Materials
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/material-list.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Materials</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="material-list">
+    {% for material in materials %}
+      <div class="material-card">
+        <div class="material-preview">
+          {% if '.pdf' in material.file.url %}
+            <i class="fas fa-file-pdf pdf-icon"></i>
+          {% elif '.doc' in material.file.url or '.docx' in material.file.url %}
+            <i class="fas fa-file-word word-icon"></i>
+          {% elif '.png' in material.file.url or '.jpg' in material.file.url or '.jpeg' in material.file.url %}
+            <img src="{{ material.file.url }}" alt="Preview" class="preview-img" />
+          {% else %}
+            <i class="fas fa-file-alt generic-icon"></i>
+          {% endif %}
+        </div>
+
+        <div class="material-details">
+          <h3 class="material-title" title="{{ material.title }}">{{ material.title }}</h3>
+          {% if material.class_name %}
+            <h4>For: {{ material.class_name }}</h4>
+          {% endif %}
+          <p class="material-description">{{ material.description }}</p>
+        </div>
+
+        <div class="material-actions">
+          <a href="{% url 'edit_material_url' material.id %}" title="Edit"><i class="fas fa-edit"></i></a>
+          <a href="{{ material.file.url }}" download title="Download"><i class="fas fa-download"></i></a>
+          <a href="{% url 'delete_material_url' material.id %}" title="Delete" class="delete"><i class="fas fa-trash"></i></a>
+        </div>
+      </div>
+    {% empty %}
+      {% if is_admin %}
+        {% include 'fragments/no_data_box.html' with empty_title='No Materials Found' empty_message='You are not assigned to any class' btn_name='Share Materials' add_url='share_material_url' %}
+      {% else %}
+        {% include 'fragments/no_data_box.html' with empty_title='No Materials Found' empty_message='You are not assigned to any class' btn_name='Share Materials' %}
+      {% endif %}
+    {% endfor %}
+  </div> 
+{% endblock %}

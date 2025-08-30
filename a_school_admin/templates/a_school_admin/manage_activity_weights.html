@@ -1,0 +1,113 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Global Activity Weights
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/manage_activity_weights.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Manage Activity Categories & Weights</h1>
+  </div>
+  <h2>Define each category’s percent of the total grade (sum to 100%).</h2>
+{% endblock %}
+
+{% block content %}
+  <!-- Add New Category -->
+  <div class="form-card">
+    <h2>Add New Category</h2>
+    <form method="post" class="inline-form">
+      {% csrf_token %}
+      <input type="text" name="new_category_name" placeholder="Category name (e.g. Test)" required />
+      <input type="number" name="new_category_weight" placeholder="Weight %" min="0" max="100" step="0.01" required />
+      <button type="submit" class="btn save">Add Category</button>
+    </form>
+  </div>
+
+  <!-- Update Existing Weights -->
+  <form method="post">
+    {% csrf_token %}
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Activity Weights</h2>
+        <button type="submit" class="btn save">Save Weights</button>
+      </div>
+      <table id="weightsTable" class="display classTable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Weight (%)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat in categories %}
+            <tr>
+              <td>{{ cat.name|default:'None' }}</td>
+              <td>
+                <input type="number" name="weight_{{ cat.id }}" value="{{ cat.weight }}" min="0" max="100" step="0.01" required />
+              </td>
+              <td>
+                <form method="post" action="{% url 'delete_category' cat.id %}" id="form_class">
+                  {% csrf_token %}
+                  <button type="submit" class="save btn delete-btn" onclick="showDeletePopup('form_class')">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </form>
+{% endblock %}
+
+{% block script %}
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      const table = $('#weightsTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+          const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+  </script>
+{% endblock %}

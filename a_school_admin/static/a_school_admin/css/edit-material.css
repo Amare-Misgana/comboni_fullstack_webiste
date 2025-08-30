@@ -1,0 +1,66 @@
+/* Container for edit form */
+form {
+  max-width: 500px;
+  margin: 2em auto;
+  background: #fff;
+  padding: 1.5em 2em;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 1.5em;
+}
+
+/* Labels */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4em;
+  color: #333;
+  font-size: 1rem;
+}
+
+/* Inputs */
+input[type="text"],
+textarea,
+input[type="file"] {
+  width: 100%;
+  padding: 0.6em 0.8em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+input[type="file"]:focus {
+  border-color: #1a73e8;
+  outline: none;
+}
+
+/* Textarea */
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Submit button */
+.btn-submit {
+  background-color: #1a73e8;
+  color: #fff;
+  padding: 0.7em 1.4em;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #155ab6;
+}

@@ -1,0 +1,20 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_student/css/quiz.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <h2>Available Quizzes</h2>
+  {% for quiz in quizzes %}
+    <div class="quiz-card">
+      <h3>{{ quiz.teacher_obj.first_name }} {{ quiz.teacher_obj.middle_name }}</h3>
+      <h4>{{ quiz.quiz_name }}</h4>
+      <p>Total Questions: {{ quiz.total_questions }}</p>
+      <a href="{% url 'student_quiz_detail' quiz.teacher quiz.quiz_name %}">View Quiz</a>
+    </div>
+  {% empty %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Quiz' empty_message="You don't have any quiz." %}
+  {% endfor %}
+{% endblock %}

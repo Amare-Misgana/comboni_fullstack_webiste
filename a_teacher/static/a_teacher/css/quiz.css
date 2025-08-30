@@ -1,0 +1,54 @@
+form {
+    background-color: var(--light-background);
+    padding: 2em;
+    border: 1px solid var(--border);
+    border-radius: 0.3em;
+    box-shadow: 0 0 0.5em var(--shadow);
+    max-width: 40em;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    color: var(--primary-text);
+    font-size: 1em;
+}
+
+input,
+select,
+textarea {
+    background-color: var(--dark-background);
+    border: 1px solid var(--border);
+    border-radius: 0.3em;
+    padding: 0.6em;
+    font-size: 1em;
+    color: var(--text);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 6em;
+}
+
+input[type="radio"] {
+    margin-right: 0.5em;
+}
+
+button.btn-primary {
+    background-color: var(--primary);
+    color: var(--on-primary);
+    padding: 0.8em 1.4em;
+    border: none;
+    border-radius: 0.3em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button.btn-primary:hover {
+    background-color: var(--primary-dark);
+}

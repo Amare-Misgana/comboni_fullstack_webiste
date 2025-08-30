@@ -1,0 +1,59 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em 0 0 0;
+}
+
+.form-card {
+    background: var(--light-background);
+    border-radius: 0.3em;
+    padding: 1.5rem;
+    width: 90%;
+    align-self: center;
+}
+
+/* Headings */
+.form-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: var(--primary-text);
+}
+
+/* Inline form */
+.inline-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.inline-form input {
+    padding: 0.5rem;
+    border: 1px solid var(--tint);
+    border-radius: 0.3em;
+    width: 12em;
+}
+
+/* Buttons */
+.btn.save {
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.3em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn.save:hover {
+    background-color: var(--primaryD);
+}
+
+.delete-btn {
+    background-color: var(--delete-btn) !important;
+}
+
+.delete-btn:hover {
+    background-color: var(--delete-btn-hover) !important;
+}

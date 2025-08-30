@@ -14,6 +14,8 @@
     border-radius: 0.3em;
     color: var(--primary-text);
     font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 .student-edit-form h2 {
@@ -69,7 +71,7 @@
     border: 1px solid var(--primaryLL);
     border-radius: .4em;
     background: var(--light-background);
-    color: var(--dark-background);
+    color: var(--primary-text);
 }
 
 .form-group input:focus,
@@ -78,17 +80,10 @@
     border-color: var(--primary);
 }
 
-button {
-    width: 100%;
-    padding: .8em;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: .5em;
-    cursor: pointer;
-    transition: background .3s;
+.crud {
+    align-self: center;
 }
 
-button:hover {
-    background: var(--primaryD);
+.crud .btn {
+    width: 10em;
 }

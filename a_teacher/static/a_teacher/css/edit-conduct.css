@@ -1,0 +1,89 @@
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info p {
+    color: var(--secondary-text);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.conduct-form {
+    background: var(--light-background);
+    padding: 2em;
+    border-radius: 0.3em;
+    width: 20em;
+    margin: 2em auto;
+    transition: var(--transition);
+}
+
+.conduct-form label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: var(--primary-text);
+    font-weight: 600;
+}
+
+.input-select {
+    width: 100%;
+    padding: 0.6em;
+    border: 1px solid var(--tint);
+    border-radius: 0.3em;
+    background: var(--background);
+    color: var(--primary-text);
+    font-size: 1em;
+    margin-bottom: 1.5em;
+    transition: var(--transition);
+}
+
+.input-select:hover {
+    border-color: var(--primaryL);
+}
+
+form {
+    width: 100%;
+}
+
+.button-row {
+    width: 100%;
+    display: flex;
+    gap: 1em;
+    justify-content: space-between;
+}
+
+.button-row a {
+    text-decoration: none;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.6em 1.2em;
+    border-radius: 0.3em;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background: var(--edit-btn);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--edit-btn-hover);
+}
+
+.btn-secondary {
+    background: var(--tint);
+    color: var(--secondary-text);
+}
+
+.btn-secondary:hover {
+    background: var(--primaryLL);
+}

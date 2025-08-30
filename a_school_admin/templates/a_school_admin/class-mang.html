@@ -1,4 +1,4 @@
-{% extends 'a_school_admin/dashboard-frag.html' %}
+{% extends 'fragments/dashboard-frag.html' %}
 {% load static %}
 
 {% block title %}
@@ -17,40 +17,140 @@
 {% endblock %}
 
 {% block content %}
-  <div class="class-activity">
-    <canvas id="class-activity"></canvas>
+  <div class="batch-creation-card" onclick="window.location.href='{% url 'create_classes_url' %}'">
+    <div class="batch-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </div>
+    <div class="batch-card-content">
+      <h3>Batch Create Classes</h3>
+      <p>Add multiple classes at once with duplicate checking</p>
+      <div class="batch-card-action">
+        <span>Get Started</span>
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </div>
+    </div>
   </div>
+
+  <!-- Availabe Classes Container -->
+
+  {% if classes %}
+    <div class="class-container">
+      <h1>School Classes</h1>
+
+      <div class="classes-container">
+        {% for class in classes %}
+          <a href="{% url 'class_detail_url' class_name=class.class_name %}"><div class="class-card">{{ class }}</div></a>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Classes Found' empty_message='Please add some classes to the system' %}
+  {% endif %}
+
+  <!-- Subjects -->
+
+  <div class="subject-manage-box">
+    <h3>Subject Management</h3>
+    <p>Easily manage all your subjects – add, edit, or delete them as needed.</p>
+    <a href="{% url 'add_subjects_url' %}" class="manage-subject-btn">Go to Subjects</a>
+  </div>
+  <div class="subject-manage-box">
+    <h3>Mange Activity</h3>
+    <p>Easily manage all your school activities.</p>
+    <a href="{% url 'manage_activity_weights' %}" class="manage-subject-btn">Go to Activities</a>
+  </div>
+
+  <!-- Classes performance Graph -->
+
+  {% if class_performance %}
+    <div class="class-activity">
+      <canvas id="class-activity"></canvas>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Acitivites" btn_name='+ Add Class' add_url='create_classes_url' %}
+  {% endif %}
+
+  <!-- Availabe Classes Rooms -->
+
+  {% if class_rooms %}
+    <div class="table-container class-container">
+      <div class="table-header">
+        <h2>Classes</h2>
+        <a href="{% url 'create_classes_url' %}"><button class="add-student-btn">Add Class</button></a>
+      </div>
+      <table id="classTable" class="classTable">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Total Students</th>
+            <th>Home Room Teacher</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for class_room in class_rooms %}
+            <tr>
+              <td>{{ class_room.class_name }}</td>
+              <td>{{ class_room.students.count }}</td>
+              {% with found=False %}
+                {% for user in users %}
+                  {% if user.user.username == class_room.room_teacher.username %}
+                    <td>{{ user.username|capfirst }}</td>
+                    {% with found=True %}
+
+                    {% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {% if not found %}
+                  <td>Empty</td>
+                {% endif %}
+              {% endwith %}
+
+              <td class="crud">
+                <a href="{% url 'class_detail_url' class_name=class_room.class_name %}" class="detail-btn right-btn">Detail</a>
+                <a href="{% url 'edit_class_url' class_name=class_room.class_name %}" class="edit-btn left-btn">Edit</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Availabe Class Rooms' empty_message="There is no availabe class. We can't show Class Tables" btn_name='+ Add Class' add_url='create_classes_url' %}
+  {% endif %}
 {% endblock %}
 
 {% block script %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
   <script>
-    const class_activity_ctx = document.getElementById('class-activity').getContext('2d')
-    
-    function getTheme() {
-      return localStorage.getItem('theme') === 'true'
-    }
-    
     function getLabelColor() {
-      return getTheme() ? 'black' : 'white'
+      return localStorage.getItem('theme') === 'true' ? 'black' : 'white'
     }
-    
-    new Chart(class_activity_ctx, {
+    {% if class_performance %}
+      const class_activity_ctx = document.getElementById('class-activity').getContext('2d')
+      
+      
+    const chart1 = new Chart(class_activity_ctx, {
       type: 'bar',
       data: {
         labels: ['Math', 'English', 'Science', 'History', 'English', 'Science', 'History'],
         datasets: [
-          {
-            label: 'Score',
-            data: [85, 90, 75, 60, 90, 75, 60],
-            backgroundColor: '#196b21'
-          }
+        {
+          label: 'Score',
+          data: [85, 90, 75, 60, 90, 75, 60],
+          backgroundColor: '#196b21'
+        }
         ]
       },
       options: {
-        indexAxis: 'y', // ⬅️ This makes it horizontal
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: false, // Key to use the CSS-defined height
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             labels: { color: getLabelColor() }
@@ -59,14 +159,92 @@
             display: true,
             text: 'Student Votes by Color',
             color: getLabelColor(),
-            font: { size: 18 }
+            font: { size: 25, weight: 'normal' },
+            align: 'start'
+          },
+          datalabels: {
+            anchor: 'center',
+            align: 'center',
+            color: 'white',
+            font: { weight: 'bold' },
+            formatter: Math.round
           }
         },
         scales: {
           x: { ticks: { color: getLabelColor() } },
           y: { ticks: { color: getLabelColor() } }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     })
+    
+    document.querySelector('.theme-toggle').addEventListener('change', function () {
+      const newColor = getLabelColor()
+      chart1.options.plugins.legend.labels.color = newColor
+      chart1.options.plugins.title.color = newColor
+      chart1.options.scales.x.ticks.color = newColor
+      chart1.options.scales.y.ticks.color = newColor
+      chart1.update()
+    })
+    
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'F9') {
+        const newColor = getLabelColor()
+        chart1.options.plugins.legend.labels.color = newColor
+        chart1.options.plugins.title.color = newColor
+        chart1.options.scales.x.ticks.color = newColor
+        chart1.options.scales.y.ticks.color = newColor
+        chart1.update()
+      }
+    }) 
+    
+    {% endif %}
+    {% if class_rooms %}
+    $(document).ready(function () {
+      const table = $('#classTable').DataTable({
+        dom: '<"dataTables-controls"lf>rtip',
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search...",
+            lengthMenu: "Show _MENU_ entries"
+        },
+        responsive: true,
+        initComplete: function () {
+          $('.dataTables_length label')
+          .contents()
+          .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          $('.dataTables_filter label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          // Now append your <p>…
+            const labelEl = document.querySelector('.dataTables_length label')
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          labelEl.appendChild(selectList)
+    
+          // Now append your <p>…
+          const labelSR = document.querySelector('.dataTables_filter label')
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          labelSR.appendChild(searchList)
+        }
+      })
+    })
+    {% endif %}
   </script>
 {% endblock %}

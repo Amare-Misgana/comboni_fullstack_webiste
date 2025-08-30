@@ -1,0 +1,176 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Class Detail | Dashboard
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="{% static 'a_teacher/css/view-class.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Class Detail: {{ class_room.class_name.class_name }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <!-- 1. Homeroom -->
+  <div class="class-info-card">
+    <h2>Homeroom Teacher</h2>
+    {% if class_room.room_teacher %}
+      <p>{{ class_room.room_teacher.username }}</p>
+    {% else %}
+      <p>
+        <em>Not assigned</em>
+      </p>
+    {% endif %}
+  </div>
+
+  <!-- 2. Shared Materials -->
+  <div class="materials-section">
+    <div class="section-header">
+      <h2>Shared Materials</h2>
+      <a href="{% url 'share_material_teacher_url' class_room.class_name.class_name %}" class="btn upload">Upload</a>
+    </div>
+    <table id="materialsTable" class="classTable">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Uploaded At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mat in materials %}
+          <tr>
+            <td>{{ mat.title }}</td>
+            <td>{{ mat.description|default:'—' }}</td>
+            <td>{{ mat.uploaded_at|date:'Y-m-d H:i' }}</td>
+            <td class="table-actions">
+              <a href="{% url 'download_material_url' mat.id %}" class="action-btn download">📥</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="activity-card">
+    <h2>Create Activity</h2>
+    <form method="post" class="load">
+      {% csrf_token %}
+      <div class="field-group">
+        <label for="activity_category">Type</label>
+        <select name="activity_category" id="activity_category" required>
+          <option value="" selected>-- Select --</option>
+          {% for activity in activities_list %}
+            <option value="{{ activity.name }}">{{ activity.name }}</option>
+          {% empty %}
+            <option>No Activites</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="activity_max_score">Max Score</label>
+        <input type="number" name="activity_max_score" id="activity_max_score" required />
+      </div>
+      <div class="field-group">
+        <label for="activity_name">Name</label>
+        <input type="text" name="activity_name" id="activity_name" required />
+      </div>
+      <button type="submit" class="btn create">Create</button>
+    </form>
+  </div>
+  <!-- 4. List Activities -->
+  <div class="activities-section" id="activities_list">
+    <h2>Recent Activities</h2>
+    <table id="activitiesTable" class="classTable">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Max Score</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for act in activities %}
+          <tr>
+            <td>{{ act.activity_category.name }}</td>
+            <td>{{ act.activity_name }}</td>
+            <td>{{ act.max_score }}</td>
+            <td>{{ act.date_created|date:'Y-m-d' }}</td>
+            <td class="table-actions">
+              <!-- Fill/Edit Marks -->
+              <a href="{% url 'fill_marks_url' act.id %}" class="action-btn fill">✏️</a>
+              <!-- View Marks -->
+              <a href="{% url 'view_activity_marks_url' act.id %}" class="action-btn view">👁️</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. Student Table -->
+  <div class="table-container">
+    <div class="section-header">
+      <h2>Assigned Students</h2>
+    </div>
+    <table id="studentsTable" class="classTable">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Middle Name</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.user.first_name }}</td>
+            <td>{{ student.user.middle_name }}</td>
+            <td>{{ student.user.age }}</td>
+            <td class="table-actions">
+              <a href="{% url 'student_detail_url' student.user.username %}" class="action-btn detail">📄</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    ;['#materialsTable', '#activitiesTable', '#studentsTable'].forEach(function (selector) {
+      $(selector).DataTable({
+        responsive: true,
+        initComplete: function () {
+          var $cont = $(this.api().table().container())
+    
+          // strip default words
+          $cont
+            .find('label')
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace(/Show|entries|Search:/g, '').trim()
+            })
+    
+          // add one Show and one Search per table
+          $('<span class="select-label">Show</span>').appendTo($cont.find('.dataTables_length label'))
+          $('<span class="search-label">Search</span>').appendTo($cont.find('.dataTables_filter label'))
+        }
+      })
+    })
+  </script>
+{% endblock %}

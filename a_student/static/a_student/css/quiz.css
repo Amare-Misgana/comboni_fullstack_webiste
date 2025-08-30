@@ -1,0 +1,61 @@
+/* quiz.css */
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2em 1em;
+    gap: 1em;
+}
+
+.quiz-card {
+    width: 95%;
+    max-width: 650px;
+    background-color: var(--light-background);
+    border-radius: 0.5em;
+    padding: 1.5em 2em;
+    box-shadow: 0 0.2em 1em rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.quiz-card:hover {
+    transform: translateY(-0.3em);
+    box-shadow: 0 0.5em 1.2em rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: var(--primary) !important;
+}
+
+.quiz-card h3 {
+    color: var(--primary);
+    font-size: 1.3em;
+    margin-bottom: 0.6em;
+}
+
+.quiz-card h4 {
+    color: var(--secondary-text);
+}
+
+.quiz-card p {
+    color: var(--secondary-text);
+    margin: 0.3em 0;
+    font-size: 0.95em;
+}
+
+.quiz-card a {
+    display: inline-block;
+    margin-top: 1em;
+    padding: 0.6em 1.2em;
+    background-color: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.4em;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.quiz-card a:hover {
+    background-color: var(--primaryD);
+}

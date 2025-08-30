@@ -36,10 +36,14 @@
       background-repeat: no-repeat;
       opacity: 0.6;
     }
+    .hero_container {
+      min-height: 1vh !important;
+    }
   </style>
 {% endblock %}
 
 {% block content %}
+  {% include "fragments/messages.html" %}
   {% include "fragments/header.html" with slogn="" main_header="Choose Your Portal" sub_header="" %}
   <section class="login-options">
     <div class="card">

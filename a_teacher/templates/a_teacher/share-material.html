@@ -1,0 +1,65 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Share Material
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_teacher/css/share-material.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Class: {{ class_name }}</h1>
+  </div>
+  <h2>Share Material</h2>
+{% endblock %}
+
+{% block content %}
+  <div class="material-card">
+    <h2 class="card-title">📁 Upload Material</h2>
+    <form id="materialForm" class="load" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="field">
+        <input type="text" name="title" id="title" required />
+        <label for="title">Title</label>
+      </div>
+
+      <div class="field">
+        <input type="file" name="file" id="file" required />
+        <label for="file">Choose File</label>
+        <div class="preview" id="file-preview"></div>
+      </div>
+
+      <div class="field">
+        <textarea name="description" id="description" rows="4"></textarea>
+        <label for="description">Description</label>
+      </div>
+
+      <button type="submit" class="btn share-btn">Share</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    const fileInput = document.getElementById('file')
+    const previewDiv = document.getElementById('file-preview')
+    
+    fileInput.addEventListener('change', () => {
+      previewDiv.innerHTML = ''
+      const file = fileInput.files[0]
+      if (!file) return
+    
+      const ext = file.name.split('.').pop().toLowerCase()
+      let icon = ['pdf'].includes(ext) ? '📄' : ['doc', 'docx'].includes(ext) ? '📃' : '📁'
+    
+      const span = document.createElement('span')
+      span.classList.add('file-icon')
+      span.textContent = `${icon} ${file.name}`
+      previewDiv.appendChild(span)
+    })
+  </script>
+{% endblock %}

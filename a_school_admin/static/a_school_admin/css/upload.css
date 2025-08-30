@@ -1,0 +1,218 @@
+.upload-title {
+    text-align: center;
+    color: var(--primary-text);
+    margin-bottom: 2rem;
+    font-size: 2.2em;
+}
+
+.upload-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--light-background);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(var(--transparent), 0.1);
+}
+
+.upload-box {
+    border: 2px dashed var(--tint);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+}
+
+.upload-box:hover {
+    border-color: var(--primary);
+    background: rgba(var(--transparent), 0.05);
+    transform: translateY(-2px);
+}
+
+.upload-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.browse-btn {
+    background: var(--primary);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border: none;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.browse-btn:hover {
+    background: var(--primaryD);
+    transform: scale(1.05);
+}
+
+.file-types {
+    color: var(--secondary-text);
+    font-size: 0.9em;
+}
+
+.selected-file {
+    margin-top: 1rem;
+    color: var(--primary-text);
+    font-weight: 500;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--edit-btn);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: var(--edit-btn-hover);
+    transform: translateY(-1px);
+}
+
+.error-card {
+    background: var(--dark-background);
+    border-left: 4px solid var(--delete-btn);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+}
+
+.error-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.error-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--delete-btn);
+}
+
+.error-title {
+    color: var(--primary-text);
+    margin: 0;
+}
+
+.error-list {
+    color: var(--delete-btn);
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.columns-card {
+    background: var(--dark-background);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.columns-title {
+    color: var(--primary-text);
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.columns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.8rem;
+}
+
+.column-item {
+    background: var(--background);
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--secondary-text);
+    border: 1px solid var(--tint);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+
+/* Recommendations */
+/* Recommendation card - matching error card style */
+.recommendation-card {
+    background: var(--dark-background);
+    border-left: 4px solid var(--recommendation-accent);
+    /* Different accent color */
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+}
+
+.recommendation-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.recommendation-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--recommendation-accent);
+}
+
+.recommendation-title {
+    color: var(--primary-text);
+    margin: 0;
+}
+
+.recommendation-list {
+    color: var(--recommendation-text);
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+/* Add these to your CSS variables */
+:root {
+    /* ... your existing variables ... */
+    --recommendation-accent: #4CAF50;
+    /* Green accent */
+    --recommendation-text: #81C784;
+    /* Light green text */
+}
+
+
+.excel-template {
+    margin-top: 0.6em;
+    color: var(--secondary-text);
+    text-align: left;
+}
+
+.excel-template a {
+    text-decoration: none;
+    color: var(--primary);
+}

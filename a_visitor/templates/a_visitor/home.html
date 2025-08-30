@@ -1,75 +1,59 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
-
-{% block title %}Home | CSSS{% endblock %}
+{% block title %}
+  Home | CSSS
+{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
-    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
-    <link rel="stylesheet" href="{% static 'a_visitor/css/home.css' %}">
-    <link rel="stylesheet" href="{% static 'css/header.css' %}">
-    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sub_title.css' %}">
-    <link rel="icon" href="{% static 'images/1x/Asset 7.png' %}" />
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
-    rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-    />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/variables.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/animations.css' %}" />
+  <link rel="stylesheet" href="{% static 'a_visitor/css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/header.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/footer.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/sub_title.css' %}" />
+  <link rel="icon" href="{% static 'images/1x/Asset 7.png' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
     .hero_container::after {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: url("{% static 'a_visitor/images/hero_background.jpg' %}");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 0.6;
+      background: url('/static/a_visitor/images/hero_background.jpg') center/cover no-repeat;
+      opacity: 0.8;
     }
   </style>
 {% endblock %}
 
 {% block content %}
-  {% include "fragments/header.html" with slogn="Always More, Always Better, For Our GOD & Country" main_header="Comboni Senior Secondary School" sub_header="Shaping Future Leaders With Knowledge, Discipline, and Integrity." %}
+  {% include 'fragments/messages.html' %}
+  {% include 'fragments/header.html' with slogn='Always More, Always Better, For Our GOD & Country' main_header='Comboni Senior Secondary School' sub_header='Shaping Future Leaders With Knowledge, Discipline, and Integrity.' %}
   <section class="feature-section">
-    {% include 'fragments/sub_title.html' with title_sub="Features" %}
+    {% include 'fragments/sub_title.html' with title_sub='Features' %}
     <div class="swiper">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
           <div class="feature_card">
             <i class="fa fa-graduation-cap"></i>
             <div class="feature_title">Academic Excellence</div>
-            <div class="feature_description">
-              Empowering students through a strong and competitive curriculum.
-            </div>
+            <div class="feature_description">Empowering students through a strong and competitive curriculum.</div>
           </div>
         </div>
         <div class="swiper-slide">
           <div class="feature_card">
             <i class="fa fa-users"></i>
             <div class="feature_title">Community Engagement</div>
-            <div class="feature_description">
-              Encouraging growth through collaboration and outreach.
-            </div>
+            <div class="feature_description">Encouraging growth through collaboration and outreach.</div>
           </div>
         </div>
         <div class="swiper-slide">
           <div class="feature_card">
             <i class="fa fa-lightbulb"></i>
             <div class="feature_title">Innovative Learning</div>
-            <div class="feature_description">
-              Integrating technology and creativity into education.
-            </div>
+            <div class="feature_description">Integrating technology and creativity into education.</div>
           </div>
         </div>
       </div>
@@ -78,27 +62,21 @@
       <div class="swiper-button-next"></div>
     </div>
   </section>
+  {% include 'fragments/sub_title.html' with title_sub='Testimonial' %}
   <section class="testimony-section">
-    {% include 'fragments/sub_title.html' with title_sub="Testimonial" %}
     <div class="testimonial">
       <div class="swiper mySwiper">
         <div class="swiper-wrapper">
           {% for testimony in testimonial %}
-          
             <div class="swiper-slide">
               <div class="card">
-                <img
-                  src="{% static testimony.src %}"
-                  alt="testimony.alt"
-                  class="card-image"
-                />
+                <img src="{% static testimony.src %}" alt="testimony.alt" class="card-image" />
                 <div class="card-text">
-                  <p class="message">"{{testimony.message}}"</p>
-                  <p class="message-by">— {{testimony.message_by}}</p>
+                  <p class="message">"{{ testimony.message }}"</p>
+                  <p class="message-by">— {{ testimony.message_by }}</p>
                 </div>
               </div>
             </div>
-          
           {% endfor %}
         </div>
         <div class="swiper-pagination"></div>
@@ -109,12 +87,12 @@
       </div>
     </div>
   </section>
-  
-  {% include "fragments/footer.html" %}
+
+  {% include 'fragments/footer.html' %}
 {% endblock %}
 
 {% block script %}
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="{% static 'a_visitor/js/home.js' %}"></script>
-<script src="{% static 'js/header.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="{% static 'a_visitor/js/home.js' %}"></script>
+  <script src="{% static 'js/header.js' %}"></script>
 {% endblock %}

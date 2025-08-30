@@ -1,0 +1,30 @@
+{% load static %}
+<div class="profile-settings">
+  <div class="profile-top">
+    <h3>My Profile</h3>
+    <div class="actions" id="close-profile">
+      <i class="fas fa-times"></i>
+    </div>
+  </div>
+  <div class="profile-info">
+    <div class="img-holder">
+      {% if user_profile.user_pic %}
+        <img src="{{ user_profile.user_pic.url }}" alt="{{ user_profile.username }}'s profile picture" />
+      {% else %}
+        <img src="{% static 'avatars/default-avatar.png' %}" alt="Default Avatar" />
+      {% endif %}
+    </div>
+    <h1 class="username">{{ request.user.first_name }} {{ request.user.middle_name }}</h1>
+  </div>
+  <div class="user-info">
+    <i class="fas fa-info-circle"></i>
+    <div class="info">
+      {% for data in datas %}
+        <div class="data">
+          <h3>{{ data.data }}</h3>
+          <h4>{{ data.name }}</h4>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

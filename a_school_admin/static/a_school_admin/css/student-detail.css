@@ -3,73 +3,130 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+@media (max-width: 800px) {
+    .content {
+        padding: 0 0 0 2em;
+    }
+}
+
+.student-container {
+    width: 90%;
+    margin: auto;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+.chart-wrapper {
+    text-align: center;
+}
+
+.chart-wrapper h2 {
+    margin-bottom: 0.2em;
+    font-size: 2em;
+    color: var(--primary);
+}
+
+.chart-wrapper p {
+    font-size: 0.9em;
+    color: var(--secondary-text);
+    margin-bottom: 1em;
+}
+
+.chart-container {
+    width: 180px;
+    height: 180px;
+    margin: auto;
+}
+
+.student-card {
+    background-color: var(--light-background);
+    border: 1px solid var(--tint);
+    border-radius: 0.5em;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+}
+
+.profile-image {
+    width: 12em;
+    height: 12em;
+    object-fit: cover;
+    border-radius: 50%;
+    background-color: var(--dark-background);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1em 2em;
     width: 100%;
 }
 
-.student-profile-card {
-    width: 80%;
-    background: var(--light-background);
+.info-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 0.85em;
+    color: var(--secondary-text);
+}
+
+.value {
+    font-weight: 600;
     color: var(--primary-text);
-    border-radius: 0.3em;
-    padding: 2em;
-    margin: 2em auto;
 }
 
-.profile-header {
+.action-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 1.9em;
-}
-
-.profile-pic {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--primary);
-}
-
-.profile-actions {
-    display: flex;
-    gap: 0.3em;
+    gap: 0.2em;
 }
 
 .edit-btn,
 .delete-btn {
-    padding: 0.5em 2em;
+    width: 9em;
+    padding: 0.5em 1.2em;
+    font-size: 0.9em;
     border: none;
-    font-weight: bold;
+    background-color: var(--primary);
+    color: white;
     cursor: pointer;
-    transition: 0.3s;
-    font-size: 1.1em;
 }
 
 .edit-btn {
     border-radius: 0.3em 0 0 0.3em;
-    background: var(--primary);
-    color: var(--primary-text);
-}
-
-.edit-btn:hover {
-    background: var(--primaryD);
 }
 
 .delete-btn {
     border-radius: 0 0.3em 0.3em 0;
-    background: crimson;
-    color: #fff;
+    background-color: crimson;
+}
+
+.edit-btn:hover {
+    background-color: var(--primaryD);
 }
 
 .delete-btn:hover {
-    background: rgb(235, 36, 75);
+    background-color: rgb(180, 30, 50);
 }
 
-.profile-details p {
-    margin: 0.6em 0;
+/* Responsive breakpoints */
+@media (min-width: 500px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.profile-details span {
-    font-weight: bold;
-    color: var(--secondary-text);
+@media (min-width: 800px) {
+    .info-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }

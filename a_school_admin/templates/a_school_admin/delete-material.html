@@ -1,0 +1,28 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Delete Material
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/delete-material.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <h1>Delete Material</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="confirm-delete">
+    <p>
+      Are you sure you want to delete the material titled "<strong>{{ material.title }}</strong>"?
+    </p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn-delete">Yes, Delete</button>
+      <a href="{% url 'materials_list_url' %}" class="btn-cancel">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

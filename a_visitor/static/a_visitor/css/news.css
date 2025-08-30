@@ -4,7 +4,9 @@ body {
   align-items: center;
   flex-direction: column;
   overflow-x: hidden !important;
+  font-family: "Merriweather", serif;
 }
+
 .news-section-other,
 .news-section-latest {
   gap: 2em;
@@ -23,6 +25,7 @@ body {
   display: flex;
   flex-direction: column;
   max-width: 23em;
+  min-width: 23em;
   height: 30em;
 }
 
@@ -62,6 +65,7 @@ body {
   font-size: 0.875em;
   color: #777;
 }
+
 .news-card .read-more {
   color: var(--primary);
   text-decoration: none;
@@ -78,14 +82,17 @@ body {
   color: #666;
   max-width: 800px;
 }
+
 .empty-box h2 {
   font-size: 2em;
   color: var(--primary);
   margin-bottom: 0.5em;
 }
+
 .empty-box p {
   font-size: 1.1em;
 }
+
 header {
   height: 70vh !important;
 }

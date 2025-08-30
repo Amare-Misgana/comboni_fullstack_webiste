@@ -1,0 +1,145 @@
+.material-card {
+    background: var(--light-background);
+    border-radius: 0.3em;
+    padding: 2em;
+    max-width: 500px;
+    margin: 2em auto;
+}
+
+.card-title {
+    margin-bottom: 1em;
+    color: var(--primaryD);
+    font-size: 1.5em;
+}
+
+.field {
+    position: relative;
+    margin-bottom: 1.5em;
+}
+
+.field input[type="text"],
+.field input[type="file"] {
+    width: 100%;
+    padding: 0.75em 1em;
+    border: 1px solid var(--tint);
+    border-radius: 0.3em;
+    color: var(--primary-text);
+    background: var(--background);
+    transition: var(--transition);
+}
+
+.field input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.field label {
+    position: absolute;
+    top: 0.75em;
+    left: 1em;
+    font-size: 0.9em; 
+    color: var(--secondary-text);
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.field input:focus+label,
+.field input:not(:placeholder-shown)+label {
+    top: -0.6em;
+    background: var(--background);
+    padding: 0 0.25em;
+    color: var(--primary);
+    font-size: 0.8em;
+}
+
+.preview {
+    margin-top: 0.5em;
+    font-size: 0.9em;
+    color: var(--secondary-text);
+}
+
+.file-icon {
+    display: inline-block;
+    padding: 0.5em;
+    background: var(--light-background);
+    border-radius: 0.3em;
+}
+
+button[type="submit"] {
+    background: var(--primary);
+    color: var(--light-background);
+    border: none;
+    padding: 0.75em 1.5em;
+    border-radius: 0.3em;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+button[type="submit"]:hover {
+    background: var(--primaryL);
+}
+
+.material-card {
+    max-width: 500px;
+    margin: 2em auto;
+    background: var(--light-background);
+    padding: 2em;
+    border-radius: 0.3em;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.field {
+    position: relative;
+    margin-bottom: 1.5em;
+}
+
+.field input,
+.field textarea {
+    width: 100%;
+    padding: 0.75em;
+    border: 1px solid #ccc;
+    border-radius: 0.3em;
+    font-size: 1em;
+    background: none;
+}
+
+.field label {
+    position: absolute;
+    top: -0.75em;
+    left: 0.75em;
+    background: var(--light-background);
+    padding: 0 0.25em;
+    font-size: 0.85em;
+    color: #666;
+}
+
+button {
+    width: 100%;
+    padding: 0.75em;
+    background: #3498db;
+    border: none;
+    border-radius: 0.3em;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+.preview {
+    margin-top: 0.5em;
+}
+
+.file-icon {
+    display: inline-block;
+    font-size: 0.95em;
+    margin-top: 0.5em;
+}

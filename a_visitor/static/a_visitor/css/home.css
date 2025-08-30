@@ -53,15 +53,17 @@ body {
 }
 
 .feature_title {
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   font-weight: bold;
   text-align: center;
+  color: var(--primary);
 }
 
 .feature_description {
   font-style: italic;
   font-size: 0.9rem;
   text-align: center;
+  color: rgb(46, 46, 46);
 }
 
 .feature-section .swiper-button-next::after,
@@ -191,6 +193,7 @@ body {
 }
 
 @media (max-width: 439px) {
+
   .testimony-section .swiper-button-next,
   .testimony-section .swiper-button-prev {
     display: none;
@@ -199,6 +202,7 @@ body {
 
 
 @media (max-width: 439px) {
+
   .feature-section .swiper-button-next,
   .feature-section .swiper-button-prev {
     display: none;

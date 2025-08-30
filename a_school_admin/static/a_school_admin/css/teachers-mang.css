@@ -1,0 +1,273 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2em;
+    padding-top: 2em;
+}
+
+
+/* Edit/Delete Buttons */
+.crud {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.crud .right-btn {
+    border-radius: 0 0.3em 0.3em 0;
+}
+
+.crud .left-btn {
+    border-radius: 0.3em 0 0 0.3em;
+}
+
+.crud .delete-btn,
+.crud .edit-btn,
+.crud .detail-btn {
+    width: 5.5em;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    padding: 0.3em 0.5em;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.crud .edit-btn {
+    background: var(--edit-btn);
+}
+
+.crud .edit-btn:hover {
+    background: var(--edit-btn-hover);
+}
+
+.crud .delete-btn {
+    background: var(--delete-btn);
+}
+
+.crud .delete-btn:hover {
+    background: var(--delete-btn-hover);
+}
+
+.crud .detail-btn {
+    background: var(--detail-btn);
+}
+
+.crud .detail-btn:hover {
+    background: var(--detail-btn-hover);
+}
+
+
+
+/* Add teacher method  */
+
+
+.reg-portal {
+    --card-tilt: 4deg;
+    --card-skew: -2deg;
+    --ornament-offset: 8%;
+    padding: 2rem;
+}
+
+.portal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.reg-card {
+    position: relative;
+    background: var(--light-background);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    transform-style: preserve-3d;
+    transition: var(--switch-mode);
+    box-shadow:
+        0 0 0 1px var(--tint),
+        0 4px 24px var(--box-shadow);
+    overflow: hidden;
+}
+
+.card-ornament {
+    position: absolute;
+    top: var(--ornament-offset);
+    left: var(--ornament-offset);
+    right: var(--ornament-offset);
+    bottom: var(--ornament-offset);
+    border: 2px solid var(--primaryLL);
+    border-radius: 1rem;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.card-core {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.card-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(45deg, var(--primaryLL), var(--primaryL));
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transition: var(--switch-mode);
+}
+
+.material-symbols-outlined {
+    font-size: 32px;
+    color: var(--primary);
+    transition: var(--switch-mode);
+}
+
+.card-header {
+    color: var(--primary-text);
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+    line-height: 1.3;
+}
+
+.card-excerpt {
+    color: var(--secondary-text);
+    font-size: 0.95rem;
+    margin: 0 0 2rem;
+    line-height: 1.6;
+    min-height: 3em;
+}
+
+.card-actions {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-cta {
+    display: inline-flex;
+    position: relative;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(95deg, var(--primary), var(--primaryD));
+    color: var(--high-dark);
+    border-radius: 0.75rem;
+    text-decoration: none;
+    font-weight: 500;
+    overflow: hidden;
+    transition: var(--switch-mode);
+}
+
+.cta-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primaryL);
+    transform: scaleX(0);
+    transition: var(--switch-mode);
+}
+
+/* Interactions */
+
+.reg-portal {
+    padding: 2rem;
+    width: 95%;
+    align-self: center;
+}
+
+.portal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.reg-card {
+    background: var(--light-background);
+    border-radius: 0.3em;
+    padding: 2.5rem;
+    border: 1px solid var(--tint);
+    position: relative;
+}
+
+.card-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    background: var(--primaryLL);
+    display: grid;
+    place-items: center;
+}
+
+.material-symbols-outlined {
+    font-size: 32px;
+    color: var(--primary-text);
+}
+
+.card-header {
+    color: var(--primary-text);
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+    text-align: center;
+}
+
+.card-excerpt {
+    color: var(--secondary-text);
+    font-size: 0.95rem;
+    text-align: center;
+    margin: 0 0 2rem;
+    line-height: 1.6;
+}
+
+
+
+.card-cta {
+    text-align: center;
+    align-self: center;
+    display: block;
+    width: 90%;
+    padding: 1rem 1rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 0.3em;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--switch-mode);
+    text-align: center;
+}
+
+.card-badge {
+    color: var(--secondary-text);
+    text-align: center;
+}
+
+/* Subtle Interactions */
+.card-cta:hover {
+    background: var(--primaryD);
+}
+
+/* Dark Mode */
+body.dark-mode .reg-card {
+    background: var(--dark-background);
+}
+
+@media (max-width: 768px) {
+    .portal-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .reg-card {
+        padding: 2rem;
+    }
+}

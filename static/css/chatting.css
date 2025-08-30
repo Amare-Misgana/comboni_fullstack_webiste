@@ -1,0 +1,24 @@
+@media (max-width: 800px) {
+    .message .chat-user {
+        display: none;
+    }
+
+
+    .message .user-list {
+        display: none;
+    }
+}
+
+@media (max-width: 1000px) {
+    .message-content {
+        display: flex;
+    }
+}
+
+.sender {
+    background-color: var(--edit-btn);
+}
+
+.receiver {
+    background-color: var(--primary);
+}

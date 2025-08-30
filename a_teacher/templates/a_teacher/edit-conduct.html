@@ -1,0 +1,39 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}Edit Conduct — {{ student.username }}{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'a_teacher/css/edit-conduct.css' %}">
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Edit Conduct</h1>  
+    <p>Student: {{ student.user.first_name }} {{ student.user.middle_name }}</p>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="conduct-form">
+    <form method="post" class="load">
+      {% csrf_token %}
+      <label for="conduct-select">Select Conduct:</label>
+      <select id="conduct-select" name="conduct" class="input-select">
+        {% for code, label in choices %}
+          <option value="{{ code }}" {% if code == current %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+      <div class="button-row">
+        <button type="submit" class="btn-primary">Save</button>
+        <a href="{% url 'teacher_student_detail_url' student_username=student.user.username %}#activities_list" class="btn-secondary">Back</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script></script>
+{% endblock %}

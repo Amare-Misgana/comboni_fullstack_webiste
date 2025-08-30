@@ -1,0 +1,222 @@
+{% extends 'fragments/dashboard-frag.html' %}
+{% load static %}
+
+{% block title %}
+  Class Detail | Dashboard
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="{% static 'a_school_admin/css/class-detail.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+  <div class="user-info">
+    <h1 class="username">Class Detail: {{ class_room.class_name.class_name }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="class-info-card">
+    <h2>Homeroom Teacher</h2>
+    {% if class_room.room_teacher %}
+      <div class="homeroom_holder">
+        <h1><strong>Homeroom Teacher:</strong> {{ class_room.room_teacher.username }}</h1>
+        <form method="post" id="room_teacher_delete_form" action="{% url 'remove_homeroom_url' teacher=class_room.room_teacher.user.username class_name=class_room.class_name %}">
+          {% csrf_token %}
+          <button type="submit" class="btn delete-btn assign-btn" onclick="showDeletePopup('room_teacher_delete_form')">Remove Homeroom Teacher</button>
+        </form>
+      </div>
+    {% else %}
+      <h2>Not Set</h2>
+      <a href="{% url 'add_homeroom_url' class_name=class_room.class_name.class_name %}"><button class="btn assign-btn">Add homeroom teacher</button></a>
+    {% endif %}
+  </div>
+
+  <!-- Assign Class -->
+  <div class="assign-box">
+    <h3>Assign Subject to Class</h3>
+    <form method="post" action="{% url 'assign_subject_url' class_room.id %}" class="load" id="assigned-subjects">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="subject">Subject:</label>
+        <select name="subject" id="subject" required>
+          <option value="">-- Select Subject --</option>
+          {% for subject in subjects %}
+            <option value="{{ subject.id }}">
+              {{ subject.subject_name }}
+              <span>
+                {% if subject.is_graded %}
+                  (Graded)
+                {% else %}
+                  (Ungraded)
+                {% endif %}
+              </span>
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="teacher">Teacher:</label>
+        <select name="teacher" id="teacher" required>
+          <option value="">-- Select Teacher --</option>
+          {% for teacher in teachers %}
+            <option value="{{ teacher.username }}">{{ teacher.first_name }} {{ teacher.middle_name }} {{ teacher.last_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="assign-btn">Assign</button>
+    </form>
+  </div>
+
+  <!-- Assigned Subject -->
+  {% if assigned_subjects %}
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Assigned Subjects</h2>
+      </div>
+      <table id="detailTable" class="classTable">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Teacher</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for assigned_subject in assigned_subjects %}
+            <tr>
+              <td>{{ assigned_subject.teacher.first_name|capfirst }} {{ assigned_subject.teacher.middle_name|capfirst }}</td>
+              <td>{{ assigned_subject.subject }}</td>
+              <td class="table-actions">
+                <form method="POST" id="form_class" action="{% url 'delete_subject_url' subject=assigned_subject.subject classroom_id=assigned_subject.class_room.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn delete btn-delete" onclick="showDeletePopup('form_class')"><i class="fa fa-trash"></i></button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No Assigned Subjects Found' empty_message="There are currently no subjects in this class. We can't show students table." %}
+  {% endif %}
+  <!-- Student Table -->
+  <div class="table-container">
+    <div class="table-header">
+      <h2>Assigned Students</h2>
+      <a href="{% url 'add_student_url' %}?defined_class={{ class_room.class_name.class_name }}"><button class="add-student-btn">Add Student</button></a>
+    </div>
+    <table id="detailTable2" class="classTable">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Second Name</th>
+          <th>Age</th>
+          <th>Avarage</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.user.first_name }}</td>
+            <td>{{ student.user.middle_name }}</td>
+            <td>{{ student.user.age }}</td>
+            <td>86%</td>
+            <td class="table-actions">
+              <a href="{% url 'edit_student_url' student.user.username %}" class="action-btn edit"><i class="fa fa-pen"></i></a>
+              <a href="{% url 'student_detail_url' student.user.username %}" class="action-btn detail"><i class="fa fa-file-lines"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(function () {
+      $('#detailTable').DataTable({
+        responsive: true,
+        initComplete: function () {
+          const tableWrapper = $('#detailTable').closest('.dataTables_wrapper')
+    
+          const lengthLabel = tableWrapper.find('.dataTables_length label')
+          lengthLabel
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          const filterLabel = tableWrapper.find('.dataTables_filter label')
+          filterLabel
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          lengthLabel.append(selectList)
+    
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          filterLabel.append(searchList)
+        }
+      })
+    
+      $('#detailTable2').DataTable({
+        responsive: true,
+        initComplete: function () {
+          const tableWrapper = $('#detailTable2').closest('.dataTables_wrapper')
+    
+          const lengthLabel = tableWrapper.find('.dataTables_length label')
+          lengthLabel
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('entries', '').trim()
+              this.textContent = this.textContent.replace('Show', '').trim()
+            })
+    
+          const filterLabel = tableWrapper.find('.dataTables_filter label')
+          filterLabel
+            .contents()
+            .filter(function () {
+              return this.nodeType === 3
+            })
+            .each(function () {
+              this.textContent = this.textContent.replace('Search:', '').trim()
+            })
+    
+          const selectList = document.createElement('p')
+          selectList.className = 'select-label'
+          selectList.textContent = 'Show'
+          lengthLabel.append(selectList)
+    
+          const searchList = document.createElement('p')
+          searchList.className = 'search-label'
+          searchList.textContent = 'Search'
+          filterLabel.append(searchList)
+        }
+      })
+    })
+  </script>
+{% endblock %}

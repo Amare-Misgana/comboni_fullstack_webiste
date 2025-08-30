@@ -1,0 +1,550 @@
+body {
+    font-size: 13px !important;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+i.fas,
+i.fa {
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900;
+}
+
+
+i.fas,
+i.far,
+i.fal,
+i.fab,
+i.fa-solid,
+i.fa-regular,
+i.fa-light,
+i.fa-brands {
+    font-family: "Font Awesome 6 Free" !important;
+    /* Or your version */
+    font-weight: 900;
+    /* Adjust depending on style: 400 (regular), 900 (solid) */
+}
+
+.top {
+    position: relative;
+}
+
+
+.top .username {
+    color: var(--primary-text);
+}
+
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    height: 100%;
+    width: 100%;
+}
+
+.message .chat-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--dark-background);
+    position: sticky;
+    top: 0;
+    height: 100%;
+}
+
+.message .chat-user a {
+    padding: 1em 0.4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.3em;
+    text-decoration: none;
+    width: 100%;
+}
+
+.message .chat-user a:hover {
+    background-color: var(--primary);
+}
+
+.message .chat-user a:hover i,
+.message .chat-user a:hover p {
+    color: white;
+}
+
+.message .chat-user a p {
+    font-size: 0.8em;
+    width: max-content;
+    color: var(--primary-text);
+}
+
+.message .chat-user a i {
+    color: var(--primary-text);
+    font-size: 2em;
+}
+
+.user-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    overflow-y: auto;
+    /* scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch; */
+    background-color: var(--light-background);
+    scrollbar-color: var(--primary) #f0f0f0;
+    gap: 0.1em;
+}
+
+.user-list>p {
+    color: var(--secondary-text);
+    text-align: center;
+}
+
+
+
+.user-list .search-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--primary);
+    padding: 2em;
+    gap: 0.3em;
+}
+
+.user-list .search-bar .fa-search {
+    font-size: 1.4em;
+    color: white;
+}
+
+.user-list .search-bar input {
+    border: none;
+    color: var(--primary);
+    border-radius: 0.7em;
+    font-size: 1.1em;
+    width: 90%;
+    padding: 0.3em 0.7em;
+}
+
+.user-list .search-bar input:focus {
+    outline: none;
+}
+
+
+.user-list .user {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.5em 0.8em;
+    background-color: var(--dark-background);
+    transition: background-color var(--switch-mode) ease !important;
+}
+
+.user-list .user.selected {
+    background-color: var(--background);
+}
+
+.user-list .user.selected:hover {
+    background-color: var(--background);
+}
+
+.user-list .user .profile-info .avatar .online {
+    position: absolute;
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 50%;
+    background-color: var(--primaryL);
+    outline: 4px solid var(--dark-background);
+    right: 0.3em;
+    bottom: 0.5em;
+    transition: outline-color var(--switch-mode) ease !important;
+}
+
+.user-list .user:hover .profile-info .avatar .online {
+    outline-color: var(--tint);
+}
+
+.user-list .user.selected .profile-info .avatar .online {
+    outline-color: var(--background);
+    background-color: var(--primary);
+}
+
+.user-list .user .profile-info {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+}
+
+.user-list .user .profile-info .avatar {
+    position: relative;
+}
+
+
+.user-list .user .profile-info .avatar img {
+    border-radius: 50%;
+    width: 4em;
+    height: 4em;
+    object-fit: cover;
+}
+
+.user-list .user .profile-info .avatar-disc {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 70%;
+}
+
+.user-list .user .profile-info .avatar-disc h3 {
+    color: var(--secondary-text);
+}
+
+
+.user-list .user .profile-info .avatar-disc h4 {
+    color: var(--primary-text);
+    font-size: 0.7em;
+
+}
+
+.user-list .user .profile-info .avatar-disc h3 {
+    color: var(--primary-text);
+
+}
+
+
+
+
+.user-list .user .extra-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.user-list .user .extra-info p {
+    color: var(--secondary-text);
+}
+
+.user-list .user .extra-info i {
+    color: var(--primary-text);
+    transform: rotate(45deg);
+}
+
+.user-list .user:hover {
+    background-color: var(--tint);
+    cursor: pointer;
+}
+
+
+/* Message Content Here  */
+
+.messages-holder {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+
+.user-list a {
+    text-decoration: none !important;
+}
+
+.content,
+.message,
+.message-holder,
+.message-data {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.message-data {
+    width: 100%;
+    height: 100%;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1em;
+    overflow-y: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+    background-color: var(--tint);
+    scrollbar-color: var(--primary) #f0f0f0;
+}
+
+.message-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    /* overflow: hidden; */
+}
+
+.message-content .click-for-message {
+    font-size: 3em;
+}
+
+.message-data div {
+    max-width: 40%;
+    padding: 0.7em 1em;
+    border-top-left-radius: 1.5em;
+    border-top-right-radius: 1.5em;
+}
+
+.message-data div p {
+    color: white;
+    font-size: 0.9em;
+    line-height: 1.4em;
+}
+
+.message-data div .data {
+    color: rgb(201, 201, 201);
+    margin-top: 0.6em;
+}
+
+.message-data .sender {
+    align-self: flex-end;
+    border-bottom-left-radius: 1.5em;
+}
+
+.message-data .sender .data {
+    text-align: start;
+}
+
+.message-data .receiver .data {
+    text-align: end;
+}
+
+.message-data .receiver {
+    align-self: flex-start;
+    border-bottom-right-radius: 1.5em;
+}
+
+.message-form {
+    width: 100%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.message-form i {
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    font-weight: 100;
+    padding: 0 0.3em;
+}
+
+.message-form .form {
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0.8em 1em;
+    gap: 0.5em;
+    position: sticky;
+    bottom: 0;
+}
+
+.message-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-size: 1.2em;
+    color: white;
+}
+
+.message-input::placeholder {
+    color: white;
+}
+
+.send-btn {
+    background-color: transparent;
+    border: none;
+}
+
+
+@media (max-width: 1000px) {
+    body {
+        padding: 0 0 0 0.1em;
+        width: 100vw !important;
+        height: 100vh;
+    }
+
+    .content {
+        width: 93vw !important;
+    }
+
+    .avatar img {
+        width: 3em !important;
+        height: 3em !important;
+    }
+
+    .avatar-disc h3 {
+        font-size: 0.9em;
+    }
+
+    .avatar-disc h4 {
+        font-size: 0.7em;
+
+    }
+
+    .chat-user a i {
+        font-size: 1em !important;
+    }
+
+    .chat-user a {
+        padding: 0 !important;
+    }
+
+    .chat-user ul {
+        text-decoration: none !important;
+    }
+
+    .avatar .online {
+        outline-width: 2.5px !important;
+        width: 0.6em !important;
+        height: 0.6em !important;
+    }
+
+    .message {
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    .message-content {
+        display: none;
+    }
+}
+
+
+
+
+
+/* Js Manipulation  */
+
+.chat-user-btn {
+    background: transparent;
+    transition: background 0.2s;
+}
+
+.chat-user-btn.active {
+    background: #196b21;
+    color: white;
+}
+
+
+.content {
+    position: relative;
+}
+
+.click-for-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 2em 0;
+    padding: 1em;
+    border-radius: 8px;
+    font-size: 4em;
+    position: absolute;
+    width: 80%;
+    height: 10%;
+    transform: translate(-50%);
+}
+
+#no-users {
+    color: var(--last-text) !important;
+    font-size: clamp(0.8em, 1.2em, 1.4em);
+    align-self: center;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.error-message {
+    color: #dc3545;
+    padding: 10px;
+    text-align: center;
+}
+
+
+@media (max-width: 800px) {
+    .dashboard-content {
+        height: 100%;
+    }
+
+    .dashboard {
+        height: 100%;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+    .message {
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0;
+        width: 100%;
+        flex: 1;
+    }
+
+    .message .chat-user {
+        width: 100%;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 0;
+        margin: 0;
+        height: 5em !important;
+    }
+
+    .message .chat-user ul {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: row !important;
+        width: 100%;
+        gap: 3em;
+    }
+
+    .message .chat-user a {
+        padding: 0.3em;
+        width: 5em;
+        height: 5em;
+        border-radius: 50%;
+        border: 1px solid var(--tint);
+
+    }
+
+    .message .user-list {
+        width: 100%;
+    }
+}

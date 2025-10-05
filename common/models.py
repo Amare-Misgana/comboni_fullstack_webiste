@@ -5,7 +5,11 @@ from django.contrib.auth.models import (
     BaseUserManager,
 )
 from django.templatetags.static import static
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    BaseUserManager,
+)
 from django.core.exceptions import ValidationError
 from decimal import Decimal
 
@@ -42,7 +46,9 @@ class CustomUserManager(BaseUserManager):
         base_username = f"{first_name}{middle_name}{last_name}".lower()
 
         # Check if the base username already exists
-        similar_users = CustomUser.objects.filter(username__startswith=base_username).count()
+        similar_users = CustomUser.objects.filter(
+            username__startswith=base_username
+        ).count()
 
         if similar_users > 0:
             user.username = f"{base_username}-{similar_users + 1}"
@@ -127,7 +133,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def save(self, *args, **kwargs):
         base_username = f"{self.first_name}{self.middle_name}{self.last_name}".lower()
-        similar_users = CustomUser.objects.filter(username__startswith=base_username).exclude(pk=self.pk).count()
+        similar_users = (
+            CustomUser.objects.filter(username__startswith=base_username)
+            .exclude(pk=self.pk)
+            .count()
+        )
 
         if similar_users > 0:
             self.username = f"{base_username}-{similar_users + 1}"
@@ -174,8 +184,12 @@ class Class(models.Model):
 
 
 class ClassSubject(models.Model):
-    class_room = models.ForeignKey("ClassRoom", on_delete=models.CASCADE, related_name="class_subjects")
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="subject_classes")
+    class_room = models.ForeignKey(
+        "ClassRoom", on_delete=models.CASCADE, related_name="class_subjects"
+    )
+    subject = models.ForeignKey(
+        Subject, on_delete=models.CASCADE, related_name="subject_classes"
+    )
     teacher = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -206,14 +220,14 @@ class ClassRoom(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        limit_choices_to={"role": "teacher"},
+        limit_choices_to={"user__role": "teacher"},
     )
     students = models.ManyToManyField(
         UserProfile,
         related_name="classroom_students",
         null=True,
         blank=True,
-        limit_choices_to={"role": "student"},
+        limit_choices_to={"user__role": "student"},
     )
 
     def __str__(self):
@@ -227,8 +241,12 @@ class Conduct(models.Model):
         ("C", "C"),
         ("D", "D"),
     ]
-    student = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="condact_student")
-    teacher = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="condact_teacher", null=True)
+    student = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="condact_student"
+    )
+    teacher = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="condact_teacher", null=True
+    )
     conduct = models.CharField(max_length=15, choices=CONDUCT_VALUES, default="A")
 
 
@@ -256,7 +274,9 @@ class Mark(models.Model):
 
     def save(self, *args, **kwargs):
         max_score = self.activity.max_score or Decimal("0")
-        score = self.score if isinstance(self.score, Decimal) else Decimal(str(self.score))
+        score = (
+            self.score if isinstance(self.score, Decimal) else Decimal(str(self.score))
+        )
 
         if score > max_score:
             raise ValidationError(f"Score ({score}) cannot exceed max ({max_score}).")
@@ -274,7 +294,9 @@ class Material(models.Model):
     file = models.FileField(upload_to="materials/%Y/%m/%d/")
     class_name = models.ForeignKey(Class, on_delete=models.CASCADE, null=True)
     description = models.CharField(max_length=500, null=True)
-    uploaded_by = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="materials")
+    uploaded_by = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="materials"
+    )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -284,7 +306,10 @@ class Material(models.Model):
 class ActivityCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
     weight = models.DecimalField(
-        max_digits=5, decimal_places=2, help_text="Percentage weight (e.g. 25.00 for 25%)", null=True
+        max_digits=5,
+        decimal_places=2,
+        help_text="Percentage weight (e.g. 25.00 for 25%)",
+        null=True,
     )
 
     def __str__(self):
@@ -292,9 +317,15 @@ class ActivityCategory(models.Model):
 
 
 class Activity(models.Model):
-    class_room = models.ForeignKey(ClassRoom, on_delete=models.PROTECT, related_name="activities")
-    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="activities")
-    teacher = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="activities_created")
+    class_room = models.ForeignKey(
+        ClassRoom, on_delete=models.PROTECT, related_name="activities"
+    )
+    subject = models.ForeignKey(
+        Subject, on_delete=models.PROTECT, related_name="activities"
+    )
+    teacher = models.ForeignKey(
+        UserProfile, on_delete=models.PROTECT, related_name="activities_created"
+    )
 
     # 2️⃣ New FK field (nullable at first):
     activity_category = models.ForeignKey(
@@ -315,5 +346,9 @@ class Activity(models.Model):
 
     def __str__(self):
         # prefer the FK once it’s populated
-        cat = self.activity_category.name if self.activity_category else self.activity_type
+        cat = (
+            self.activity_category.name
+            if self.activity_category
+            else self.activity_type
+        )
         return f"{self.activity_name} ({cat})"

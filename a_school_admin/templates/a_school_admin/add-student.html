@@ -25,7 +25,7 @@
       <div class="profile-wrapper">
         <label for="profile_image" class="profile-label">
           <img src="{% static 'avatars/default-avatar.png' %}" id="profilePreview" alt="Profile Preview" />
-          <input type="file" id="profile_image" accept="image/*" hidden name="profile_pic" required />
+          <input type="file" id="profile_image" accept="image/*" value="{% static 'avatars/default-avatar.png' %}" hidden name="profile_pic" required />
         </label>
       </div>
       <div class="form-row">
@@ -106,5 +106,7 @@
       }
       reader.readAsDataURL(file)
     })
+    
+    const profileInput = document.getElementById('profile_image')
   </script>
 {% endblock %}

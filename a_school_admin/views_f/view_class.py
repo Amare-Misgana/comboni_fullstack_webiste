@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponse
 from django.contrib import messages
 from common.models import (
     UserProfile,
@@ -142,8 +143,7 @@ def class_detail(request, class_name):
 def remove_homeroom_teacher(request, teacher, class_name):
     if request.method == "POST":
         class_room = get_object_or_404(ClassRoom, room_teacher__user__username=teacher)
-        class_room.room_teacher = None
-        class_room.save()
+        class_room.delete()
         messages.success(request, "Successfully removed homeroom teacher.")
     return redirect("class_detail_url", class_name=class_name)
 
@@ -179,10 +179,12 @@ def delete_assigned_subjects(request, subject, classroom_id):
 def add_homeroom_teacher(request, class_name):
     class_room = get_object_or_404(ClassRoom, class_name__class_name=class_name)
     assigned_teachers = list(
-        ClassRoom.objects.exclude(room_teacher__isnull=True).values_list(
+        ClassRoom.objects.exclude(class_name=None).values_list(
             "room_teacher", flat=True
         )
     )
+
+    print(assigned_teachers)
 
     available_teachers = UserProfile.objects.filter(user__role="teacher").exclude(
         user__id__in=assigned_teachers
@@ -218,7 +220,7 @@ def add_homeroom_teacher(request, class_name):
 
 @user_passes_test(lambda u: u.is_authenticated and u.role == "admin")
 def edit_class(request, class_name):
-    pass
+    return HttpResponse("Under development")
 
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")

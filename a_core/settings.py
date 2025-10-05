@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-uxsn!-ggnv-pym%g5+k%#qkr($rc@w%89x281(s+n8xx7$+jn8"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -33,7 +34,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "codeamare@gmail.com"
-EMAIL_HOST_PASSWORD = "iumq ztrn hktn ztjt"
+EMAIL_HOST_PASSWORD = "yesc mwdn dkuo eiwv"
 EMAIL_TIMEOUT = 60
 
 
@@ -96,6 +97,8 @@ WSGI_APPLICATION = "a_core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -155,6 +158,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "a_student" / "static",
     BASE_DIR / "media",
 ]
+
 MEDIA_URL = "/media-url/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -171,9 +175,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
-    "CONFIG": {
-        "hosts": [("127.0.0.1", 6379)],
-    },
 }
+
 
 MAX_UPLOAD_SIZE = 3 * 1024 * 1024

@@ -55,19 +55,18 @@ def edit_teacher(request, teacher_username):
     )
 
     # Get existing ClassRoom if any
-    room_class = ClassRoom.objects.filter(
-        room_teacher__user__username=teacher_username
-    ).first() or None
+    room_class = (
+        ClassRoom.objects.filter(room_teacher__user__username=teacher_username).first()
+        or None
+    )
 
-    home_room_assigned = ClassRoom.objects.filter(
-        room_teacher=teacher_profile
-    ).first()
+    home_room_assigned = ClassRoom.objects.filter(room_teacher=teacher_profile).first()
 
     context = {
         "teacher_profile": teacher_profile,
         "available_class_rooms": available_class_rooms,
         "room_class": room_class,
-        "home_room_class": home_room_assigned or None,
+        "home_room_class": home_room_assigned,
     }
     context.update(identify)
 
@@ -89,12 +88,17 @@ def edit_teacher(request, teacher_username):
 
             # Handle home room assignment
             if home_room_class:
+                current_room = ClassRoom.objects.filter(
+                    room_teacher__user=teacher
+                ).first()
+                if home_room_assigned.lower() == "none" and current_room:
+                    current_room.delete()
+
                 if not Class.objects.filter(class_name=home_room_class).exists():
                     messages.error(request, f"'{home_room_class}' doesn't exist.")
                     return render(request, "a_school_admin/edit-teachers.html", context)
 
                 new_class = Class.objects.get(class_name=home_room_class)
-                current_room = ClassRoom.objects.filter(room_teacher__user=teacher).first()
                 # If changing to a different class
                 if not current_room or current_room.class_name != new_class:
                     if ClassRoom.objects.filter(class_name=new_class).exists():
@@ -102,20 +106,23 @@ def edit_teacher(request, teacher_username):
                             request,
                             f"There is already a home room teacher for '{home_room_class}'.",
                         )
-                        return render(request, "a_school_admin/edit-teachers.html", context)
+                        return render(
+                            request, "a_school_admin/edit-teachers.html", context
+                        )
                     # Delete old assignment
                     if current_room:
                         current_room.delete()
                     # Create new assignment
                     ClassRoom.objects.create(
-                        class_name=new_class,
-                        room_teacher=teacher_profile
+                        class_name=new_class, room_teacher=teacher_profile
                     )
                     has_changes = True
                     changes.append("home room class")
             else:
                 # Clear existing assignment if any
-                current_room = ClassRoom.objects.filter(room_teacher__user=teacher).first()
+                current_room = ClassRoom.objects.filter(
+                    room_teacher__user=teacher
+                ).first()
                 if current_room:
                     current_room.class_name = None
                     current_room.save()
@@ -127,7 +134,11 @@ def edit_teacher(request, teacher_username):
                 if not validate_email(email):
                     messages.error(request, "Invalid Email Format!")
                     return render(request, "a_school_admin/edit-teachers.html", context)
-                if CustomUser.objects.filter(email=email).exclude(pk=teacher.pk).exists():
+                if (
+                    CustomUser.objects.filter(email=email)
+                    .exclude(pk=teacher.pk)
+                    .exists()
+                ):
                     messages.error(request, "Email already exists.")
                     return render(request, "a_school_admin/edit-teachers.html", context)
                 teacher.email = email
@@ -153,7 +164,9 @@ def edit_teacher(request, teacher_username):
             # Phone number
             if phone_number:
                 if not re.match(r"^\+?[0-9]{8,15}$", phone_number):
-                    messages.error(request, "Invalid phone number format. Use +1234567890 format.")
+                    messages.error(
+                        request, "Invalid phone number format. Use +1234567890 format."
+                    )
                     return render(request, "a_school_admin/edit-teachers.html", context)
                 if phone_number != teacher.phone_number:
                     teacher.phone_number = phone_number

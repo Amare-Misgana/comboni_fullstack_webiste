@@ -96,19 +96,12 @@
             <tr>
               <td>{{ class_room.class_name }}</td>
               <td>{{ class_room.students.count }}</td>
-              {% with found=False %}
-                {% for user in users %}
-                  {% if user.user.username == class_room.room_teacher.username %}
-                    <td>{{ user.username|capfirst }}</td>
-                    {% with found=True %}
 
-                    {% endwith %}
-                  {% endif %}
-                {% endfor %}
-                {% if not found %}
-                  <td>Empty</td>
-                {% endif %}
-              {% endwith %}
+              {% if class_room.room_teacher.username %}
+                <td>{{ class_room.room_teacher.username|capfirst }}</td>
+              {% else %}
+                <td>Empty</td>
+              {% endif %}
 
               <td class="crud">
                 <a href="{% url 'class_detail_url' class_name=class_room.class_name %}" class="detail-btn right-btn">Detail</a>

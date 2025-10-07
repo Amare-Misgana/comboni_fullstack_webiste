@@ -53,12 +53,21 @@
       </div>
     </div>
   </div>
-  <div class="student-per-grade generic-graph-container">
-    <canvas id="sutent-per-grade" class="generic-graph"></canvas>
-  </div>
-  <div class="student-gender generic-graph-container">
-    <canvas id="student-gender" class="generic-graph"></canvas>
-  </div>
+  {% if class_json.data %}
+    <div class="student-per-grade generic-graph-container">
+      <canvas id="sutent-per-grade" class="generic-graph"></canvas>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No classroom found. Unable to present class distribution.' empty_message="There are currently no class room in the system. We can't show the student distribution." btn_name='+ Add Classes' add_url='create_classes_url' %}
+  {% endif %}
+  {% if gender_json.data %}
+    <div class="student-gender generic-graph-container">
+      <canvas id="student-gender" class="generic-graph"></canvas>
+    </div>
+  {% else %}
+    {% include 'fragments/no_data_box.html' with empty_title='No classroom found. Unable to present gender distribution.' empty_message="There are currently no class room in the system. We can't show the student gender distribution." btn_name='+ Add Classes' add_url='create_classes_url' %}
+  {% endif %}
+
   <div class="table-container">
     <div class="table-header">
       <h2>Admins Recent Actions</h2>

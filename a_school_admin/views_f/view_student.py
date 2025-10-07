@@ -64,7 +64,11 @@ def delete_student(request, student_username):
     return redirect("students_mang_url")
 
 
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin" or user.role == "teacher")
+@user_passes_test(
+    lambda user: user.is_authenticated
+    and user.role == "admin"
+    or user.role == "teacher"
+)
 def student_detail(request, student_username):
     try:
         student = CustomUser.objects.get(username=student_username)
@@ -72,10 +76,18 @@ def student_detail(request, student_username):
             student_profile = UserProfile.objects.get(user=student)
             student_class = student_profile.classroom_students.all().first()
             if not student_profile.user_pic:
-                messages.warning(request, "Student Profile is incomplete. Add profile picture")
+                messages.warning(
+                    request, "Student Profile is incomplete. Add profile picture"
+                )
         except UserProfile.DoesNotExist:
-            messages.warning(request, "Student Profile is incomplete. Compelete Profile")
-            return redirect(reverse("edit_student_url", kwargs={"student_username": student_username}))
+            messages.warning(
+                request, "Student Profile is incomplete. Compelete Profile"
+            )
+            return redirect(
+                reverse(
+                    "edit_student_url", kwargs={"student_username": student_username}
+                )
+            )
     # conduct = Conduct
     except CustomUser.DoesNotExist:
         messages.error(request, "Student can't be found!")
@@ -90,7 +102,6 @@ def student_detail(request, student_username):
         "student_profile": student_profile,
         "student_class": student_class,
         "conduct": conduct,
-        "conduct": {"conduct": 2},
         "only_back": True if request.user.role == "teacher" else False,
     }
     context.update(identify)
@@ -100,7 +111,9 @@ def student_detail(request, student_username):
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def add_student(request):
     context = {
-        "class_list": Class.objects.values_list("class_name", flat=True).order_by(Length("class_name"), "class_name")
+        "class_list": Class.objects.values_list("class_name", flat=True).order_by(
+            Length("class_name"), "class_name"
+        )
     }
     context.update(identify)
 
@@ -146,7 +159,9 @@ def add_student(request):
                 return render(request, "a_school_admin/add-student.html", context)
 
             if not re.match(r"^\+?[0-9]{8,15}$", phone_number):
-                messages.error(request, "Invalid phone number format. Use +1234567890 format.")
+                messages.error(
+                    request, "Invalid phone number format. Use +1234567890 format."
+                )
                 return render(request, "a_school_admin/add-student.html", context)
 
             if not age:
@@ -194,14 +209,18 @@ def add_student(request):
                 return redirect("student_mang_url")
 
             try:
-                student_profile = UserProfile.objects.create(user=student, user_pic=profile_pic, password=password)
+                student_profile = UserProfile.objects.create(
+                    user=student, user_pic=profile_pic, password=password
+                )
             except Exception as e:
                 student.delete()
                 messages.error(request, f"Failed to create student profile: {e}")
                 return redirect("students_mang_url")
 
             try:
-                class_room, created = ClassRoom.objects.get_or_create(class_name=class_instance)
+                class_room, created = ClassRoom.objects.get_or_create(
+                    class_name=class_instance
+                )
                 class_room.students.add(student_profile)
             except Exception as e:
                 messages.error(request, f"Can't create the class: {e}")
@@ -255,7 +274,11 @@ def edit_student(request, student_username):
                 if not validate_email(email):
                     messages.error(request, "Invalid Email Format!")
                     return render(request, "a_school_admin/edit-students.html", context)
-                if CustomUser.objects.filter(email=email).exclude(email=student.email).exists():
+                if (
+                    CustomUser.objects.filter(email=email)
+                    .exclude(email=student.email)
+                    .exists()
+                ):
                     messages.error(request, "Email already exists.")
                     return render(request, "a_school_admin/edit-students.html", context)
                 student.email = email
@@ -284,7 +307,9 @@ def edit_student(request, student_username):
                 has_changes = True
 
             if not re.match(r"^\+?[0-9]{8,15}$", phone_number):
-                messages.error(request, "Invalid phone number format. Use +1234567890 format.")
+                messages.error(
+                    request, "Invalid phone number format. Use +1234567890 format."
+                )
                 return render(request, "a_school_admin/edit-students.html", context)
             if phone_number != student.phone_number:
                 student.phone_number = phone_number
@@ -358,7 +383,9 @@ def add_students(request):
             return render(request, "a_school_admin/upload.html", context)
 
         try:
-            df = pd.read_excel(uploaded_file, dtype={"phone number": str, "class": str}).fillna("")
+            df = pd.read_excel(
+                uploaded_file, dtype={"phone number": str, "class": str}
+            ).fillna("")
         except Exception as e:
             context["errors"].append(f"Error reading file: {e}")
             return render(request, "a_school_admin/upload.html", context)
@@ -395,11 +422,11 @@ def add_students(request):
                 row_err.append(f"Line {line}: Invalid age")
 
             phone = field("phone number")
-            if not (phone.isdigit() and len(phone) == 10):
+            if not (phone.isdigit() and len(phone) <= 13):
                 row_err.append(f"Line {line}: Invalid phone '{phone}'")
 
             g = field("gender").upper()
-            if g not in ("M", "F"):
+            if g not in ("M", "F", "MALE", "FEMALE"):
                 row_err.append(f"Line {line}: Invalid gender '{g}'")
 
             for n in ["first name", "middle name", "last name"]:
@@ -438,7 +465,15 @@ def add_students(request):
                         last_name=field("last name"),
                         email=field("email").lower(),
                         age=int(field("age")),
-                        gender="male" if field("gender").upper() == "M" else "female",
+                        gender=(
+                            "male"
+                            if field("gender").upper() in ["M", "MALE"]
+                            else (
+                                "female"
+                                if field("gender").upper() in ["F", "FEMALE"]
+                                else field("gender")
+                            )
+                        ),
                         phone_number=field("phone number"),
                         role="student",
                     )
@@ -464,7 +499,9 @@ def add_students(request):
 
                     created += 1
 
-                AdminAction.objects.create(admin=request.user, action=f"Bulk added {created} students")
+                AdminAction.objects.create(
+                    admin=request.user, action=f"Bulk added {created} students"
+                )
                 messages.success(request, f"Successfully added {created} students")
                 return redirect("students_mang_url")
 
@@ -489,7 +526,9 @@ def download_student_excel_template(request):
 
     df = pd.DataFrame(columns=columns)
 
-    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     response["Content-Disposition"] = 'attachment; filename="student_template.xlsx"'
 
     df.to_excel(response, index=False)

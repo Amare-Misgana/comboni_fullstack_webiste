@@ -10,7 +10,14 @@ from django.db.models import Q
 from .models import AdminAction, News
 from django.core.mail import EmailMultiAlternatives
 from email.mime.image import MIMEImage
-from common.models import UserProfile, CustomUser, ClassRoom, Class, Material, ActivityCategory
+from common.models import (
+    UserProfile,
+    CustomUser,
+    ClassRoom,
+    Class,
+    Material,
+    ActivityCategory,
+)
 from decimal import Decimal
 import json
 
@@ -30,34 +37,46 @@ def school_admin_dashboard(request):
 
     students = CustomUser.objects.filter(role="student")
     teachers = CustomUser.objects.filter(role="teacher")
-    classes = sorted(set(int(item[:-1]) for item in Class.objects.values_list("class_name", flat=True)))
+    classes = sorted(
+        set(
+            int(item[:-1])
+            for item in Class.objects.values_list("class_name", flat=True)
+        )
+    )
 
-    classrooms = ClassRoom.objects.select_related("class_name", "room_teacher").prefetch_related("students")
+    classrooms = ClassRoom.objects.select_related(
+        "class_name", "room_teacher"
+    ).prefetch_related("students")
 
-    grades = {}
-    for classroom in classrooms:
-        if not classroom.class_name:
-            continue
-        class_students = classroom.students.all()
-        grades[str(classroom.class_name)] = {
-            "male": class_students.filter(user__gender="male").count(),
-            "female": class_students.filter(user__gender="female").count(),
+    genders = {}
+    classes_json = {}
+
+    if classrooms.exists():
+        for classroom in classrooms:
+            if not classroom.class_name:
+                continue
+            class_students = classroom.students.all()
+            genders[str(classroom.class_name)] = {
+                "male": class_students.filter(user__gender="male").count(),
+                "female": class_students.filter(user__gender="female").count(),
+            }
+
+        classes_json = {
+            "classes": [str(c.class_name) for c in classrooms if c.class_name],
+            "data": [
+                {
+                    "class": str(c.class_name),
+                    "male": genders.get(str(c.class_name), {}).get("male", 0),
+                    "female": genders.get(str(c.class_name), {}).get("female", 0),
+                }
+                for c in classrooms
+                if c.class_name
+            ],
         }
 
-    classes_json = {
-        "classes": [str(c.class_name) for c in classrooms if c.class_name],
-        "data": [
-            {
-                "class": str(c.class_name),
-                "male": grades.get(str(c.class_name), {}).get("male", 0),
-                "female": grades.get(str(c.class_name), {}).get("female", 0),
-            }
-            for c in classrooms
-            if c.class_name
-        ],
-    }
-
-    admin_actions = AdminAction.objects.select_related("admin").all().order_by("-timestamp")
+    admin_actions = (
+        AdminAction.objects.select_related("admin").all().order_by("-timestamp")
+    )
     admin_profiles = UserProfile.objects.select_related("user").all()
 
     action_profiles = []
@@ -77,9 +96,11 @@ def school_admin_dashboard(request):
         "teachers_amount": teachers.count(),
         "classes_amount": len(classes),
         "sections_amount": classrooms.count(),
-        "class": sorted({c.class_name.class_name[:-1] for c in classrooms if c.class_name}),
+        "class": sorted(
+            {c.class_name.class_name[:-1] for c in classrooms if c.class_name}
+        ),
         "action_profiles": action_profiles,
-        "gender_json": json.dumps(grades),
+        "gender_json": json.dumps(genders),
         "class_json": json.dumps(classes_json),
         "datas": data,
     }
@@ -103,8 +124,12 @@ def share_material(request):
             return render(request, "a_school_admin/share-material.html", identify)
 
         user_profile = UserProfile.objects.get(user=request.user)
-        material = Material.objects.create(title=title, file=file, uploaded_by=user_profile, description=description)
-        AdminAction.objects.create(admin=request.user, action=f"Created Material ({material.title})")
+        material = Material.objects.create(
+            title=title, file=file, uploaded_by=user_profile, description=description
+        )
+        AdminAction.objects.create(
+            admin=request.user, action=f"Created Material ({material.title})"
+        )
         messages.success(request, "Material created successfully.")
         return redirect("materials_list_url")
 
@@ -114,7 +139,9 @@ def share_material(request):
 @user_passes_test(lambda user: user.is_authenticated)
 def materials_list(request):
     user_profile = UserProfile.objects.get(user=request.user)
-    materials = Material.objects.filter(uploaded_by=user_profile).order_by("-uploaded_at")
+    materials = Material.objects.filter(uploaded_by=user_profile).order_by(
+        "-uploaded_at"
+    )
 
     context = {
         "materials": materials,
@@ -128,12 +155,20 @@ def materials_list(request):
 @user_passes_test(lambda user: user.is_authenticated)
 def download_material(request, material_id):
     material = get_object_or_404(Material, pk=material_id)
-    response = FileResponse(open(material.file.path, "rb"), content_type="application/octet-stream")
-    response["Content-Disposition"] = f'attachment; filename="{material.file.name.split("/")[-1]}"'
+    response = FileResponse(
+        open(material.file.path, "rb"), content_type="application/octet-stream"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="{material.file.name.split("/")[-1]}"'
+    )
     return response
 
 
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin" or user.role == "teacher")
+@user_passes_test(
+    lambda user: user.is_authenticated
+    and user.role == "admin"
+    or user.role == "teacher"
+)
 def edit_material(request, material_id):
     material = get_object_or_404(Material, pk=material_id)
 
@@ -156,7 +191,9 @@ def edit_material(request, material_id):
 
         if has_changes:
             material.save()
-            AdminAction.objects.create(admin=request.user, action=f"Updated Material ({material.title})")
+            AdminAction.objects.create(
+                admin=request.user, action=f"Updated Material ({material.title})"
+            )
             messages.success(request, "Material updated successfully.")
         else:
             messages.info(request, "No changes detected.")
@@ -168,13 +205,19 @@ def edit_material(request, material_id):
     return render(request, "a_school_admin/edit-material.html", context)
 
 
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin" or user.role == "teacher")
+@user_passes_test(
+    lambda user: user.is_authenticated
+    and user.role == "admin"
+    or user.role == "teacher"
+)
 def delete_material(request, material_id):
     material = get_object_or_404(Material, pk=material_id)
     if request.method == "POST":
         title = material.title
         material.delete()
-        AdminAction.objects.create(admin=request.user, action=f"Deleted Material ({title})")
+        AdminAction.objects.create(
+            admin=request.user, action=f"Deleted Material ({title})"
+        )
         messages.success(request, "Material deleted successfully.")
         return redirect("materials_list_url")
     context = {"material": material}
@@ -194,7 +237,9 @@ def chat(request):
     def attach_last_msg(qs):
         for peer in qs:
             peer.last_message = (
-                Message.objects.filter(Q(sender=me, receiver=peer) | Q(sender=peer, receiver=me))
+                Message.objects.filter(
+                    Q(sender=me, receiver=peer) | Q(sender=peer, receiver=me)
+                )
                 .order_by("-timestamp")
                 .first()
             )
@@ -232,7 +277,9 @@ def chatting(request, username):
 
     other = UserProfile.objects.get(user__username=username)
 
-    chats = Message.objects.filter(Q(sender=me, receiver=other) | Q(sender=other, receiver=me)).order_by("timestamp")
+    chats = Message.objects.filter(
+        Q(sender=me, receiver=other) | Q(sender=other, receiver=me)
+    ).order_by("timestamp")
 
     try:
         receiver = CustomUser.objects.get(username=username)
@@ -298,7 +345,9 @@ def add_news(request):
 
 def _send_news_email(news, request, subject_prefix, action_desc):
     recipients = list(
-        CustomUser.objects.exclude(email=request.user.email).exclude(email__exact="").values_list("email", flat=True)
+        CustomUser.objects.exclude(email=request.user.email)
+        .exclude(email__exact="")
+        .values_list("email", flat=True)
     )
     # Log and exit if no recipients
     if not recipients:
@@ -349,7 +398,9 @@ def _send_news_email(news, request, subject_prefix, action_desc):
             with open(news.photo.path, "rb") as img_f:
                 img = MIMEImage(img_f.read())
                 img.add_header("Content-ID", "<newsimage>")
-                img.add_header("Content-Disposition", "inline", filename=news.photo.name)
+                img.add_header(
+                    "Content-Disposition", "inline", filename=news.photo.name
+                )
                 email.attach(img)
         except Exception:
             pass
@@ -430,7 +481,9 @@ def edit_news(request, id):
         if recipients:
             subject = f"📝 News Updated: {news.header}"
             plain_text = news.description
-            detail_url = request.build_absolute_uri(reverse("news_detail", args=[news.id]))
+            detail_url = request.build_absolute_uri(
+                reverse("news_detail", args=[news.id])
+            )
 
             html_content = f"""
             <!DOCTYPE html>
@@ -473,7 +526,9 @@ def edit_news(request, id):
                     with open(news.photo.path, "rb") as img_f:
                         img = MIMEImage(img_f.read())
                         img.add_header("Content-ID", "<newsimage>")
-                        img.add_header("Content-Disposition", "inline", filename=news.photo.name)
+                        img.add_header(
+                            "Content-Disposition", "inline", filename=news.photo.name
+                        )
                         email.attach(img)
                 except Exception:
                     pass

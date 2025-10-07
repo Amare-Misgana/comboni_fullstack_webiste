@@ -91,7 +91,7 @@ def edit_teacher(request, teacher_username):
                 current_room = ClassRoom.objects.filter(
                     room_teacher__user=teacher
                 ).first()
-                if home_room_assigned.lower() == "none" and current_room:
+                if not home_room_assigned and current_room:
                     current_room.delete()
 
                 if not Class.objects.filter(class_name=home_room_class).exists():
@@ -214,6 +214,8 @@ def edit_teacher(request, teacher_username):
             return redirect("teachers_mang_url")
 
         except Exception as e:
+            # check for this error origin
+            # ClassRoom' object has no attribute 'lower'
             messages.error(request, f"Update failed: {str(e)}")
 
     return render(request, "a_school_admin/edit-teachers.html", context)
@@ -499,7 +501,9 @@ def add_teachers(request):
                 elif home_class not in existing_classes:
                     context["recommendations"] = sorted(existing_classes)
                     row_errors.append(f"Line {line}: Class '{home_class}' not found")
-                    taken_home_rooms.add(Class.objects.get(class_name=home_class))
+                    taken_home_rooms.add(
+                        Class.objects.filter(class_name=home_class).first()
+                    )
 
             # Validate age (18-65 for teachers)
             try:
@@ -511,8 +515,8 @@ def add_teachers(request):
 
             # Validate phone number format
             phone = row_data["phone number"]
-            if not re.match(r"^\d{10}$", phone):
-                row_errors.append(f"Line {line}: Invalid phone number format '{phone}'")
+            if not (phone.isdigit() and len(phone) <= 13):
+                row_errors.append(f"Line {line}: Invalid phone '{phone}'")
 
             # Validate gender
             gender = row_data["gender"].upper()
@@ -540,6 +544,7 @@ def add_teachers(request):
                 to_create.append((row_data, home_class, age, gender, email))
 
         if errors:
+            context.update(identify)
             context["errors"] = errors
             return render(request, "a_school_admin/upload.html", context)
 
@@ -605,6 +610,7 @@ def add_teachers(request):
 
         except Exception as e:
             context["errors"].append(f"System error: {str(e)}")
+            context.update(identify)
             return render(request, "a_school_admin/upload.html", context)
     context.update(identify)
     return render(request, "a_school_admin/upload.html", context)

@@ -53,7 +53,12 @@ def teacher_dashboard(request):
         .count()
     )
 
-    total_sections = ClassSubject.objects.filter(teacher=request.user).values("class_room").distinct().count()
+    total_sections = (
+        ClassSubject.objects.filter(teacher=request.user)
+        .values("class_room")
+        .distinct()
+        .count()
+    )
 
     # Students in the homeroom class (optional)
     # Error querying students from the database: 'NoneType' object has no attribute 'students'
@@ -66,9 +71,13 @@ def teacher_dashboard(request):
     if class_room:
         student_data = []
         for student in students:
-            conduct = Conduct.objects.filter(student=student, teacher=teacher_profile).first()
+            conduct = Conduct.objects.filter(
+                student=student, teacher=teacher_profile
+            ).first()
             if not conduct:
-                conduct = Conduct.objects.create(student=student, teacher=teacher_profile)
+                conduct = Conduct.objects.create(
+                    student=student, teacher=teacher_profile
+                )
             student_data.append(
                 {
                     "user": student.user,
@@ -91,7 +100,9 @@ def teacher_dashboard(request):
 
     students_taught = []
     for student in taught_students:
-        conduct = Conduct.objects.filter(student=student, teacher=teacher_profile).first()
+        conduct = Conduct.objects.filter(
+            student=student, teacher=teacher_profile
+        ).first()
         class_room = ClassRoom.objects.filter(students=student).first()
         if not conduct:
             conduct = Conduct.objects.create(student=student, teacher=teacher_profile)
@@ -126,16 +137,25 @@ def student_detail(request, student_username):
             student_profile = UserProfile.objects.get(user=student)
             student_class = student_profile.classroom_students.all().first()
             if not student_profile.user_pic:
-                messages.warning(request, "Student Profile is incomplete. Add profile picture")
+                messages.warning(
+                    request, "Student Profile is incomplete. Add profile picture"
+                )
         except UserProfile.DoesNotExist:
-            messages.warning(request, "Student Profile is incomplete. Compelete Profile")
-            return redirect(reverse("edit_student_url", kwargs={"student_username": student_username}))
+            messages.warning(
+                request, "Student Profile is incomplete. Compelete Profile"
+            )
+            return redirect(
+                reverse(
+                    "edit_student_url", kwargs={"student_username": student_username}
+                )
+            )
 
     except CustomUser.DoesNotExist:
         messages.error(request, "Student can't be found!")
         return redirect("students_mang_url")
 
     conduct = Conduct.objects.filter(student__user=student).first()
+    print(conduct.student)
     if not conduct:
         student_profile = UserProfile.objects.get(user=student)
         conduct = Conduct.objects.create(student=student_profile)
@@ -152,16 +172,24 @@ def student_detail(request, student_username):
 
 @user_passes_test(lambda user: user.is_authenticated and user.role == "teacher")
 def edit_conduct(request, username):
-    teacher_profile = get_object_or_404(UserProfile, user=request.user, user__role="teacher")
-    student_profile = get_object_or_404(UserProfile, user__username=username, user__role="student")
-    conduct_obj, _ = Conduct.objects.get_or_create(teacher=teacher_profile, student=student_profile)
+    teacher_profile = get_object_or_404(
+        UserProfile, user=request.user, user__role="teacher"
+    )
+    student_profile = get_object_or_404(
+        UserProfile, user__username=username, user__role="student"
+    )
+    conduct_obj, _ = Conduct.objects.get_or_create(
+        teacher=teacher_profile, student=student_profile
+    )
     if request.method == "POST":
         new_val = request.POST.get("conduct")
         valid_vals = [choice[0] for choice in Conduct.CONDUCT_VALUES]
         if new_val in valid_vals:
             conduct_obj.conduct = new_val
             conduct_obj.save()
-            messages.success(request, f"Conduct for {student_profile.username} set to “{new_val}”")
+            messages.success(
+                request, f"Conduct for {student_profile.username} set to “{new_val}”"
+            )
         else:
             messages.error(request, "Invalid conduct value.")
         return redirect("edit_conduct_url", username=username)
@@ -186,7 +214,9 @@ def chat(request):
     def attach_last_msg(qs):
         for peer in qs:
             peer.last_message = (
-                Message.objects.filter(Q(sender=me, receiver=peer) | Q(sender=peer, receiver=me))
+                Message.objects.filter(
+                    Q(sender=me, receiver=peer) | Q(sender=peer, receiver=me)
+                )
                 .order_by("-timestamp")
                 .first()
             )
@@ -225,7 +255,9 @@ def chatting(request, username):
 
     other = UserProfile.objects.get(user__username=username)
 
-    chats = Message.objects.filter(Q(sender=me, receiver=other) | Q(sender=other, receiver=me)).order_by("timestamp")
+    chats = Message.objects.filter(
+        Q(sender=me, receiver=other) | Q(sender=other, receiver=me)
+    ).order_by("timestamp")
 
     try:
         receiver = CustomUser.objects.get(username=username)
@@ -271,7 +303,9 @@ def teacher_classes(request):
     for cs in taught:
         room = cs.class_room
         students_count = room.students.count()
-        materials_count = Material.objects.filter(uploaded_by__user=request.user).count()
+        materials_count = Material.objects.filter(
+            uploaded_by__user=request.user
+        ).count()
 
         stats.append(
             {
@@ -330,7 +364,9 @@ def view_class_teacher(request, class_name):
     class_room = get_object_or_404(ClassRoom, class_name__class_name=class_name)
 
     # 2. Ensure this teacher is assigned
-    if not ClassSubject.objects.filter(class_room=class_room, teacher=request.user).exists():
+    if not ClassSubject.objects.filter(
+        class_room=class_room, teacher=request.user
+    ).exists():
         messages.error(request, "You are not assigned to this class.")
         return redirect("teacher_home_url")
 
@@ -378,7 +414,9 @@ def view_class_teacher(request, class_name):
     students = subjects.class_room.students.select_related("user").all()
     student_count = class_room.students.count()
     user_profile = UserProfile.objects.get(user=request.user)
-    materials = Material.objects.filter(uploaded_by=user_profile, class_name=class_object)
+    materials = Material.objects.filter(
+        uploaded_by=user_profile, class_name=class_object
+    )
     activities = Activity.objects.filter(class_room=class_room, teacher=user_profile)
     activities_list = list(ActivityCategory.objects.order_by("name"))
 
@@ -454,7 +492,9 @@ def assign_marks(request, activity_id):
             try:
                 Decimal(val)
             except InvalidOperation:
-                messages.error(request, f"“{val}” is not a valid number for {st.user.first_name}.")
+                messages.error(
+                    request, f"“{val}” is not a valid number for {st.user.first_name}."
+                )
                 had_error = True
                 continue
 
@@ -488,7 +528,9 @@ def assign_marks(request, activity_id):
         else:
             messages.info(request, "No changes detected; nothing to save.")
 
-        return redirect("view_class_url", class_name=activity.class_room.class_name.class_name)
+        return redirect(
+            "view_class_url", class_name=activity.class_room.class_name.class_name
+        )
 
     return render(
         request,

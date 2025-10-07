@@ -363,38 +363,8 @@ def assign_subject_view(request, classroom_id):
 @user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
 def classroom_add(request):
     classes = Class.objects.all()
-    teachers = UserProfile.objects.filter(role="teacher")
-    students = UserProfile.objects.filter(role="student")
-
-    if request.method == "POST":
-        class_name = request.POST["class_name"]
-        teacher_id = request.POST.get("room_teacher")
-        student_ids = request.POST.getlist("students")
-
-        cls = Class.objects.get(class_name=class_name)
-        room = ClassRoom.objects.create(
-            class_name=cls, room_teacher_id=teacher_id or None
-        )
-
-        if student_ids:
-            room.students.set(student_ids)
-
-        return redirect("detail_classroom_url", pk=class_name)
-
-    context = {
-        "classes": classes,
-        "teachers": teachers,
-        "students": students,
-    }
-    context.update(identify)
-    return render(request, "a_school_admin/add-classroom.html", context)
-
-
-@user_passes_test(lambda user: user.is_authenticated and user.role == "admin")
-def classroom_add(request):
-    classes = Class.objects.all()
-    teachers = UserProfile.objects.filter(role="teacher")
-    students = UserProfile.objects.filter(role="student")
+    teachers = UserProfile.objects.filter(user__role="teacher")
+    students = UserProfile.objects.filter(user__role="student")
 
     if request.method == "POST":
         class_name = request.POST["class_name"]

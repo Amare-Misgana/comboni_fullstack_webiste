@@ -331,12 +331,19 @@ def add_news(request):
         news = News(photo=photo, header=header, description=description)
         news.save()
 
-        _send_news_email(
-            news,
-            request,
-            subject_prefix="📢 New News:",
-            action_desc=f"Added News ({news.header})",
-        )
+        try:
+            _send_news_email(
+                news,
+                request,
+                subject_prefix="📢 New News:",
+                action_desc=f"Added News ({news.header})",
+            )
+        except Exception:
+            print("Failed to send news email (non-fatal)")
+            messages.warning(
+                request, "News saved but notification email failed to send."
+            )
+
         messages.success(request, "News item added successfully.")
         return redirect("all_news_url")
 

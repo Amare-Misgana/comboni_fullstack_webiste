@@ -14,6 +14,31 @@ from pathlib import Path
 import os
 from django.urls import reverse_lazy
 
+# Try to load environment variables from .env file if python-dotenv is installed
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    # If python-dotenv is not installed, continue without it
+    pass
+
+# Try to import dj_database_url for database URL parsing
+try:
+    import dj_database_url
+
+    HAS_DJ_DATABASE_URL = True
+except ImportError:
+    HAS_DJ_DATABASE_URL = False
+
+# Try to import whitenoise
+try:
+    import whitenoise
+
+    HAS_WHITENOISE = True
+except ImportError:
+    HAS_WHITENOISE = False
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,20 +47,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-uxsn!-ggnv-pym%g5+k%#qkr($rc@w%89x281(s+n8xx7$+jn8"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-uxsn!-ggnv-pym%g5+k%#qkr($rc@w%89x281(s+n8xx7$+jn8"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
+# Email Configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "codeamare@gmail.com"
-EMAIL_HOST_PASSWORD = "yesc mwdn dkuo eiwv"
-EMAIL_TIMEOUT = 60
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "60"))
 
 
 # Application definition
@@ -59,13 +87,22 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Add WhiteNoise middleware only if installed and in production
+if HAS_WHITENOISE and not DEBUG:
+    MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
+
+MIDDLEWARE.extend(
+    [
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "django.middleware.common.CommonMiddleware",
+        "django.middleware.csrf.CsrfViewMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "django.contrib.messages.middleware.MessageMiddleware",
+        "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    ]
+)
 
 ROOT_URLCONF = "a_core.urls"
 
@@ -74,7 +111,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             BASE_DIR / "templates",
-            BASE_DIR / "a_visiter" / "templates",
+            BASE_DIR / "a_visitor" / "templates",
             BASE_DIR / "a_school_admin" / "templates",
             BASE_DIR / "a_teacher" / "templates",
             BASE_DIR / "a_student" / "templates",
@@ -97,14 +134,58 @@ WSGI_APPLICATION = "a_core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import dj_database_url
+DATABASE_URL = os.getenv("DATABASE_URL", "")
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if DATABASE_URL and HAS_DJ_DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
-}
+elif DATABASE_URL and not HAS_DJ_DATABASE_URL:
+    # If DATABASE_URL is provided but dj_database_url is not installed
+    # Try to parse PostgreSQL URL manually
+    if DATABASE_URL.startswith("postgresql://") or DATABASE_URL.startswith(
+        "postgres://"
+    ):
+        # Check if psycopg2 is available
+        try:
+            import psycopg2
+            from urllib.parse import urlparse
+
+            db_url = urlparse(DATABASE_URL)
+            DATABASES = {
+                "default": {
+                    "ENGINE": "django.db.backends.postgresql",
+                    "NAME": db_url.path[1:],  # Remove leading '/'
+                    "USER": db_url.username,
+                    "PASSWORD": db_url.password,
+                    "HOST": db_url.hostname,
+                    "PORT": db_url.port or 5432,
+                }
+            }
+        except ImportError:
+            # psycopg2 not installed, fallback to SQLite
+            print("Warning: psycopg2 not installed. Falling back to SQLite.")
+            DATABASES = {
+                "default": {
+                    "ENGINE": "django.db.backends.sqlite3",
+                    "NAME": BASE_DIR / "db.sqlite3",
+                }
+            }
+    else:
+        # Fallback to SQLite if URL parsing fails
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
@@ -141,7 +222,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.getenv("STATIC_ROOT", BASE_DIR / "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -152,15 +234,19 @@ LOGIN_URL = reverse_lazy("login_choice_url")
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    BASE_DIR / "a_visiter" / "static",
+    BASE_DIR / "a_visitor" / "static",
     BASE_DIR / "a_school_admin" / "static",
     BASE_DIR / "a_teacher" / "static",
     BASE_DIR / "a_student" / "static",
-    BASE_DIR / "media",
 ]
 
+# Media files
 MEDIA_URL = "/media-url/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = os.getenv("MEDIA_ROOT", BASE_DIR / "media")
+
+# WhiteNoise for static file serving in production
+if HAS_WHITENOISE and not DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 AUTHENTICATION_BACKENDS = [
     "a_school_admin.backends.UsernameOrEmailBackend",
@@ -171,11 +257,69 @@ AUTH_USER_MODEL = "common.CustomUser"
 ASGI_APPLICATION = "a_core.asgi.application"
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}
+# Channel Layers Configuration for WebSockets
+# Try to import channels_redis
+try:
+    import channels_redis
 
+    HAS_CHANNELS_REDIS = True
+except ImportError:
+    HAS_CHANNELS_REDIS = False
+
+REDIS_URL = os.getenv("REDIS_URL", "")
+
+if REDIS_URL and HAS_CHANNELS_REDIS:
+    # Parse Redis URL (format: redis://host:port/db or redis://host:port)
+    import re
+
+    redis_url_pattern = re.compile(r"redis://(?:[^@]+@)?([^:/]+)(?::(\d+))?(?:/(\d+))?")
+    redis_match = redis_url_pattern.match(REDIS_URL)
+
+    if redis_match:
+        host = redis_match.group(1)
+        port = int(redis_match.group(2)) if redis_match.group(2) else 6379
+        CHANNEL_LAYERS = {
+            "default": {
+                "BACKEND": "channels_redis.core.RedisChannelLayer",
+                "CONFIG": {
+                    "hosts": [(host, port)],
+                },
+            },
+        }
+    else:
+        # If REDIS_URL is not a connection string, try using it directly
+        # This allows for custom configurations
+        CHANNEL_LAYERS = {
+            "default": {
+                "BACKEND": "channels_redis.core.RedisChannelLayer",
+                "CONFIG": {
+                    "hosts": [REDIS_URL],
+                },
+            },
+        }
+else:
+    # Use InMemoryChannelLayer for development (or if channels_redis is not installed)
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
 
 MAX_UPLOAD_SIZE = 3 * 1024 * 1024
+
+# Security Settings for Production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False") == "True"
+    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "True") == "True"
+    CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "True") == "True"
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = "DENY"
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    X_FRAME_OPTIONS = "SAMEORIGIN"
